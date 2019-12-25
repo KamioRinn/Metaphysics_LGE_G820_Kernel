@@ -3093,7 +3093,7 @@ static void _sde_crtc_set_input_fence_timeout(struct sde_crtc_state *cstate)
 static void sde_crtc_build_dim_layer_expo(struct sde_hw_dim_layer *dim_layer,
 		int hdisplay, int vdisplay, u32 alpha) {
 	dim_layer->flags = SDE_DRM_DIM_LAYER_INCLUSIVE;
-	dim_layer->stage = SDE_STAGE_MAX - SDE_STAGE_0 - 1;
+	dim_layer->stage = SDE_STAGE_MAX - 1;
 	dim_layer->rect.x = 0;
 	dim_layer->rect.y = 0;
 	dim_layer->rect.w = hdisplay;
