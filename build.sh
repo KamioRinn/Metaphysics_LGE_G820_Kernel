@@ -1,9 +1,8 @@
 #!/bin/sh
-clean=$1
-if [ $clean ]; then
-    rm -rf ./out
-fi
-mkdir -p out log
+mkdir -p out
+cd ./out
+make clean
+cd ..
 export CLANG_TRIPLE=aarch64-linux-gnu-
 export CROSS_COMPILE=../toolchain/gcc/bin/aarch64-linux-androidkernel-
 make O=./out ARCH=arm64 vendor/alphalm_lao_com-perf_defconfig
