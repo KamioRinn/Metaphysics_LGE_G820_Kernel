@@ -262,7 +262,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
 }
 
 /**
- * cma_declare_contiguous() - reserve custom contiguous area
+ * __declare_contiguous() - reserve custom contiguous area
  * @base: Base address of the reserved area optional, use 0 for any
  * @size: Size of the reserved area (in bytes),
  * @limit: End address of the reserved memory (optional, 0 for any).
@@ -279,7 +279,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
  * If @fixed is true, reserve contiguous area at exactly @base.  If false,
  * reserve in range from @base to @limit.
  */
-int __init cma_declare_contiguous(phys_addr_t base,
+int __init __declare_contiguous(phys_addr_t base,
 			phys_addr_t size, phys_addr_t limit,
 			phys_addr_t alignment, unsigned int order_per_bit,
 			bool fixed, const char *name, struct cma **res_cma)
@@ -440,7 +440,7 @@ int __init gcma_declare_contiguous(phys_addr_t base,
 {
 	int ret = 0;
 
-	ret = cma_declare_contiguous(base, size, limit, alignment,
+	ret = __declare_contiguous(base, size, limit, alignment,
 			order_per_bit, fixed, name, res_cma);
 	if (ret >= 0)
 		(*res_cma)->gcma = IS_GCMA;
@@ -448,7 +448,7 @@ int __init gcma_declare_contiguous(phys_addr_t base,
 	return ret;
 }
 
-int __init __declare_contiguous(phys_addr_t base,
+int __init cma_declare_contiguous(phys_addr_t base,
 			phys_addr_t size, phys_addr_t limit,
 			phys_addr_t alignment, unsigned int order_per_bit,
 			bool fixed, const char *name, struct cma **res_cma)
