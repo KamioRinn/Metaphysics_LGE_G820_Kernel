@@ -1,0 +1,6 @@
+arch/arm64/boot/dts/qcom/*.building
+out/
+packing/Image.gz-dtb
+packing/dtb
+packing/kernel
+packing/new-boot.img
