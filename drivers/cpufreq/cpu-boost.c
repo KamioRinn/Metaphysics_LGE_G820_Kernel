@@ -17,11 +17,15 @@
 #include <linux/init.h>
 #include <linux/cpufreq.h>
 #include <linux/cpu.h>
+#include <linux/kthread.h>
 #include <linux/sched.h>
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
 #include <linux/input.h>
 #include <linux/time.h>
+#include <uapi/linux/sched/types.h>
+
+#include <linux/sched/rt.h>
 
 struct cpu_sync {
 	int cpu;
@@ -30,9 +34,8 @@ struct cpu_sync {
 };
 
 static DEFINE_PER_CPU(struct cpu_sync, sync_info);
-static struct workqueue_struct *cpu_boost_wq;
 
-static struct work_struct input_boost_work;
+static struct kthread_work input_boost_work;
 
 static bool input_boost_enabled;
 
@@ -46,7 +49,11 @@ static bool sched_boost_active;
 
 static struct delayed_work input_boost_rem;
 static u64 last_input_time;
-#define MIN_INPUT_INTERVAL (150 * USEC_PER_MSEC)
+
+static struct kthread_worker cpu_boost_worker;
+static struct task_struct *cpu_boost_worker_thread;
+
+#define MIN_INPUT_INTERVAL (100 * USEC_PER_MSEC)
 
 static int set_input_boost_freq(const char *buf, const struct kernel_param *kp)
 {
@@ -114,85 +121,6 @@ static const struct kernel_param_ops param_ops_input_boost_freq = {
 	.get = get_input_boost_freq,
 };
 module_param_cb(input_boost_freq, &param_ops_input_boost_freq, NULL, 0644);
-
-static DEFINE_PER_CPU(unsigned int, sub_boost_freq);
-
-#define MIN_INPUT_INTERVAL_MS 40
-#define MIN_INPUT_INTERVAL_US (MIN_INPUT_INTERVAL_MS * USEC_PER_MSEC)
-#define MAX_PRECEDING_BOOST_TIME 200
-
-static bool sub_boost_enabled = false;
-static unsigned int prec_boost_ms = 0;
-static unsigned int boost_step = 0;
-
-static struct work_struct input_boost_multi_step_work;
-
-static int set_sub_boost_freq(const char *buf, const struct kernel_param *kp)
-{
-	int i, ntokens = 0;
-	unsigned int val, cpu;
-	const char *cp = buf;
-	bool enabled = false;
-
-	while ((cp = strpbrk(cp + 1, " :")))
-		ntokens++;
-
-	/* single number: apply to all CPUs */
-	if (!ntokens) {
-		if (sscanf(buf, "%u\n", &val) != 1)
-			return -EINVAL;
-		for_each_possible_cpu(i)
-			per_cpu(sub_boost_freq, i) = val;
-		goto check_enable;
-	}
-
-	/* CPU:value pair */
-	if (!(ntokens % 2))
-		return -EINVAL;
-
-	cp = buf;
-	for (i = 0; i < ntokens; i += 2) {
-		if (sscanf(cp, "%u:%u", &cpu, &val) != 2)
-			return -EINVAL;
-		if (cpu >= num_possible_cpus())
-			return -EINVAL;
-
-		per_cpu(sub_boost_freq, cpu) = val;
-		cp = strchr(cp, ' ');
-		cp++;
-	}
-
-check_enable:
-	for_each_possible_cpu(i) {
-		if (per_cpu(sub_boost_freq, i)) {
-			enabled = true;
-			break;
-		}
-	}
-	sub_boost_enabled = enabled;
-
-	return 0;
-}
-
-static int get_sub_boost_freq(char *buf, const struct kernel_param *kp)
-{
-	int cnt = 0, cpu;
-	unsigned int val;
-
-	for_each_possible_cpu(cpu) {
-		val = per_cpu(sub_boost_freq, cpu);
-		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt,
-				"%d:%u ", cpu, val);
-	}
-	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "\n");
-	return cnt;
-}
-
-static const struct kernel_param_ops param_ops_sub_boost_freq = {
-	.set = set_sub_boost_freq,
-	.get = get_sub_boost_freq,
-};
-module_param_cb(sub_boost_freq, &param_ops_sub_boost_freq, NULL, 0644);
 
 /*
  * The CPUFREQ_ADJUST notifier is used to override the current policy min to
@@ -264,11 +192,9 @@ static void do_input_boost_rem(struct work_struct *work)
 			pr_err("cpu-boost: sched boost disable failed\n");
 		sched_boost_active = false;
 	}
-
-	boost_step = 0;
 }
 
-static void do_input_boost(struct work_struct *work)
+static void do_input_boost(struct kthread_work *work)
 {
 	unsigned int i, ret;
 	struct cpu_sync *i_sync_info;
@@ -298,68 +224,7 @@ static void do_input_boost(struct work_struct *work)
 			sched_boost_active = true;
 	}
 
-	queue_delayed_work(cpu_boost_wq, &input_boost_rem,
-					msecs_to_jiffies(input_boost_ms));
-}
-
-static void do_input_boost_multi_step(struct work_struct *work)
-{
-	unsigned int i, ret;
-	struct cpu_sync *i_sync_info;
-
-	cancel_delayed_work_sync(&input_boost_rem);
-	if (boost_step == 0) {
-		// step 1
-		pr_debug("Multi step boost: step 1\n");
-		if (sched_boost_active) {
-			sched_set_boost(0);
-			sched_boost_active = false;
-		}
-
-		for_each_possible_cpu(i) {
-			i_sync_info = &per_cpu(sync_info, i);
-			i_sync_info->input_boost_min = i_sync_info->input_boost_freq;
-		}
-
-		update_policy_online();
-
-		if (sched_boost_on_input > 0) {
-			ret = sched_set_boost(sched_boost_on_input);
-			if (ret)
-				pr_err("cpu-boost: HMP boost enable failed\n");
-			else
-				sched_boost_active = true;
-		}
-
-		if (sub_boost_enabled) {
-			boost_step = 1;
-			prec_boost_ms = 0;
-		}
-	} else if (boost_step == 1) {
-		// step 2
-		prec_boost_ms += MIN_INPUT_INTERVAL_MS;
-		if (prec_boost_ms >= MAX_PRECEDING_BOOST_TIME) {
-			pr_debug("Multi step boost: step 2\n");
-			for_each_possible_cpu(i) {
-				i_sync_info = &per_cpu(sync_info, i);
-				i_sync_info->input_boost_min = per_cpu(sub_boost_freq, i);
-			}
-
-			update_policy_online();
-
-			if (sched_boost_active) {
-				ret = sched_set_boost(0);
-				if (ret)
-					pr_err("cpu-boost: HMP boost disable failed\n");
-				sched_boost_active = false;
-			}
-
-			boost_step = 2;
-		}
-	}
-
-	queue_delayed_work(cpu_boost_wq, &input_boost_rem,
-					msecs_to_jiffies(input_boost_ms));
+	schedule_delayed_work(&input_boost_rem, msecs_to_jiffies(input_boost_ms));
 }
 
 static void cpuboost_input_event(struct input_handle *handle,
@@ -370,27 +235,14 @@ static void cpuboost_input_event(struct input_handle *handle,
 	if (!input_boost_enabled)
 		return;
 
-	{ // multi-step boost
-		now = ktime_to_us(ktime_get());
-		if (now - last_input_time < MIN_INPUT_INTERVAL_US)
-			return;
-
-		if (work_pending(&input_boost_multi_step_work))
-			return;
-
-		queue_work(cpu_boost_wq, &input_boost_multi_step_work);
-		last_input_time = ktime_to_us(ktime_get());
-		return;
-	}
-
 	now = ktime_to_us(ktime_get());
 	if (now - last_input_time < MIN_INPUT_INTERVAL)
 		return;
 
-	if (work_pending(&input_boost_work))
+	if (queuing_blocked(&cpu_boost_worker, &input_boost_work))
 		return;
 
-	queue_work(cpu_boost_wq, &input_boost_work);
+	kthread_queue_work(&cpu_boost_worker, &input_boost_work);
 	last_input_time = ktime_to_us(ktime_get());
 }
 
@@ -467,16 +319,37 @@ static struct input_handler cpuboost_input_handler = {
 
 static int cpu_boost_init(void)
 {
-	int cpu, ret;
+	int cpu, ret, i;
 	struct cpu_sync *s;
+	struct sched_param param = { .sched_priority = 2 };
+	cpumask_t sys_bg_mask;
 
-	cpu_boost_wq = alloc_workqueue("cpuboost_wq", WQ_HIGHPRI, 0);
-	if (!cpu_boost_wq)
+	/* Hardcode the cpumask to bind the kthread to it */
+	cpumask_clear(&sys_bg_mask);
+	for (i = 0; i <= 3; i++) {
+		cpumask_set_cpu(i, &sys_bg_mask);
+	}
+
+	kthread_init_worker(&cpu_boost_worker);
+	cpu_boost_worker_thread = kthread_create(kthread_worker_fn,
+		&cpu_boost_worker, "cpu_boost_worker_thread");
+	if (IS_ERR(cpu_boost_worker_thread)) {
+		pr_err("cpu-boost: Failed to init kworker!\n");
 		return -EFAULT;
+	}
 
-	INIT_WORK(&input_boost_work, do_input_boost);
+	ret = sched_setscheduler(cpu_boost_worker_thread, SCHED_FIFO, &param);
+	if (ret)
+		pr_err("cpu-boost: Failed to set SCHED_FIFO!\n");
+
+	/* Now bind it to the cpumask */
+	kthread_bind_mask(cpu_boost_worker_thread, &sys_bg_mask);
+
+	/* Wake it up! */
+	wake_up_process(cpu_boost_worker_thread);
+
+	kthread_init_work(&input_boost_work, do_input_boost);
 	INIT_DELAYED_WORK(&input_boost_rem, do_input_boost_rem);
-	INIT_WORK(&input_boost_multi_step_work, do_input_boost_multi_step);
 
 	for_each_possible_cpu(cpu) {
 		s = &per_cpu(sync_info, cpu);
