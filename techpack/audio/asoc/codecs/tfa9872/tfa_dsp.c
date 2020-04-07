@@ -4455,6 +4455,12 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
 #if defined(TFA_USE_DEVICE_SPECIFIC_CONTROL)
 		if (active_handle != -1) {
 			if (dev != active_handle) {
+				tfa_set_swprof(dev,
+					(unsigned short)next_profile);
+				tfa_set_swvstep(dev,
+					(unsigned short)
+					tfa_cont_get_current_vstep(dev));
+
 				err = _tfa_stop(dev); /* stop inactive handle */
 				continue;
 			}
@@ -4492,16 +4498,9 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
 		}
 
 #if defined(TFA_USE_DEVICE_SPECIFIC_CONTROL)
-		if (active_handle != -1) {
-			if (dev != active_handle) {
-				tfa_set_swprof(dev,
-					(unsigned short)next_profile);
-				tfa_set_swvstep(dev,
-					(unsigned short)
-					tfa_cont_get_current_vstep(dev));
+		if (active_handle != -1)
+			if (dev != active_handle)
 				continue;
-			}
-		}
 #endif
 
 		/* check if the profile and steps are the one we want */
@@ -5970,17 +5969,17 @@ wait_calibrate_done_error_exit:
 #define UPPER_LIMIT_CAL_S_N1A 8000
 #elif defined(CONFIG_MACH_SM8150_FLASH) // Flash
 #define LOWER_LIMIT_CAL_N3B 5800
-#define UPPER_LIMIT_CAL_N3B 7800
+#define UPPER_LIMIT_CAL_N3B 8000
 #define LOWER_LIMIT_CAL_N1A 5800
-#define UPPER_LIMIT_CAL_N1A 7800
+#define UPPER_LIMIT_CAL_N1A 8000
 #define LOWER_LIMIT_CAL_P_N3B 5400
-#define UPPER_LIMIT_CAL_P_N3B 7200
+#define UPPER_LIMIT_CAL_P_N3B 8000
 #define LOWER_LIMIT_CAL_P_N1A 5400
-#define UPPER_LIMIT_CAL_P_N1A 7200
+#define UPPER_LIMIT_CAL_P_N1A 8000
 #define LOWER_LIMIT_CAL_S_N3B 5800
-#define UPPER_LIMIT_CAL_S_N3B 7800
+#define UPPER_LIMIT_CAL_S_N3B 8000
 #define LOWER_LIMIT_CAL_S_N1A 5800
-#define UPPER_LIMIT_CAL_S_N1A 7800
+#define UPPER_LIMIT_CAL_S_N1A 8000
 #elif defined(CONFIG_MACH_SM8150_ALPHA) // Alpha
 #define LOWER_LIMIT_CAL_N3B 5600
 #define UPPER_LIMIT_CAL_N3B 8000
@@ -5993,6 +5992,19 @@ wait_calibrate_done_error_exit:
 #define LOWER_LIMIT_CAL_S_N3B 5600
 #define UPPER_LIMIT_CAL_S_N3B 8000
 #define LOWER_LIMIT_CAL_S_N1A 5600
+#define UPPER_LIMIT_CAL_S_N1A 8000
+#elif defined(CONFIG_MACH_SM8150_BETA) // BETA
+#define LOWER_LIMIT_CAL_N3B 5800
+#define UPPER_LIMIT_CAL_N3B 7800
+#define LOWER_LIMIT_CAL_N1A 5800
+#define UPPER_LIMIT_CAL_N1A 7800
+#define LOWER_LIMIT_CAL_P_N3B 5600
+#define UPPER_LIMIT_CAL_P_N3B 12500
+#define LOWER_LIMIT_CAL_P_N1A 5600
+#define UPPER_LIMIT_CAL_P_N1A 12500
+#define LOWER_LIMIT_CAL_S_N3B 6000
+#define UPPER_LIMIT_CAL_S_N3B 8000
+#define LOWER_LIMIT_CAL_S_N1A 6000
 #define UPPER_LIMIT_CAL_S_N1A 8000
 #else
 #define LOWER_LIMIT_CAL_N3B 0

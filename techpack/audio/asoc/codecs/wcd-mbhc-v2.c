@@ -52,8 +52,8 @@ int es9218_sabre_headphone_off(void);
 #define LGE_NORMAL_HEADSET_THRESHOLD	50
 #define LGE_ADVANCED_HEADSET_THRESHOLD	600
 #else /* LGE original from ELSA*/
-#define LGE_NORMAL_HEADSET_THRESHOLD	100
-#define LGE_ADVANCED_HEADSET_THRESHOLD	400
+#define LGE_NORMAL_HEADSET_THRESHOLD	50
+#define LGE_ADVANCED_HEADSET_THRESHOLD	600
 #endif
 
 #define EXTCON_JACK_NORMAL   30
@@ -71,6 +71,7 @@ enum {
 	NO_DEVICE   = 0,
 	LGE_HEADSET = (1 << 0),
 	LGE_HEADPHONE = (1 << 1),
+	LGE_LINEOUT = (1 << 2),
 	LGE_AUX_HIDDEN = (1 << 6),
 };
 
@@ -91,6 +92,10 @@ static const unsigned int extcon_mute_det[] = {
 };
 #endif /* CONFIG_SND_LGE_VOC_MUTE_DET */
 
+/* Z floating defined in ohms */
+/* copied from TAVIL_ZDET_FLOATING_IMPEDANCE in wcd934x-mbhc.c */
+#define LGE_TAVIL_ZDET_FLOATING_IMPEDANCE 0x0FFFFFFE
+
 static void lge_set_edev_name(struct wcd_mbhc *mbhc, int status)
 {
 #if defined(CONFIG_SND_SOC_ES9218P)
@@ -104,14 +109,18 @@ static void lge_set_edev_name(struct wcd_mbhc *mbhc, int status)
 	if (((mbhc->zl == 0) && (mbhc->zr == 0)) ||
 		((mbhc->zl > LGE_ADVANCED_HEADSET_THRESHOLD-advanced_threshold) || (mbhc->zr > LGE_ADVANCED_HEADSET_THRESHOLD-advanced_threshold)))
 		strcpy((char *)mbhc->edev->name,"h2w_aux");
-	else if (mbhc->zl < LGE_NORMAL_HEADSET_THRESHOLD-normal_threshold)
-		strcpy((char *)mbhc->edev->name,"h2w");
 	else if ( (mbhc->zr >= LGE_NORMAL_HEADSET_THRESHOLD-normal_threshold && mbhc->zr < LGE_ADVANCED_HEADSET_THRESHOLD-advanced_threshold) ||
 		(mbhc->zl >= LGE_NORMAL_HEADSET_THRESHOLD-normal_threshold && mbhc->zl < LGE_ADVANCED_HEADSET_THRESHOLD-advanced_threshold) )
 		strcpy((char *)mbhc->edev->name,"h2w_advanced");
+	else if (mbhc->zl < LGE_NORMAL_HEADSET_THRESHOLD-normal_threshold)
+		strcpy((char *)mbhc->edev->name,"h2w");
 	else
 		strcpy((char *)mbhc->edev->name,"h2w_aux");
 #else
+	// defensive code
+	if ( mbhc->zl == 0 ) mbhc->zl = LGE_TAVIL_ZDET_FLOATING_IMPEDANCE;
+	if ( mbhc->zr == 0 ) mbhc->zr = LGE_TAVIL_ZDET_FLOATING_IMPEDANCE;
+
 	if ((mbhc->zl > LGE_ADVANCED_HEADSET_THRESHOLD) &&
 			(mbhc->zr > LGE_ADVANCED_HEADSET_THRESHOLD))
 		strcpy((char *)mbhc->edev->name,"h2w_aux");
@@ -139,19 +148,28 @@ static int lge_set_extcon_device(struct wcd_mbhc *mbhc, int status)
 	switch (status) {
 		case 0:
 		case SND_JACK_UNSUPPORTED:
+			//pr_err("[LGE MBHC] SND_JACK_UNSUPPORTED(0x%x) is reported.\n", status);
 			break;
 		case SND_JACK_HEADPHONE:
+			result = LGE_HEADPHONE;
+			break;
 		case SND_JACK_HEADSET:
+			result = LGE_HEADSET;
+			break;
 		case SND_JACK_LINEOUT:
-			lge_set_edev_name(mbhc, status);
-			result = (status == SND_JACK_HEADPHONE || status == SND_JACK_LINEOUT)? LGE_HEADPHONE : LGE_HEADSET;
-			pr_info("[LGE MBHC] %s %s is Inserted. jack_type=0x%x\n",
-					(result-1)?"3 Pin":"4 Pin",
-					(mbhc->zr < (LGE_ADVANCED_HEADSET_THRESHOLD))?"Headset":"AUX Cable", status);
+			result = LGE_LINEOUT;
 			break;
 		default:
 			pr_err("[LGE MBHC] Unsupported jack type(0x%x) is reported.\n", status);
 			break;
+	}
+
+	if (result != NO_DEVICE) {
+		lge_set_edev_name(mbhc, status);
+		pr_info("[LGE MBHC] %s %s is Inserted. jack_type=0x%x\n",
+			(result-1)?"3 Pin":"4 Pin",
+			(mbhc->zr < (LGE_ADVANCED_HEADSET_THRESHOLD))?"Headset":"AUX Cable",
+			status);
 	}
 
 	pr_info("[LGE MBHC] edev state: %d, edev name: %s\n", result, mbhc->edev->name);
@@ -827,7 +845,6 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 						SND_JACK_LINEOUT |
 						SND_JACK_ANC_HEADPHONE |
 						SND_JACK_UNSUPPORTED);
-			mbhc->force_linein = false;
 		}
 
 		if (mbhc->current_plug == MBHC_PLUG_TYPE_HEADSET &&
@@ -878,6 +895,7 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 					&mbhc->zl, &mbhc->zr);
 			WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_FSM_EN,
 						 fsm_en);
+#ifndef CONFIG_MACH_LGE
 			if ((mbhc->zl > mbhc->mbhc_cfg->linein_th &&
 				mbhc->zl < MAX_IMPED) &&
 				(mbhc->zr > mbhc->mbhc_cfg->linein_th &&
@@ -897,6 +915,26 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 				}
 				pr_debug("%s: Marking jack type as SND_JACK_LINEOUT\n",
 				__func__);
+			}
+#endif /* CONFIG_MACH_LGE */
+		}
+
+		/* Do not calculate impedance again for lineout
+		 * as during playback pa is on and impedance values
+		 * will not be correct resulting in lineout detected
+		 * as headphone.
+		 */
+		if ((is_pa_on) && mbhc->force_linein == true) {
+			jack_type = SND_JACK_LINEOUT;
+			mbhc->current_plug = MBHC_PLUG_TYPE_HIGH_HPH;
+			if (mbhc->hph_status) {
+				mbhc->hph_status &= ~(SND_JACK_HEADSET |
+						SND_JACK_LINEOUT |
+						SND_JACK_UNSUPPORTED);
+				wcd_mbhc_jack_report(mbhc,
+						&mbhc->headset_jack,
+						mbhc->hph_status,
+						WCD_MBHC_JACK_MASK);
 			}
 		}
 
@@ -1220,6 +1258,8 @@ static void wcd_mbhc_swch_irq_handler(struct wcd_mbhc *mbhc)
 		mbhc->extn_cable_hph_rem = false;
 #ifdef CONFIG_MACH_LGE
 		mbhc->LGE_HIGH_HPH_HEADSET = false;
+		pr_info("[LGE MBHC] %s: jack report for remove interrupt with none plug type %d\n", __func__,mbhc->current_plug);
+		wcd_mbhc_report_plug(mbhc, 0, SND_JACK_UNSUPPORTED);
 #endif
 	}
 
@@ -1581,9 +1621,6 @@ static int wcd_mbhc_initialise(struct wcd_mbhc *mbhc)
 	 * by an external source
 	 */
 	if (mbhc->mbhc_cfg->enable_usbc_analog) {
-		mbhc->hphl_swh = 0;
-		mbhc->gnd_swh = 0;
-
 		if (mbhc->mbhc_cb->hph_pull_up_control_v2)
 			mbhc->mbhc_cb->hph_pull_up_control_v2(codec,
 							      HS_PULLUP_I_OFF);

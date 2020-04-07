@@ -47,7 +47,7 @@
 #include <linux/regulator/consumer.h>
 #include <dsp/q6afe-v2.h>
 #include <sound/soc-dapm.h>
-#include "../../../../../drivers/extcon/extcon.h"
+#include "../../../../drivers/extcon/extcon.h"
 #endif
 
 #include "sma6101.h"
@@ -64,6 +64,7 @@ static bool piezo_receiver=0;  // 0:disable 1:enable
 
 #define FIFO_BUFFER_SIZE 10
 #define VBAT_TABLE_NUM 4
+
 
 #define PLL_MATCH(_input_clk_name, _output_clk_name, _input_clk,\
 		_post_n, _n, _f1, _f2, _f3_p_cp)\
@@ -5172,7 +5173,7 @@ static int sma6101_thermal_compensation(struct sma6101_priv *sma6101,
 	unsigned int cur_vol;
 	int ret, i = 0;
 	struct outside_status fifo_buf_out = {0, };
-	int vbat_gain = 0, vbat_status;
+	int vbat_gain = 0, vbat_status = -1;
 
 	/* SPK OCP issued or monitoring function */
 	if (ocp_status) {

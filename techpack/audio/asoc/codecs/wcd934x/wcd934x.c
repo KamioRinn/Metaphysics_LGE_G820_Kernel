@@ -1,4 +1,4 @@
-/* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2015-2019, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -52,7 +52,7 @@
 #include "wcd934x-dsd.h"
 
 #ifdef CONFIG_MACH_LGE // add extcon dev for SAR backoff
-#include "../../../../../drivers/extcon/extcon.h"
+#include "../../../../drivers/extcon/extcon.h"
 
 static const unsigned int extcon_sar_backoff[] = {
 	EXTCON_MECHANICAL,
@@ -160,6 +160,7 @@ static const struct snd_kcontrol_new name##_mux = \
 #define  CF_MIN_3DB_75HZ		0x1
 #define  CF_MIN_3DB_150HZ		0x2
 
+#define  SB_OF_UF_MAX_RETRY_CNT		5
 #define CPE_ERR_WDOG_BITE BIT(0)
 #define CPE_FATAL_IRQS CPE_ERR_WDOG_BITE
 
@@ -656,6 +657,7 @@ struct tavil_priv {
 	int micb_load_low;
 	int micb_load_high;
 	u8 dmic_drv_ctl;
+	unsigned short slim_tx_of_uf_cnt[WCD934X_TX_MAX][SB_PORT_ERR_MAX];
 #ifdef CONFIG_MACH_LGE // add extcon dev for SAR backoff
 	struct extcon_dev* sar;
 #endif
@@ -1909,6 +1911,7 @@ static int tavil_codec_enable_tx(struct snd_soc_dapm_widget *w,
 	struct tavil_priv *tavil_p = snd_soc_codec_get_drvdata(codec);
 	struct wcd9xxx_codec_dai_data *dai;
 	struct wcd9xxx *core;
+	struct wcd9xxx_ch *ch;
 	int ret = 0;
 
 	dev_dbg(codec->dev,
@@ -1945,6 +1948,13 @@ static int tavil_codec_enable_tx(struct snd_soc_dapm_widget *w,
 			dev_dbg(codec->dev, "%s: Disconnect RX port, ret = %d\n",
 				 __func__, ret);
 		}
+		/* reset overflow and underflow counts */
+		list_for_each_entry(ch, &dai->wcd9xxx_ch_list, list) {
+			tavil_p->slim_tx_of_uf_cnt[ch->port][SB_PORT_ERR_OF]
+									= 0;
+			tavil_p->slim_tx_of_uf_cnt[ch->port][SB_PORT_ERR_UF]
+									= 0;
+		}
 		break;
 	}
 	return ret;
@@ -1957,6 +1967,7 @@ static int tavil_codec_enable_slimvi_feedback(struct snd_soc_dapm_widget *w,
 	struct wcd9xxx *core = NULL;
 	struct snd_soc_codec *codec = NULL;
 	struct tavil_priv *tavil_p = NULL;
+	struct wcd9xxx_ch *ch;
 	int ret = 0;
 	struct wcd9xxx_codec_dai_data *dai = NULL;
 
@@ -2050,6 +2061,13 @@ static int tavil_codec_enable_slimvi_feedback(struct snd_soc_dapm_widget *w,
 				dai->grph);
 			dev_dbg(codec->dev, "%s: Disconnect TX port, ret = %d\n",
 				__func__, ret);
+		}
+		/* reset over.f and under.f counts */
+		list_for_each_entry(ch, &dai->wcd9xxx_ch_list, list) {
+			tavil_p->slim_tx_of_uf_cnt[ch->port][SB_PORT_ERR_OF]
+									= 0;
+			tavil_p->slim_tx_of_uf_cnt[ch->port][SB_PORT_ERR_UF]
+									= 0;
 		}
 		if (test_bit(VI_SENSE_1, &tavil_p->status_mask)) {
 			/* Disable V&I sensing */
@@ -2360,9 +2378,10 @@ static int tavil_codec_enable_hphr_pa(struct snd_soc_dapm_widget *w,
 		break;
 	case SND_SOC_DAPM_PRE_PMD:
 		tavil_ocp_control(codec, false);
-		blocking_notifier_call_chain(&tavil->mbhc->notifier,
-					     WCD_EVENT_PRE_HPHR_PA_OFF,
-					     &tavil->mbhc->wcd_mbhc);
+		if (tavil->mbhc)
+			blocking_notifier_call_chain(&tavil->mbhc->notifier,
+						     WCD_EVENT_PRE_HPHR_PA_OFF,
+						     &tavil->mbhc->wcd_mbhc);
 		/* Enable DSD Mute before PA disable */
 		if (dsd_conf &&
 		    (snd_soc_read(codec, WCD934X_CDC_DSD1_PATH_CTL) & 0x01))
@@ -2386,9 +2405,10 @@ static int tavil_codec_enable_hphr_pa(struct snd_soc_dapm_widget *w,
 		else
 			usleep_range(5000, 5100);
 		tavil_codec_override(codec, tavil->hph_mode, event);
-		blocking_notifier_call_chain(&tavil->mbhc->notifier,
-					     WCD_EVENT_POST_HPHR_PA_OFF,
-					     &tavil->mbhc->wcd_mbhc);
+		if (tavil->mbhc)
+			blocking_notifier_call_chain(&tavil->mbhc->notifier,
+					WCD_EVENT_POST_HPHR_PA_OFF,
+					&tavil->mbhc->wcd_mbhc);
 		if (TAVIL_IS_1_0(tavil->wcd9xxx))
 			snd_soc_update_bits(codec, WCD934X_HPH_REFBUFF_LP_CTL,
 					    0x06, 0x0);
@@ -2516,9 +2536,10 @@ static int tavil_codec_enable_hphl_pa(struct snd_soc_dapm_widget *w,
 		break;
 	case SND_SOC_DAPM_PRE_PMD:
 		tavil_ocp_control(codec, false);
-		blocking_notifier_call_chain(&tavil->mbhc->notifier,
-					     WCD_EVENT_PRE_HPHL_PA_OFF,
-					     &tavil->mbhc->wcd_mbhc);
+		if (tavil->mbhc)
+			blocking_notifier_call_chain(&tavil->mbhc->notifier,
+						     WCD_EVENT_PRE_HPHL_PA_OFF,
+						     &tavil->mbhc->wcd_mbhc);
 		/* Enable DSD Mute before PA disable */
 		if (dsd_conf &&
 		    (snd_soc_read(codec, WCD934X_CDC_DSD0_PATH_CTL) & 0x01))
@@ -2544,9 +2565,10 @@ static int tavil_codec_enable_hphl_pa(struct snd_soc_dapm_widget *w,
 		else
 			usleep_range(5000, 5100);
 		tavil_codec_override(codec, tavil->hph_mode, event);
-		blocking_notifier_call_chain(&tavil->mbhc->notifier,
-					     WCD_EVENT_POST_HPHL_PA_OFF,
-					     &tavil->mbhc->wcd_mbhc);
+		if (tavil->mbhc)
+			blocking_notifier_call_chain(&tavil->mbhc->notifier,
+						WCD_EVENT_POST_HPHL_PA_OFF,
+						&tavil->mbhc->wcd_mbhc);
 		if (TAVIL_IS_1_0(tavil->wcd9xxx))
 			snd_soc_update_bits(codec, WCD934X_HPH_REFBUFF_LP_CTL,
 					    0x06, 0x0);
@@ -4514,18 +4536,16 @@ static int tavil_codec_enable_dec(struct snd_soc_dapm_widget *w,
 
 		tavil->tx_hpf_work[decimator].hpf_cut_off_freq =
 							hpf_cut_off_freq;
-		if (hpf_cut_off_freq != CF_MIN_3DB_150HZ) {
-			snd_soc_update_bits(codec, dec_cfg_reg,
-					    TX_HPF_CUT_OFF_FREQ_MASK,
-					    CF_MIN_3DB_150HZ << 5);
-			snd_soc_update_bits(codec, hpf_gate_reg, 0x02, 0x02);
-			/*
-			 * Minimum 1 clk cycle delay is required as per
-			 * HW spec.
-			 */
-			usleep_range(1000, 1010);
-			snd_soc_update_bits(codec, hpf_gate_reg, 0x02, 0x00);
-		}
+		snd_soc_update_bits(codec, dec_cfg_reg,
+				    TX_HPF_CUT_OFF_FREQ_MASK,
+				    CF_MIN_3DB_150HZ << 5);
+		snd_soc_update_bits(codec, hpf_gate_reg, 0x02, 0x02);
+		/*
+		 * Minimum 1 clk cycle delay is required as per
+		 * HW spec.
+		 */
+		usleep_range(1000, 1010);
+		snd_soc_update_bits(codec, hpf_gate_reg, 0x02, 0x00);
 		/* schedule work queue to Remove Mute */
 		schedule_delayed_work(&tavil->tx_mute_dwork[decimator].dwork,
 				      msecs_to_jiffies(tx_unmute_delay));
@@ -5250,9 +5270,10 @@ static void tavil_codec_hph_reg_recover(struct tavil_priv *tavil,
 	int i;
 	unsigned int reg;
 
-	blocking_notifier_call_chain(&tavil->mbhc->notifier,
-				     WCD_EVENT_OCP_OFF,
-				     &tavil->mbhc->wcd_mbhc);
+	if (tavil->mbhc)
+		blocking_notifier_call_chain(&tavil->mbhc->notifier,
+					     WCD_EVENT_OCP_OFF,
+					     &tavil->mbhc->wcd_mbhc);
 
 	if (pa_status & 0xC0)
 		goto pa_en_restore;
@@ -5362,11 +5383,13 @@ pa_en_restore:
 	}
 
 end:
-	tavil->mbhc->is_hph_recover = true;
-	blocking_notifier_call_chain(
-			&tavil->mbhc->notifier,
-			WCD_EVENT_OCP_ON,
-			&tavil->mbhc->wcd_mbhc);
+	if (tavil->mbhc) {
+		tavil->mbhc->is_hph_recover = true;
+		blocking_notifier_call_chain(
+				&tavil->mbhc->notifier,
+				WCD_EVENT_OCP_ON,
+				&tavil->mbhc->wcd_mbhc);
+	}
 }
 
 static int tavil_codec_reset_hph_registers(struct snd_soc_dapm_widget *w,
@@ -5409,7 +5432,8 @@ static int tavil_codec_reset_hph_registers(struct snd_soc_dapm_widget *w,
 		} else {
 			dev_dbg(codec->dev, "%s: cache and hw reg are same\n",
 				__func__);
-			tavil->mbhc->is_hph_recover = false;
+			if (tavil->mbhc)
+				tavil->mbhc->is_hph_recover = false;
 		}
 		break;
 	default:
@@ -9729,14 +9753,40 @@ static irqreturn_t tavil_slimbus_irq(int irq, void *data)
 		if (val & WCD934X_SLIM_IRQ_UNDERFLOW)
 			dev_err_ratelimited(tavil->dev, "%s: underflow error on %s port %d, value %x\n",
 			   __func__, (tx ? "TX" : "RX"), port_id, val);
+		if (tx) {
+			/* inc count */
+			if (val & WCD934X_SLIM_IRQ_OVERFLOW) {
+				tavil->slim_tx_of_uf_cnt[port_id]
+							[SB_PORT_ERR_OF]++;
+				dev_err_ratelimited(tavil->dev, "%s: tx port(%d) overflow cnt: %d\n",
+					__func__, port_id,
+					tavil->slim_tx_of_uf_cnt[port_id]
+							[SB_PORT_ERR_OF]);
+			}
+			if (val & WCD934X_SLIM_IRQ_UNDERFLOW) {
+				tavil->slim_tx_of_uf_cnt[port_id]
+							[SB_PORT_ERR_UF]++;
+				dev_err_ratelimited(tavil->dev, "%s: tx port(%d) underflow cnt: %d\n",
+						__func__, port_id,
+					tavil->slim_tx_of_uf_cnt[port_id]
+							[SB_PORT_ERR_UF]);
+			}
+
+		}
+
 		if ((val & WCD934X_SLIM_IRQ_OVERFLOW) ||
 			(val & WCD934X_SLIM_IRQ_UNDERFLOW)) {
 			if (!tx)
 				reg = WCD934X_SLIM_PGD_PORT_INT_RX_EN0 +
 					(port_id / 8);
-			else
+			else if ((tavil->slim_tx_of_uf_cnt[port_id]
+				[SB_PORT_ERR_OF] > SB_OF_UF_MAX_RETRY_CNT) ||
+				(tavil->slim_tx_of_uf_cnt[port_id]
+				[SB_PORT_ERR_UF] > SB_OF_UF_MAX_RETRY_CNT))
 				reg = WCD934X_SLIM_PGD_PORT_INT_TX_EN0 +
 					(port_id / 8);
+			else
+				goto skip_port_disable;
 			int_val = wcd9xxx_interface_reg_read(
 				tavil->wcd9xxx, reg);
 			if (int_val & (1 << (port_id % 8))) {
@@ -9745,6 +9795,7 @@ static irqreturn_t tavil_slimbus_irq(int irq, void *data)
 					reg, int_val);
 			}
 		}
+skip_port_disable:
 		if (val & WCD934X_SLIM_IRQ_PORT_CLOSED) {
 			/*
 			 * INT SOURCE register starts from RX to TX
@@ -10093,7 +10144,8 @@ static int tavil_device_down(struct wcd9xxx *wcd9xxx)
 		priv->dai[count].bus_down_in_recovery = true;
 	snd_event_notify(priv->dev->parent, SND_EVENT_DOWN);
 
-	priv->mbhc->wcd_mbhc.deinit_in_progress = true;
+	if (priv->mbhc)
+		priv->mbhc->wcd_mbhc.deinit_in_progress = true;
 	if (delayed_work_pending(&priv->spk_anc_dwork.dwork))
 		cancel_delayed_work(&priv->spk_anc_dwork.dwork);
 	for (decimator = 0; decimator < WCD934X_NUM_DECIMATORS; decimator++) {
@@ -10108,11 +10160,14 @@ static int tavil_device_down(struct wcd9xxx *wcd9xxx)
 	}
 	if (delayed_work_pending(&priv->power_gate_work))
 		cancel_delayed_work_sync(&priv->power_gate_work);
-	if (delayed_work_pending(&priv->mbhc->wcd_mbhc.mbhc_btn_dwork)) {
-		ret = cancel_delayed_work(&priv->mbhc->wcd_mbhc.mbhc_btn_dwork);
-		if (ret)
-			priv->mbhc->wcd_mbhc.mbhc_cb->lock_sleep
-					(&priv->mbhc->wcd_mbhc, false);
+	if (priv->mbhc) {
+		if (delayed_work_pending(&priv->mbhc->wcd_mbhc.mbhc_btn_dwork)) {
+			ret = cancel_delayed_work(
+					&priv->mbhc->wcd_mbhc.mbhc_btn_dwork);
+			if (ret)
+				priv->mbhc->wcd_mbhc.mbhc_cb->lock_sleep
+						(&priv->mbhc->wcd_mbhc, false);
+		}
 	}
 
 	if (priv->swr.ctrl_data) {
@@ -10196,16 +10251,17 @@ static int tavil_post_reset_cb(struct wcd9xxx *wcd9xxx)
 		dev_err(codec->dev, "%s: invalid pdata\n", __func__);
 
 	/* Initialize MBHC module */
-	mbhc = &tavil->mbhc->wcd_mbhc;
-	ret = tavil_mbhc_post_ssr_init(tavil->mbhc, codec);
-	if (ret) {
-		dev_err(codec->dev, "%s: mbhc initialization failed\n",
-			__func__);
-		goto done;
-	} else {
-		tavil_mbhc_hs_detect(codec, mbhc->mbhc_cfg);
+	if (tavil->mbhc) {
+		mbhc = &tavil->mbhc->wcd_mbhc;
+		ret = tavil_mbhc_post_ssr_init(tavil->mbhc, codec);
+		if (ret) {
+			dev_err(codec->dev, "%s: mbhc initialization failed\n",
+				__func__);
+			goto done;
+		} else {
+			tavil_mbhc_hs_detect(codec, mbhc->mbhc_cfg);
+		}
 	}
-
 	/* DSD initialization */
 	ret = tavil_dsd_post_ssr_init(tavil->dsd_config);
 	if (ret)
@@ -10388,7 +10444,8 @@ static int tavil_soc_codec_probe(struct snd_soc_codec *codec)
 	snd_soc_dapm_ignore_suspend(dapm, "AIF2 Capture");
 	snd_soc_dapm_ignore_suspend(dapm, "AIF3 Playback");
 	snd_soc_dapm_ignore_suspend(dapm, "AIF3 Capture");
-	snd_soc_dapm_ignore_suspend(dapm, "WDMA3_OUT");
+//	snd_soc_dapm_ignore_suspend(dapm, "WDMA3_OUT"); called by msm_audrx_init in Q OS migration. please check it.
+
 	if (tavil->intf_type == WCD9XXX_INTERFACE_TYPE_SLIMBUS) {
 		snd_soc_dapm_ignore_suspend(dapm, "AIF4 Playback");
 		snd_soc_dapm_ignore_suspend(dapm, "AIF4 MAD TX");

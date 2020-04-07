@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -186,7 +186,13 @@ static int msm_pcm_open(struct snd_pcm_substream *substream)
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct msm_audio *prtd;
 	int ret = 0;
+	enum apr_subsys_state q6_state;
 
+	q6_state = apr_get_q6_state();
+	if (q6_state == APR_SUBSYS_DOWN) {
+		pr_debug("%s: adsp is down\n", __func__);
+		return -ENETRESET;
+	}
 	prtd = kzalloc(sizeof(struct msm_audio), GFP_KERNEL);
 
 	if (prtd == NULL)
@@ -443,6 +449,8 @@ static int msm_pcm_mmap_fd(struct snd_pcm_substream *substream,
 	struct audio_port_data *apd;
 	struct audio_buffer *ab;
 	int dir = -1;
+	struct dma_buf *buf = NULL;
+	int rc = 0;
 
 	if (!substream->runtime) {
 		pr_err("%s substream runtime not found\n", __func__);
@@ -469,12 +477,25 @@ static int msm_pcm_mmap_fd(struct snd_pcm_substream *substream,
 	 * used to call dma_buf_fd internally.
 	 */
 	mmap_fd->fd = dma_buf_fd(ab->dma_buf, O_CLOEXEC);
-	if (mmap_fd->fd >= 0) {
-		mmap_fd->dir = dir;
-		mmap_fd->actual_size = ab->actual_size;
-		mmap_fd->size = ab->size;
+	if (mmap_fd->fd < 0) {
+		pr_err("%s: dma_buf_fd failed, fd:%d\n",
+			__func__, mmap_fd->fd);
+		rc = -EFAULT;
+		goto buf_fd_fail;
 	}
-	return mmap_fd->fd < 0 ? -EFAULT : 0;
+	mmap_fd->dir = dir;
+	mmap_fd->actual_size = ab->actual_size;
+	mmap_fd->size = ab->size;
+
+	buf = dma_buf_get(mmap_fd->fd);
+	if (IS_ERR_OR_NULL(buf)) {
+		pr_err("%s: dma_buf_get failed, fd:%d\n",
+			__func__, mmap_fd->fd);
+		rc = -EINVAL;
+	}
+
+buf_fd_fail:
+        return rc;
 }
 
 static int msm_pcm_ioctl(struct snd_pcm_substream *substream,
@@ -583,13 +604,26 @@ static int msm_pcm_mmap(struct snd_pcm_substream *substream,
 
 static int msm_pcm_prepare(struct snd_pcm_substream *substream)
 {
+	int rc = 0;
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct msm_audio *prtd = runtime->private_data;
+	struct asm_softvolume_params softvol = {
+		.period = SOFT_VOLUME_PERIOD,
+		.step = SOFT_VOLUME_STEP,
+		.rampingcurve = SOFT_VOLUME_CURVE_LINEAR,
+	};
 
 	if (!prtd || !prtd->mmap_flag)
 		return -EIO;
 
-	return 0;
+	if (prtd->audio_client) {
+		rc = q6asm_set_softvolume_v2(prtd->audio_client,
+						&softvol, SOFT_VOLUME_INSTANCE_1);
+		if (rc < 0)
+			pr_err("%s: Send SoftVolume command failed rc=%d\n",
+					__func__, rc);
+	}
+	return rc;
 }
 
 static int msm_pcm_close(struct snd_pcm_substream *substream)
