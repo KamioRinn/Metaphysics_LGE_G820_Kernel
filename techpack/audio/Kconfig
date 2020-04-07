@@ -127,6 +127,9 @@ config MACH_SM8150_ALPHA
 config SND_FM_RX_MI2S
 	tristate "SND_FM_RX_MI2S"
 	default y
+config SND_SOC_TFA9872_STEREO	
+	tristate "SND_SOC_TFA9872_STEREO"	
+	default y
 config SND_SOC_TFA9872
 	tristate "SND_SOC_TFA9872"
 	default y
