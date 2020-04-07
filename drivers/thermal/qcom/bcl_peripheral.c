@@ -430,21 +430,18 @@ static irqreturn_t bcl_handle_ibat(int irq, void *data)
 {
 	struct bcl_peripheral_data *perph_data =
 		(struct bcl_peripheral_data *)data;
-
+bool irq_enabled = false;
 	mutex_lock(&perph_data->state_trans_lock);
-	if (!perph_data->irq_enabled) {
-		WARN_ON(1);
-		disable_irq_nosync(irq);
-		perph_data->irq_enabled = false;
-		goto exit_intr;
-	}
+irq_enabled = perph_data->irq_enabled;
+	
 	mutex_unlock(&perph_data->state_trans_lock);
 #ifdef CONFIG_LGE_PM_DEBUG
 	pr_info_ratelimited("ibat interrupt:%d\n", irq);
 #endif
-	of_thermal_handle_trip(perph_data->tz_dev);
+	if (irq_enabled)
+		of_thermal_handle_trip(perph_data->tz_dev);
 
-	return IRQ_HANDLED;
+
 
 exit_intr:
 	mutex_unlock(&perph_data->state_trans_lock);
@@ -455,24 +452,16 @@ static irqreturn_t bcl_handle_vbat(int irq, void *data)
 {
 	struct bcl_peripheral_data *perph_data =
 		(struct bcl_peripheral_data *)data;
-
+bool irq_enabled = false;
 	mutex_lock(&perph_data->state_trans_lock);
-	if (!perph_data->irq_enabled) {
-		WARN_ON(1);
-		disable_irq_nosync(irq);
-		perph_data->irq_enabled = false;
-		goto exit_intr;
-	}
+	irq_enabled = perph_data->irq_enabled;
+
 	mutex_unlock(&perph_data->state_trans_lock);
 #ifdef CONFIG_LGE_PM_DEBUG
 	pr_info_ratelimited("vbat interrupt:%d\n", irq);
 #endif
-	of_thermal_handle_trip(perph_data->tz_dev);
-
-	return IRQ_HANDLED;
-
-exit_intr:
-	mutex_unlock(&perph_data->state_trans_lock);
+	if (irq_enabled)
+		of_thermal_handle_trip(perph_data->tz_dev);
 	return IRQ_HANDLED;
 }
 
