@@ -41,14 +41,10 @@ static DEFINE_IDR(zram_index_idr);
 static DEFINE_MUTEX(zram_index_mutex);
 
 static int zram_major;
-static const char *default_compressor = "lzo";
+static const char *default_compressor = "lz4";
 
 /* Module params (documentation at end) */
-#ifndef CONFIG_HSWAP
 static unsigned int num_devices = 1;
-#else
-static unsigned int num_devices = 2;
-#endif
 /*
  * Pages that compress to sizes equals or greater than this are stored
  * uncompressed in memory.
@@ -79,29 +75,6 @@ static inline bool init_done(struct zram *zram)
 {
 	return zram->disksize;
 }
-
-#ifdef CONFIG_HSWAP
-int zram0_free_size(void)
-{
-	struct zram *zram;
-	u64 val = 0;
-
-	if (idr_is_empty(&zram_index_idr))
-		return 0;
-
-	zram = idr_find(&zram_index_idr, 0);
-
-	if (init_done(zram))
-		val += ((zram->disksize >> PAGE_SHIFT) -
-				(u64)atomic64_read(&zram->stats.pages_stored) -
-				(u64)atomic64_read(&zram->stats.same_pages));
-
-	if (val > 0)
-		return val;
-
-	return 0;
-}
-#endif
 
 static inline struct zram *dev_to_zram(struct device *dev)
 {

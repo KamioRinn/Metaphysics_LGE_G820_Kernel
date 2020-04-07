@@ -10,9 +10,6 @@ config SND_SOC_WCD9XXX_V2
 config SND_SOC_WCD_MBHC
 	tristate "SND_SOC_WCD_MBHC"
 	default y
-config SND_SOC_WSA881X
-	tristate "SND_SOC_WSA881X"
-	default y
 config SND_SOC_WCD9360
 	tristate "SND_SOC_WCD9360"
 	default y
@@ -33,6 +30,9 @@ config SND_SOC_WCD934X_DSD
 	default y
 config SND_SOC_WCD_CPE
 	tristate "SND_SOC_WCD_CPE"
+	default y
+config SND_SOC_WSA881X
+	tristate "SND_SOC_WSA881X"
 	default y
 config SOUNDWIRE_WCD_CTRL
 	tristate "SOUNDWIRE_WCD_CTRL"
