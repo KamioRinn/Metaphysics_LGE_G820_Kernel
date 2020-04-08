@@ -4,3 +4,5 @@ packing/Image.gz-dtb
 packing/dtb
 packing/kernel
 packing/new-boot.img
+dtbo/dtbo-new.img
+dtbo/temp
