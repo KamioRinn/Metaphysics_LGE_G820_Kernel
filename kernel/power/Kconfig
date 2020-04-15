@@ -171,7 +171,7 @@ config PM_WAKELOCKS_LIMIT
 config PM_WAKELOCKS_GC
 	bool "Garbage collector for user space wakeup sources"
 	depends on PM_WAKELOCKS
-	default n
+	default y
 
 config PM
 	bool "Device power management core functionality"

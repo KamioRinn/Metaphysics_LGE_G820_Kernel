@@ -39,8 +39,15 @@
 #include <linux/sched.h>
 #include <uapi/linux/sched/types.h>
 #endif
+
 #include "power.h"
 #include <soc/qcom/boot_stats.h>
+
+#include <linux/gpio.h>
+#include <linux/soc/qcom/smem_state.h>
+extern struct qcom_smem_state *qstate;
+#define PROC_AWAKE_ID 12 /* 12th bit */
+#define AWAKE_BIT BIT(PROC_AWAKE_ID)
 
 const char * const pm_labels[] = {
 	[PM_SUSPEND_TO_IDLE] = "freeze",
@@ -69,6 +76,8 @@ static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
 
 enum s2idle_states __read_mostly s2idle_state;
 static DEFINE_RAW_SPINLOCK(s2idle_lock);
+extern int check_touchirq_triggerd(void);
+
 #ifdef CONFIG_PM_SLEEP_MONITOR
 /* Suspend monitor thread toggle reason */
 enum toggle_reason {
@@ -212,6 +221,7 @@ static void s2idle_begin(void)
 static void s2idle_enter(void)
 {
 	trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, true);
+
 #ifdef CONFIG_PM_SLEEP_MONITOR
 	stop_suspend_mon();
 #endif
@@ -240,6 +250,7 @@ static void s2idle_enter(void)
  out:
 	s2idle_state = S2IDLE_STATE_NONE;
 	raw_spin_unlock_irq(&s2idle_lock);
+
 #ifdef CONFIG_PM_SLEEP_MONITOR
 	start_suspend_mon();
 #endif
@@ -476,35 +487,6 @@ static int suspend_test(int level)
 	return 0;
 }
 
-#ifdef CONFIG_DPM_WATCHDOG
-struct suspend_watchdog {
-	struct timer_list   timer;
-};
-
-static void suspend_watchdog_handler(unsigned long data)
-{
-	panic("suspend watchdog timer expired!\n");
-}
-
-static void suspend_watchdog_set(struct suspend_watchdog *wd)
-{
-	struct timer_list *timer = &wd->timer;
-
-	init_timer_on_stack(timer);
-	timer->expires = jiffies + HZ * CONFIG_DPM_WATCHDOG_TIMEOUT * 3;
-	timer->function = suspend_watchdog_handler;
-	add_timer(timer);
-}
-
-static void suspend_watchdog_clear(struct suspend_watchdog *wd)
-{
-	struct timer_list *timer = &wd->timer;
-
-	del_timer_sync(timer);
-	destroy_timer_on_stack(timer);
-}
-#endif
-
 /**
  * suspend_prepare - Prepare for entering system sleep state.
  *
@@ -605,16 +587,21 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 
 	error = disable_nonboot_cpus();
 	if (error || suspend_test(TEST_CPUS)) {
-		log_suspend_abort_reason("Disabling non-boot cpus failed");
 		goto Enable_cpus;
 	}
 
 	arch_suspend_disable_irqs();
 	BUG_ON(!irqs_disabled());
+
 #ifdef CONFIG_PM_SLEEP_MONITOR
 	stop_suspend_mon();
 #endif
 
+	if (check_touchirq_triggerd()) {
+		pr_err("[TP]touchpanel irq status is low\n");
+		error = -EBUSY;
+		goto Enable_irq;
+	}
 
 	error = syscore_suspend();
 	if (!error) {
@@ -633,12 +620,13 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 		}
 		syscore_resume();
 	}
+Enable_irq:
 
-	arch_suspend_enable_irqs();
 #ifdef CONFIG_PM_SLEEP_MONITOR
 	start_suspend_mon();
 #endif
 
+	arch_suspend_enable_irqs();
 	BUG_ON(irqs_disabled());
 
  Enable_cpus:
@@ -724,66 +712,6 @@ static void suspend_finish(void)
 	pm_restore_console();
 }
 
-#ifdef CONFIG_PM_SUSPEND_BG_SYNC
-static struct workqueue_struct *suspend_sync_wq;
-static void work_sync_fn(struct work_struct *work);
-static DECLARE_WORK(work_sync, work_sync_fn);
-static int suspend_sync_done;
-
-static void suspend_sync_wq_init(void)
-{
-	if (suspend_sync_wq)
-		return;
-
-	suspend_sync_wq = create_singlethread_workqueue("suspend_sync");
-}
-
-#define BG_SYNC_TIMEOUT 10	// 10*10ms
-static int bg_sync(void)
-{
-	int timeout_in_ms = BG_SYNC_TIMEOUT;
-	bool ret = false;
-
-	suspend_sync_wq_init();
-
-    if (!suspend_sync_wq) {
-        printk(KERN_DEBUG "[bg_sync] Failed to create workqueue\n");
-        return -ENOMEM;
-    }
-
-	if (work_busy(&work_sync)) {
-		printk(KERN_DEBUG "[bg_sync] work_sync already run\n");
-		return -EBUSY;
-	}
-
-	printk(KERN_DEBUG "[bg_sync] queue start\n");
-	suspend_sync_done = 0;
-	ret = queue_work(suspend_sync_wq, &work_sync);
-	printk(KERN_DEBUG "[bg_sync] queue end, ret = %s\n", ret?"true":"false");
-
-	while (timeout_in_ms--) {
-		if (suspend_sync_done)
-			break;
-		msleep(10);
-	}
-
-	if (suspend_sync_done) {
-		printk(KERN_INFO "[bg_sync] (%d * 10ms) ...\n", BG_SYNC_TIMEOUT - timeout_in_ms);
-		return 0;
-	}
-
-	return -EBUSY;
-}
-
-static void work_sync_fn(struct work_struct *work)
-{
-	printk(KERN_DEBUG "[bg_sync] sys_sync start\n");
-	sys_sync();
-	printk(KERN_DEBUG "[bg_sync] sys_sync done\n");
-	suspend_sync_done = 1;
-}
-#endif
-
 /**
  * enter_state - Do common work needed to enter system sleep state.
  * @state: System sleep state to enter.
@@ -795,9 +723,6 @@ static void work_sync_fn(struct work_struct *work)
 static int enter_state(suspend_state_t state)
 {
 	int error;
-#ifdef CONFIG_DPM_WATCHDOG
-	struct suspend_watchdog wd;
-#endif
 
 	trace_suspend_resume(TPS("suspend_enter"), state, true);
 	if (state == PM_SUSPEND_TO_IDLE) {
@@ -818,31 +743,15 @@ static int enter_state(suspend_state_t state)
 
 #ifndef CONFIG_SUSPEND_SKIP_SYNC
 	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
-#ifdef CONFIG_PM_SUSPEND_BG_SYNC
-	printk(KERN_INFO "PM: Background Syncing filesystems ... \n");
-	if (bg_sync()) {
-		printk(KERN_INFO "[bg_sync] Syncing busy ...\n");
-		error = -EBUSY;
-		goto Unlock;
-	}
-	printk("PM: done.\n");
-#else
 	pr_info("Syncing filesystems ... ");
 	sys_sync();
 	pr_cont("done.\n");
-#endif
 	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
 #endif
 
 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
 	pm_suspend_clear_flags();
-#ifdef CONFIG_DPM_WATCHDOG
-	suspend_watchdog_set(&wd);
-#endif
 	error = suspend_prepare(state);
-#ifdef CONFIG_DPM_WATCHDOG
-	suspend_watchdog_clear(&wd);
-#endif
 	if (error)
 		goto Unlock;
 
@@ -851,9 +760,6 @@ static int enter_state(suspend_state_t state)
 
 	trace_suspend_resume(TPS("suspend_enter"), state, false);
 	pm_pr_dbg("Suspending system (%s)\n", mem_sleep_labels[state]);
-#ifdef CONFIG_PM_SLEEP_MONITOR
-	start_suspend_mon();
-#endif
 	pm_restrict_gfp_mask();
 	error = suspend_devices_and_enter(state);
 	pm_restore_gfp_mask();
@@ -879,15 +785,6 @@ static void pm_suspend_marker(char *annotation)
 		tm.tm_hour, tm.tm_min, tm.tm_sec, ts.tv_nsec);
 }
 
-#ifdef CONFIG_LGE_PM
-static bool debug_irq_pin = false;
-bool suspend_debug_irq_pin(void)
-{
-	return debug_irq_pin;
-}
-EXPORT_SYMBOL(suspend_debug_irq_pin);
-#endif
-
 /**
  * pm_suspend - Externally visible function for suspending the system.
  * @state: System sleep state to enter.
@@ -901,27 +798,35 @@ int pm_suspend(suspend_state_t state)
 
 	if (state <= PM_SUSPEND_ON || state >= PM_SUSPEND_MAX)
 		return -EINVAL;
-#ifdef CONFIG_LGE_PM
-	debug_irq_pin = true;
-#endif
+
+	qcom_smem_state_update_bits(qstate, AWAKE_BIT, 0);
+	pr_err("%s: PM_SUSPEND_PREPARE smp2p_change_state", __func__); 
+
 	pm_suspend_marker("entry");
-	pr_info("suspend entry (%s)\n", mem_sleep_labels[state]);
+	pr_debug("suspend entry (%s)\n", mem_sleep_labels[state]);
+
+#ifdef CONFIG_PM_SLEEP_MONITOR
+	start_suspend_mon();
+#endif	
+
 	error = enter_state(state);
+
+	qcom_smem_state_update_bits(qstate, AWAKE_BIT, AWAKE_BIT);
+	pr_err("%s: PM_POST_SUSPEND smp2p_change_state", __func__);
+
 	if (error) {
 		suspend_stats.fail++;
 		dpm_save_failed_errno(error);
 	} else {
 		suspend_stats.success++;
 	}
+
 #ifdef CONFIG_PM_SLEEP_MONITOR
 	stop_suspend_mon();
 #endif
 
 	pm_suspend_marker("exit");
-	pr_info("suspend exit\n");
-#ifdef CONFIG_LGE_PM
-	debug_irq_pin = false;
-#endif
+	pr_debug("suspend exit\n");
 	measure_wake_up_time();
 	return error;
 }
