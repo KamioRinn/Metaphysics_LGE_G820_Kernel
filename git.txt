@@ -1,0 +1,916 @@
+.gitignore:74:# git files that we don't want to ignore even if they are dot-files
+.mailmap:2:# This list is used by git-shortlog to fix a few botched name translations
+.mailmap:3:# in the git archive, either because the author's full name was messed up
+Documentation/RCU/Design/Requirements/Requirements.html:3321:Other contributions are acknowledged in the Linux kernel's git archive.
+Documentation/RCU/RTFP.txt:2211:,Title="[{RFC} git tree] Userspace {RCU} (urcu) for {Linux}"
+Documentation/acpi/linuxized-acpica.txt:109:   Linux, there is a release process to convert the ACPICA git commits into
+Documentation/acpi/linuxized-acpica.txt:112:   copy the ACPICA git repository.  Each commit in the monthly release is
+Documentation/acpi/linuxized-acpica.txt:127:    < git reset >                                                \
+Documentation/acpi/linuxized-acpica.txt:160:    B. acpica / master - "master" branch of the git repository at
+Documentation/acpi/linuxized-acpica.txt:162:    C. linux-pm / linux-next - "linux-next" branch of the git repository at
+Documentation/acpi/linuxized-acpica.txt:164:    D. linux / master - "master" branch of the git repository at
+Documentation/acpi/linuxized-acpica.txt:224:   First you need to git clone the ACPICA repository and the ACPICA change
+Documentation/acpi/linuxized-acpica.txt:230:   $ git clone https://github.com/acpica/acpica
+Documentation/acpi/linuxized-acpica.txt:245:   $ git clone https://github.com/acpica/acpica
+Documentation/acpi/linuxized-acpica.txt:259:   # git clone https://github.com/acpica/acpica
+Documentation/acpi/linuxized-acpica.txt:260:   # git clone http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+Documentation/admin-guide/LSM/Smack.rst:39:The current git repository for Smack user space is:
+Documentation/admin-guide/LSM/apparmor.rst:51:Kernel module - git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
+Documentation/admin-guide/bug-bisect.rst:34:- build the Kernel from its git source
+Documentation/admin-guide/bug-bisect.rst:37:	$ git bisect start
+Documentation/admin-guide/bug-bisect.rst:41:	$ git bisect bad [commit]
+Documentation/admin-guide/bug-bisect.rst:45:	$ git bisect good [commit]
+Documentation/admin-guide/bug-bisect.rst:48:- interact with git bisect by using either::
+Documentation/admin-guide/bug-bisect.rst:50:	$ git bisect good
+Documentation/admin-guide/bug-bisect.rst:54:	$ git bisect bad
+Documentation/admin-guide/bug-bisect.rst:57:- After some interactions, git bisect will give you the changeset that
+Documentation/admin-guide/bug-bisect.rst:63:           $ git bisect start
+Documentation/admin-guide/bug-bisect.rst:64:           $ git bisect bad                 # Current version is bad
+Documentation/admin-guide/bug-bisect.rst:65:           $ git bisect good v4.8
+Documentation/admin-guide/bug-bisect.rst:68:.. [#f1] You can, optionally, provide both good and bad arguments at git
+Documentation/admin-guide/bug-bisect.rst:74:- `Fighting regressions with git bisect <https://www.kernel.org/pub/software/scm/git/docs/git-bisect-lk2009.html>`_
+Documentation/arm/Atmel/README:13:official Atmel product name. Anyway, files, directories, git trees,
+Documentation/arm/keystone/knav-qmss.txt:42:   git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+Documentation/bcache.txt:8:Wiki and git repositories are at:
+Documentation/block/bfq-iosched.txt:188:    from a high throughput. Examples are systemd during boot, or git
+Documentation/cgroup-v1/memory.txt:15:      we call it "memory cgroup". When you see git-log and source code, you'll
+Documentation/dev-tools/sparse.rst:80:of sparse using git to clone::
+Documentation/dev-tools/sparse.rst:82:        git://git.kernel.org/pub/scm/devel/sparse/sparse.git
+Documentation/dev-tools/sparse.rst:84:DaveJ has hourly generated tarballs of the git tree available at::
+Documentation/early-userspace/README:91:For active users, you are better off using the klibc git
+Documentation/filesystems/9p.txt:139:Protocol specifications are maintained on github:
+Documentation/filesystems/cifs/README:55:found at cifs-utils.git on git.samba.org
+Documentation/filesystems/exofs.txt:36:     [parent-directory]$ git clone git://git.open-osd.org/open-osd.git
+Documentation/filesystems/ext4.txt:30:	or grab the latest git repository from:
+Documentation/filesystems/ext4.txt:32:    git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
+Documentation/filesystems/f2fs.txt:21:The following git tree provides the file system formatting tool (mkfs.f2fs),
+Documentation/filesystems/f2fs.txt:23:>> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git
+Documentation/filesystems/ocfs2.txt:12:Tools git tree:      https://github.com/markfasheh/ocfs2-tools
+Documentation/filesystems/overlayfs.txt:296:  git://git.infradead.org/users/dhowells/unionmount-testsuite.git
+Documentation/fmc/FMC-and-SDB.txt:21:        git://ohwr.org/fmc-projects/fmc-bus.git (read-only)
+Documentation/fmc/FMC-and-SDB.txt:22:        git@ohwr.org:fmc-projects/fmc-bus.git (read-write for developers)
+Documentation/gpu/drm-uapi.rst:202:	$ git clone git://anongit.freedesktop.org/drm/igt-gpu-tools
+Documentation/ia64/xen.txt:16:  - git
+Documentation/ia64/xen.txt:127:    # git clone http://people.valinux.co.jp/~yamahata/xen-ia64/linux-2.6-xen-ia64.git/
+Documentation/ia64/xen.txt:129: 2. git branch (if necessary)
+Documentation/ia64/xen.txt:131:    # git checkout -b your_branch origin/xen-ia64-domu-minimal-2008may19
+Documentation/ia64/xen.txt:137:    git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux-2.6 test)
+Documentation/kdump/kdump.txt:72:The latest kexec-tools git tree is available at:
+Documentation/kdump/kdump.txt:78:There is also a gitweb interface available at
+Documentation/media/uapi/v4l/open.rst:91:`v4l-utils <http://git.linuxtv.org/cgit.cgi/v4l-utils.git/>`__ git
+Documentation/mmc/mmc-tools.txt:5:you can find it at the below public git repository:
+Documentation/networking/README.ipw2100:10:Version: git-1.1.5
+Documentation/networking/README.ipw2100:17:2. Release git-1.1.5 Current Features
+Documentation/networking/README.ipw2100:91:2. Release git-1.1.5 Current Supported Features
+Documentation/networking/bridge.txt:8:   git://git.kernel.org/pub/scm/linux/kernel/git/shemminger/bridge-utils.git
+Documentation/networking/netdev-FAQ.txt:66:   has re-opened yet, simply check the net-next git repository link above for
+Documentation/networking/netdev-FAQ.txt:88:   Then once decided, assuming that you use git, use the prefix flag, i.e.
+Documentation/networking/netdev-FAQ.txt:93:   bug-fix net content.  If you don't use git, then note the only magic in
+Documentation/networking/netdev-FAQ.txt:137:   to simply clone the repo, and then git grep the mainline commit ID, e.g.
+Documentation/networking/netdev-FAQ.txt:139:	stable-queue$ git grep -l 284041ef21fdf2e
+Documentation/networking/regulatory.txt:206:file available in the git repository here:
+Documentation/networking/regulatory.txt:208:    git://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git
+Documentation/networking/rmnet.txt:79:and command line utility rmnetcli. Utility is hosted in codeaurora forum git.
+Documentation/process/1.Intro.rst:43:managing patches with git and reviewing patches posted by others.
+Documentation/process/2.Process.rst:230:tree, usually (but certainly not always) using the git source management
+Documentation/process/2.Process.rst:231:tool.  Tools like git (and related tools like quilt or mercurial) allow
+Documentation/process/2.Process.rst:350:community is git.  Git is one of a number of distributed version control
+Documentation/process/2.Process.rst:355:time.  Some sort of familiarity with git is almost a requirement for kernel
+Documentation/process/2.Process.rst:356:developers; even if they do not use it for their own work, they'll need git
+Documentation/process/2.Process.rst:366:Among the kernel developers who do not use git, the most popular choice is
+Documentation/process/2.Process.rst:371:Mercurial shares many features with git, but it provides an interface which
+Documentation/process/3.Early-stage.rst:141:useful trick is to use git (and "git log" in particular) to see who is
+Documentation/process/5.Posting.rst:24:consider posting in-progress work, or even making a git tree available so
+Documentation/process/5.Posting.rst:69:Linus's git tree.  When basing on mainline, start with a well-known release
+Documentation/process/5.Posting.rst:276:   those who might be working there now.  Using git to see who else has
+Documentation/process/5.Posting.rst:318:receiving end.  Tools like git and quilt have commands to mail out a set of
+Documentation/process/5.Posting.rst:320:are using git, please stay away from the --chain-reply-to option to avoid
+Documentation/process/7.AdvancedTopics.rst:11:Managing patches with git
+Documentation/process/7.AdvancedTopics.rst:20:BitKeeper.  For better or for worse, the kernel project has settled on git
+Documentation/process/7.AdvancedTopics.rst:23:Managing patches with git can make life much easier for the developer,
+Documentation/process/7.AdvancedTopics.rst:27:teach the reader how to use git; that would be sufficient material for a
+Documentation/process/7.AdvancedTopics.rst:28:long document in its own right.  Instead, the focus here will be on how git
+Documentation/process/7.AdvancedTopics.rst:30:wish to come up to speed with git will find more information at:
+Documentation/process/7.AdvancedTopics.rst:39:understanding of how git works before trying to use it to make patches
+Documentation/process/7.AdvancedTopics.rst:40:available to others.  A git-using developer should be able to obtain a copy
+Documentation/process/7.AdvancedTopics.rst:42:the tree, use branches, etc.  An understanding of git's tools for the
+Documentation/process/7.AdvancedTopics.rst:44:own terminology and concepts; a new user of git should know about refs,
+Documentation/process/7.AdvancedTopics.rst:49:Using git to generate patches for submission by email can be a good
+Documentation/process/7.AdvancedTopics.rst:52:When you are ready to start putting up git trees for others to look at, you
+Documentation/process/7.AdvancedTopics.rst:54:server with git-daemon is relatively straightforward if you have a system
+Documentation/process/7.AdvancedTopics.rst:60:The normal git workflow involves the use of a lot of branches.  Each line
+Documentation/process/7.AdvancedTopics.rst:62:maintained independently.  Branches in git are cheap, there is no reason to
+Documentation/process/7.AdvancedTopics.rst:75:shifted from one branch to another.  And so on.  Judicious use of git's
+Documentation/process/7.AdvancedTopics.rst:110:perform test merges in a private branch.  The git "rerere" tool can be
+Documentation/process/7.AdvancedTopics.rst:114:One of the biggest recurring complaints about tools like git is this: the
+Documentation/process/7.AdvancedTopics.rst:118:thing happening; putting up a git tree with unreviewed or off-topic patches
+Documentation/process/7.AdvancedTopics.rst:123:	You can send me patches, but for me to pull a git patch from you, I
+Documentation/process/7.AdvancedTopics.rst:133:importantly, do not use a git tree to bypass the review process.  Post an
+Documentation/process/7.AdvancedTopics.rst:139:authorship information; the git "am" tool does its best in this regard, but
+Documentation/process/7.AdvancedTopics.rst:145:pull.  The git request-pull command can be helpful in this regard; it will
+Documentation/process/8.Conclusion.rst:46:Documentation for git can be found at:
+Documentation/process/adding-syscalls.rst:476: - git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+Documentation/process/applying-patches.rst:333:by Linus whenever he deems the current git (the kernel's source management
+Documentation/process/howto.rst:259:    is using git (the kernel's source management tool, more information
+Documentation/process/howto.rst:269:    outside of the code that is being added.  git can be used to send
+Documentation/process/howto.rst:272:  - A new -rc is released whenever Linus deems the current git tree to
+Documentation/process/howto.rst:329:Most of these repositories are git trees, but there are also other SCMs
+Documentation/process/stable-kernel-rules.rst:85:worthy at the time it is applied to a public git tree (for instance, because
+Documentation/process/stable-kernel-rules.rst:117:     git cherry-pick a1f84a3
+Documentation/process/stable-kernel-rules.rst:118:     git cherry-pick 1b9508f
+Documentation/process/stable-kernel-rules.rst:119:     git cherry-pick fd21073
+Documentation/process/stable-kernel-rules.rst:120:     git cherry-pick <this commit>
+Documentation/process/stable-kernel-rules.rst:133:     git cherry-pick <this commit>
+Documentation/process/submitting-patches.rst:34:  git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+Documentation/process/submitting-patches.rst:765:      git://jdelvare.pck.nerim.net/jdelvare-2.6 i2c-for-linus
+Documentation/process/submitting-patches.rst:799:  git request-pull master git://my.public.tree/linux.git my-signed-tag
+Documentation/sound/hd-audio/notes.rst:677:The latest development codes for HD-audio are found on sound git tree:
+Documentation/sound/hd-audio/notes.rst:679:* git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+Documentation/sound/hd-audio/notes.rst:720:version can be found on git repository:
+Documentation/sound/hd-audio/notes.rst:722:* git://git.alsa-project.org/alsa-utils.git
+Documentation/sound/hd-audio/notes.rst:792:* git://git.alsa-project.org/alsa-tools.git
+Documentation/sound/hd-audio/notes.rst:798:Also a git repository is available:
+Documentation/sound/hd-audio/notes.rst:800:* git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/hda-verb.git
+Documentation/sound/hd-audio/notes.rst:820:* git://git.alsa-project.org/alsa.git
+Documentation/sound/hd-audio/notes.rst:863:The program is found in the git repository below:
+Documentation/sound/hd-audio/notes.rst:865:* git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/hda-emu.git
+Documentation/sound/hd-audio/notes.rst:882:* git://git.alsa-project.org/alsa-tools.git
+Documentation/timers/NO_HZ.txt:216:master of the following git archive:
+Documentation/translations/ja_JP/SubmittingPatches:109:パッチの説明を Linux カーネルのソースコードマネジメントシステム「 git 」の
+Documentation/translations/ja_JP/SubmittingPatches:506:なるように心がけてください。「summary phrase」は git のチェンジログの中へ
+Documentation/translations/ja_JP/SubmittingPatches:595:diffstat の結果を生成するために「 git diff -M --stat --summary 」を使って
+Documentation/translations/ja_JP/howto.rst:273:    大きな変更は git(カーネルのソース管理ツール、詳細は
+Documentation/translations/ja_JP/howto.rst:282:    Linus へパッチを送付するのに git を使うこともできますが、パッチは
+Documentation/translations/ja_JP/howto.rst:285:  - 新しい -rc は Linus が、最新の git ツリーがテスト目的であれば十分
+Documentation/translations/ja_JP/howto.rst:341:大部分のこれらのリポジトリは git ツリーです。しかしその他の SCM や
+Documentation/translations/ko_KR/howto.rst:263:    선호되는 방법은  git(커널의 소스 관리 툴, 더 많은 정보들은
+Documentation/translations/ko_KR/howto.rst:274:    있지 않기 때문이다. -rc1이 배포된 이후에 git를 사용하여 패치들을 Linus에게
+Documentation/translations/ko_KR/howto.rst:277:  - 새로운 -rc는 Linus가 현재 git tree가 테스트 하기에 충분히 안정된 상태에
+Documentation/translations/ko_KR/howto.rst:329:대부분의 이러한 저장소는 git 트리지만, git이 아닌 SCM으로 관리되거나, quilt
+Documentation/translations/zh_CN/SubmittingPatches:303:记住 e-mail 的“一句话概述”会成为该补丁的全局唯一标识。它会蔓延到 git
+Documentation/translations/zh_CN/coding-style.rst:264:当 git 发现补丁包含了行尾空白的时候会警告你，并且可以应你的要求去掉行尾空白；
+Documentation/translations/zh_CN/sparse.txt:72:或者，你也可以使用 git 克隆最新的 sparse 开发版本：
+Documentation/translations/zh_CN/sparse.txt:76:DaveJ 把每小时自动生成的 git 源码树 tar 包放在以下地址：
+Documentation/vm/hugetlbfs_reserv.txt:498:Per-node huge page lists existed in struct hstate when git was first used
+MAINTAINERS:42:	script will be best if you have git installed and are making
+MAINTAINERS:43:	your changes in a branch derived from Linus' latest git tree.
+MAINTAINERS:83:	   Type is one of: git, hg, quilt, stgit, topgit
+MAINTAINERS:105:	   get_maintainer will not look at git log history when an F: pattern
+MAINTAINERS:106:	   match occurs.  When an N: match occurs, git log history is used
+MAINTAINERS:107:	   to also notify the people that have git commit signatures.
+MAINTAINERS:183:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+MAINTAINERS:199:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git
+MAINTAINERS:214:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:298:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+MAINTAINERS:331:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+MAINTAINERS:362:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+MAINTAINERS:541:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:551:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:572:T:	git git://people.freedesktop.org/~airlied/linux (part of drm maint)
+MAINTAINERS:594:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:612:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:744:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+MAINTAINERS:752:T:	git git://people.freedesktop.org/~gabbayo/linux.git
+MAINTAINERS:869:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+MAINTAINERS:906:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/apm.git
+MAINTAINERS:916:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev.git
+MAINTAINERS:1047:T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git
+MAINTAINERS:1099:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
+MAINTAINERS:1149:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git
+MAINTAINERS:1227:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nferre/linux-at91.git
+MAINTAINERS:1281:T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git clkdev
+MAINTAINERS:1326:T:	git git://github.com/ulli-kroll/linux.git
+MAINTAINERS:1338:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/baohua/linux.git
+MAINTAINERS:1371:T:	git git://git.berlios.de/gemini-board
+MAINTAINERS:1388:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
+MAINTAINERS:1403:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
+MAINTAINERS:1431:T:	git git://github.com/hisilicon/linux-hisi.git
+MAINTAINERS:1442:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kristoffer/linux-hpc.git
+MAINTAINERS:1536:T:	git git://github.com/vzapolskiy/linux-lpc32xx.git
+MAINTAINERS:1643:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik.git
+MAINTAINERS:1749:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+MAINTAINERS:1768:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+MAINTAINERS:1793:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
+MAINTAINERS:1881:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+MAINTAINERS:1901:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git
+MAINTAINERS:1949:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mcoquelin/stm32.git
+MAINTAINERS:1981:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git
+MAINTAINERS:2025:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git
+MAINTAINERS:2030:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+MAINTAINERS:2062:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git
+MAINTAINERS:2067:T:	git git://git.linaro.org/people/ulfh/clk.git
+MAINTAINERS:2181:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+MAINTAINERS:2195:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:2266:T:	git git://github.com/AlbanBedel/linux
+MAINTAINERS:2290:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git
+MAINTAINERS:2367:T:	git git://github.com/ndyer/linux.git
+MAINTAINERS:2462:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+MAINTAINERS:2505:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:2512:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:2536:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git
+MAINTAINERS:2574:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:2589:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/luisbg/linux-befs.git
+MAINTAINERS:2611:T:	git git://git.code.sf.net/p/adi-linux/code
+MAINTAINERS:2663:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+MAINTAINERS:2681:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git
+MAINTAINERS:2682:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
+MAINTAINERS:2692:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git
+MAINTAINERS:2693:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
+MAINTAINERS:2750:T:	git git://github.com/broadcom/mach-bcm
+MAINTAINERS:2763:T:	git git://github.com/anholt/linux
+MAINTAINERS:2800:T:	git git://github.com/broadcom/stblinux.git
+MAINTAINERS:2816:T:	git git://github.com/broadcom/stblinux.git
+MAINTAINERS:2834:T:	git git://github.com/broadcom/stblinux.git
+MAINTAINERS:2911:T:	git git://github.com/broadcom/cygnus-linux.git
+MAINTAINERS:3017:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:3035:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git
+MAINTAINERS:3047:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3056:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+MAINTAINERS:3071:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:3102:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3110:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3140:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can.git
+MAINTAINERS:3141:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git
+MAINTAINERS:3155:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can.git
+MAINTAINERS:3156:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git
+MAINTAINERS:3247:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3277:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
+MAINTAINERS:3278:T:	git git://github.com/ceph/ceph-client.git
+MAINTAINERS:3290:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
+MAINTAINERS:3291:T:	git git://github.com/ceph/ceph-client.git
+MAINTAINERS:3336:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git
+MAINTAINERS:3337:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
+MAINTAINERS:3347:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+MAINTAINERS:3368:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/usb.git
+MAINTAINERS:3384:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+MAINTAINERS:3445:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+MAINTAINERS:3459:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3470:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mmarek/kbuild.git misc
+MAINTAINERS:3500:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+MAINTAINERS:3513:T:	git git://git.samba.org/sfrench/cifs-2.6.git
+MAINTAINERS:3551:T:	git git://git.infradead.org/users/hch/configfs.git
+MAINTAINERS:3567:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
+MAINTAINERS:3578:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
+MAINTAINERS:3618:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+MAINTAINERS:3619:T:	git git://git.linaro.org/people/vireshk/linux.git (For ARM Updates)
+MAINTAINERS:3654:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+MAINTAINERS:3673:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+MAINTAINERS:3689:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jesper/cris.git
+MAINTAINERS:3698:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
+MAINTAINERS:3699:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git
+MAINTAINERS:3719:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3739:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3750:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3770:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:3781:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:3890:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4019:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:4033:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git
+MAINTAINERS:4040:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git
+MAINTAINERS:4062:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+MAINTAINERS:4071:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+MAINTAINERS:4090:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git
+MAINTAINERS:4212:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git
+MAINTAINERS:4227:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4238:T:	git git://git.infradead.org/users/vkoul/slave-dma.git
+MAINTAINERS:4245:T:	git git://git.infradead.org/users/hch/dma-mapping.git
+MAINTAINERS:4283:T:	git git://git.lwn.net/linux.git docs-next
+MAINTAINERS:4288:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:4324:T:	git git://git.linbit.com/linux-drbd.git
+MAINTAINERS:4325:T:	git git://git.linbit.com/drbd-8.4.git
+MAINTAINERS:4333:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+MAINTAINERS:4353:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4365:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4395:T:	git git://people.freedesktop.org/~robclark/linux
+MAINTAINERS:4405:T:	git git://github.com/skeggsb/linux
+MAINTAINERS:4420:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4429:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4469:T:	git git://people.freedesktop.org/~syeh/repos_linux
+MAINTAINERS:4470:T:	git git://people.freedesktop.org/~thomash/linux
+MAINTAINERS:4478:T:	git git://people.freedesktop.org/~airlied/linux
+MAINTAINERS:4498:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4512:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git
+MAINTAINERS:4524:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4532:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4539:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4548:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+MAINTAINERS:4575:T:	git git://github.com/patjak/drm-gma500
+MAINTAINERS:4585:T:	git git://github.com/xin3liang/linux.git
+MAINTAINERS:4602:T:	git git://anongit.freedesktop.org/tegra/linux.git
+MAINTAINERS:4614:T:	git git://linuxtv.org/pinchartl/fbdev
+MAINTAINERS:4628:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4634:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4645:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4667:T:	git git://github.com/anholt/linux
+MAINTAINERS:4672:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4691:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4696:T:	git git://anongit.freedesktop.org/tegra/linux.git
+MAINTAINERS:4706:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:4714:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:4727:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:4738:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4748:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4758:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4768:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4778:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4788:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:4798:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4807:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4817:T:	git git://linuxtv.org/mkrufky/mxl111sf.git
+MAINTAINERS:4827:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4837:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4867:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4883:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:4892:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git
+MAINTAINERS:4923:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
+MAINTAINERS:4924:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git linux_next
+MAINTAINERS:5045:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:5060:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mfleming/efi.git
+MAINTAINERS:5087:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:5150:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kristoffer/linux-hpc.git
+MAINTAINERS:5209:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+MAINTAINERS:5225:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
+MAINTAINERS:5241:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git
+MAINTAINERS:5273:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+MAINTAINERS:5327:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:5371:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:5379:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git
+MAINTAINERS:5388:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nab/lio-core-2.6.git master
+MAINTAINERS:5396:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git
+MAINTAINERS:5419:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/floppy.git
+MAINTAINERS:5437:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/atull/linux-fpga.git
+MAINTAINERS:5460:T:	git git://github.com/bzolnier/linux.git
+MAINTAINERS:5648:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git
+MAINTAINERS:5681:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+MAINTAINERS:5693:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+MAINTAINERS:5742:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:5776:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git
+MAINTAINERS:5784:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git
+MAINTAINERS:5821:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
+MAINTAINERS:5873:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+MAINTAINERS:5975:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:5982:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:5989:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:5996:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6003:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6010:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6017:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6024:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6032:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pablo/gtp.git
+MAINTAINERS:6046:T:	git git://git.sourceforge.jp/gitroot/uclinux-h8/linux.git
+MAINTAINERS:6059:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:6076:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
+MAINTAINERS:6097:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/hwspinlock.git
+MAINTAINERS:6111:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6176:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git
+MAINTAINERS:6197:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+MAINTAINERS:6305:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git
+MAINTAINERS:6351:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:6428:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+MAINTAINERS:6513:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-2.6-x86setup.git
+MAINTAINERS:6520:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git
+MAINTAINERS:6621:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide.git
+MAINTAINERS:6658:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sschmidt/wpan.git
+MAINTAINERS:6659:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sschmidt/wpan-next.git
+MAINTAINERS:6721:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+MAINTAINERS:6783:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dledford/rdma.git
+MAINTAINERS:6817:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
+MAINTAINERS:6847:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+MAINTAINERS:6870:T:	git git://git.code.sf.net/p/intel-sas/isci
+MAINTAINERS:6883:T:	git git://anongit.freedesktop.org/drm-intel
+MAINTAINERS:6896:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/net-queue.git
+MAINTAINERS:6897:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/next-queue.git
+MAINTAINERS:6948:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
+MAINTAINERS:6963:T:	git git://git.infradead.org/iommu-2.6.git
+MAINTAINERS:7093:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi.git
+MAINTAINERS:7151:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+MAINTAINERS:7187:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs-next.git
+MAINTAINERS:7188:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git
+MAINTAINERS:7213:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sameo/irda-2.6.git
+MAINTAINERS:7220:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+MAINTAINERS:7230:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+MAINTAINERS:7239:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+MAINTAINERS:7253:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:7293:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git master
+MAINTAINERS:7305:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kkeil/isdn-2.6.git
+MAINTAINERS:7334:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:7342:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:7368:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shaggy/jfs-2.6.git
+MAINTAINERS:7438:T:	git git://gitorious.org/linux-kconfig/linux-kconfig
+MAINTAINERS:7455:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:7469:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+MAINTAINERS:7489:T:	git git://linux-nfs.org/~bfields/linux.git
+MAINTAINERS:7504:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
+MAINTAINERS:7521:T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
+MAINTAINERS:7547:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git
+MAINTAINERS:7577:T:	git git://github.com/agraf/linux-2.6.git
+MAINTAINERS:7589:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git
+MAINTAINERS:7602:T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
+MAINTAINERS:7613:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+MAINTAINERS:7664:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git
+MAINTAINERS:7748:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+MAINTAINERS:7773:T:	git git://linuxtv.org/mkrufky/tuners.git
+MAINTAINERS:7783:T:	git git://linuxtv.org/mkrufky/tuners.git
+MAINTAINERS:7790:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+MAINTAINERS:7799:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+MAINTAINERS:7807:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+MAINTAINERS:7817:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+MAINTAINERS:7826:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+MAINTAINERS:7833:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+MAINTAINERS:7871:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
+MAINTAINERS:7903:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
+MAINTAINERS:7933:T:	git git://git.denx.de/linux-denx-agust.git
+MAINTAINERS:7952:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/scottwood/linux.git
+MAINTAINERS:8010:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/livepatching.git
+MAINTAINERS:8066:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git lsm/loadpin
+MAINTAINERS:8075:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+MAINTAINERS:8140:T:	git git://github.com/linux-test-project/ltp.git
+MAINTAINERS:8152:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git
+MAINTAINERS:8176:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:8191:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8199:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git
+MAINTAINERS:8200:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
+MAINTAINERS:8238:T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-armada-devel
+MAINTAINERS:8239:T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-armada-fixes
+MAINTAINERS:8338:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8407:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8431:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8441:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8449:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8457:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8470:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8480:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8490:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8498:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8508:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8516:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8525:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8535:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8544:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8553:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8562:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8570:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8581:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8849:T:	git git://git.infradead.org/linux-mtd.git master
+MAINTAINERS:8850:T:	git git://git.infradead.org/l2-mtd.git master
+MAINTAINERS:8887:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:8892:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/metag.git
+MAINTAINERS:8906:T:	git git://git.monstr.eu/linux-2.6-microblaze.git
+MAINTAINERS:8983:T:	git git://git.linux-mips.org/pub/scm/ralf/linux.git
+MAINTAINERS:9027:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9036:T:	git git://github.com/hzhuang1/linux.git
+MAINTAINERS:9037:T:	git git://git.linaro.org/people/ycmiao/pxa-linux.git
+MAINTAINERS:9063:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git modules-next
+MAINTAINERS:9084:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9112:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:9122:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:9135:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9143:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9151:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9159:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9167:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
+MAINTAINERS:9182:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
+MAINTAINERS:9221:T:	git git://linuxtv.org/mkrufky/tuners.git
+MAINTAINERS:9244:T:	git git://git.infradead.org/linux-mtd.git nand/fixes
+MAINTAINERS:9245:T:	git git://git.infradead.org/l2-mtd.git nand/next
+MAINTAINERS:9327:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf.git
+MAINTAINERS:9328:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git
+MAINTAINERS:9375:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
+MAINTAINERS:9376:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+MAINTAINERS:9394:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git
+MAINTAINERS:9395:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next.git
+MAINTAINERS:9414:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
+MAINTAINERS:9415:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+MAINTAINERS:9436:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec.git
+MAINTAINERS:9437:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
+MAINTAINERS:9460:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
+MAINTAINERS:9525:T:	git git://git.linux-nfs.org/projects/trondmy/linux-nfs.git
+MAINTAINERS:9542:T:	git git://github.com/konis/nilfs2.git
+MAINTAINERS:9568:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lftan/nios2.git
+MAINTAINERS:9577:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/nohz
+MAINTAINERS:9615:T:	git git://github.com/jonmason/ntb.git
+MAINTAINERS:9634:T:	git git://github.com/jonmason/ntb.git
+MAINTAINERS:9641:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
+MAINTAINERS:9697:T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-devel
+MAINTAINERS:9698:T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-fixes
+MAINTAINERS:9860:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
+MAINTAINERS:9874:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
+MAINTAINERS:9928:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9935:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9942:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9949:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:9997:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+MAINTAINERS:10008:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+MAINTAINERS:10026:T:	git git://github.com/openrisc/linux.git
+MAINTAINERS:10047:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git
+MAINTAINERS:10056:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:10082:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+MAINTAINERS:10106:T:	git git://linuxtv.org/mhadli/v4l-dvb-davinci_devices.git
+MAINTAINERS:10114:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git
+MAINTAINERS:10200:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jejb/parisc-2.6.git
+MAINTAINERS:10201:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git
+MAINTAINERS:10401:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kishon/pci-endpoint.git
+MAINTAINERS:10442:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git
+MAINTAINERS:10455:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git/
+MAINTAINERS:10525:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git
+MAINTAINERS:10548:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git
+MAINTAINERS:10568:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+MAINTAINERS:10612:T:	git git://github.com/jamieiles/linux-2.6-ji.git
+MAINTAINERS:10621:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+MAINTAINERS:10668:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+MAINTAINERS:10709:T:	git git://github.com/gxt/linux.git
+MAINTAINERS:10720:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
+MAINTAINERS:10747:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+MAINTAINERS:10756:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+MAINTAINERS:10777:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+MAINTAINERS:10908:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
+MAINTAINERS:10947:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:10957:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:10965:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:10988:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git
+MAINTAINERS:11017:T:	git git://github.com/hzhuang1/linux.git
+MAINTAINERS:11018:T:	git git://github.com/rjarzmik/linux.git
+MAINTAINERS:11158:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:11166:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git
+MAINTAINERS:11194:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rkuo/linux-hexagon-kernel.git
+MAINTAINERS:11209:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11217:T:	git git://github.com/KrasnikovEugene/wcn36xx.git
+MAINTAINERS:11233:T:	git git://people.freedesktop.org/~agd5f/linux
+MAINTAINERS:11250:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11257:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11268:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
+MAINTAINERS:11269:T:	git git://github.com/ceph/ceph-client.git
+MAINTAINERS:11284:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11329:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+MAINTAINERS:11341:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+MAINTAINERS:11387:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+MAINTAINERS:11400:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git
+MAINTAINERS:11421:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git
+MAINTAINERS:11436:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/remoteproc.git
+MAINTAINERS:11447:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/rpmsg.git
+MAINTAINERS:11483:T:	git git://git.pengutronix.de/git/pza/linux
+MAINTAINERS:11495:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git
+MAINTAINERS:11496:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
+MAINTAINERS:11573:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:11583:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:11593:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:11600:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+MAINTAINERS:11610:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+MAINTAINERS:11619:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+MAINTAINERS:11627:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jes/linux.git rtl8xxxu-devel
+MAINTAINERS:11642:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git
+MAINTAINERS:11734:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11744:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11752:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:11909:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+MAINTAINERS:11941:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dad/srp-initiator.git
+MAINTAINERS:11956:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git
+MAINTAINERS:11958:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git
+MAINTAINERS:12016:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git seccomp
+MAINTAINERS:12037:T:	git git://git.infradead.org/users/ahunter/linux-sdhci.git
+MAINTAINERS:12074:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+MAINTAINERS:12086:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+MAINTAINERS:12171:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:12181:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:12188:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12196:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12206:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12214:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12222:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12232:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12260:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-sfi-2.6.git
+MAINTAINERS:12345:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+MAINTAINERS:12353:T:	git git://github.com/cschaufler/smack-next
+MAINTAINERS:12424:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12457:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shli/md.git
+MAINTAINERS:12502:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+MAINTAINERS:12503:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:12514:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+MAINTAINERS:12532:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
+MAINTAINERS:12553:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git
+MAINTAINERS:12554:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git
+MAINTAINERS:12562:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git
+MAINTAINERS:12563:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git
+MAINTAINERS:12579:T:	git git://git.kernel.org/pub/scm/devel/sparse/sparse.git
+MAINTAINERS:12580:T:	git git://git.kernel.org/pub/scm/devel/sparse/chrisl/sparse.git
+MAINTAINERS:12606:T:	git git://git.infradead.org/linux-mtd.git spi-nor/fixes
+MAINTAINERS:12607:T:	git git://git.infradead.org/l2-mtd.git spi-nor/next
+MAINTAINERS:12615:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
+MAINTAINERS:12653:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git
+MAINTAINERS:12761:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+MAINTAINERS:12786:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:12855:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git
+MAINTAINERS:12881:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:12892:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git
+MAINTAINERS:12952:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
+MAINTAINERS:12969:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+MAINTAINERS:12977:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git
+MAINTAINERS:12996:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git master
+MAINTAINERS:13037:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:13047:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:13057:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:13067:T:	git git://linuxtv.org/mkrufky/tuners.git
+MAINTAINERS:13077:T:	git git://linuxtv.org/mkrufky/tuners.git
+MAINTAINERS:13087:T:	git git://linuxtv.org/mkrufky/tuners.git
+MAINTAINERS:13094:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13104:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13113:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13120:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13128:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13165:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
+MAINTAINERS:13227:T:	git git://github.com/czankel/xtensa-linux.git
+MAINTAINERS:13252:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13261:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
+MAINTAINERS:13262:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git
+MAINTAINERS:13287:T:	git git://repo.or.cz/linux-2.6/linux-acpi-2.6/ibm-acpi-2.6.git
+MAINTAINERS:13309:T:	git git://linuxtv.org/mhadli/v4l-dvb-davinci_devices.git
+MAINTAINERS:13343:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nsekhar/linux-davinci.git
+MAINTAINERS:13361:T:	git git://linuxtv.org/mhadli/v4l-dvb-davinci_devices.git
+MAINTAINERS:13387:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git
+MAINTAINERS:13459:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/luca/wl12xx.git
+MAINTAINERS:13467:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/cmetcalf/linux-tile.git
+MAINTAINERS:13484:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+MAINTAINERS:13520:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13610:T:	git git://git.infradead.org/users/jjs/linux-tpmdd.git
+MAINTAINERS:13617:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+MAINTAINERS:13644:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/trivial.git
+MAINTAINERS:13652:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+MAINTAINERS:13669:T:	git git://linuxtv.org/anttip/media_tree.git
+MAINTAINERS:13707:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13715:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:13725:T:	git git://git.infradead.org/ubifs-2.6.git
+MAINTAINERS:13737:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git
+MAINTAINERS:13787:T:	git git://github.com/gxt/linux.git
+MAINTAINERS:13829:T:	git git://git.infradead.org/ubifs-2.6.git
+MAINTAINERS:13907:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git
+MAINTAINERS:13916:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git
+MAINTAINERS:13946:T:	git git://git.alsa-project.org/alsa-kernel.git
+MAINTAINERS:13964:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/usb.git
+MAINTAINERS:13983:T:	git git://github.com/petkan/pegasus.git
+MAINTAINERS:13991:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git
+MAINTAINERS:14012:T:	git git://github.com/petkan/rtl8150.git
+MAINTAINERS:14020:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git
+MAINTAINERS:14043:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+MAINTAINERS:14070:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14079:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14114:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14126:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git
+MAINTAINERS:14137:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+MAINTAINERS:14146:T:	git git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
+MAINTAINERS:14153:T:	git git://git.infradead.org/users/hch/uuid.git
+MAINTAINERS:14183:T:	git git://github.com/awilliam/linux-vfio.git
+MAINTAINERS:14211:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:14256:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14329:T:	git git://anongit.freedesktop.org/drm/drm-misc
+MAINTAINERS:14340:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git
+MAINTAINERS:14360:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14378:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+MAINTAINERS:14439:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
+MAINTAINERS:14518:T:	git git://www.linux-watchdog.org/linux-watchdog.git
+MAINTAINERS:14629:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git
+MAINTAINERS:14655:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
+MAINTAINERS:14676:T:	git git://git.infradead.org/users/dvhart/linux-platform-drivers-x86.git
+MAINTAINERS:14684:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
+MAINTAINERS:14693:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14723:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
+MAINTAINERS:14770:T:	git git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+MAINTAINERS:14791:T:	git git://linuxtv.org/media_tree.git
+MAINTAINERS:14827:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git yama/tip
+MAINTAINERS:14934:T:	git git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+arch/arc/include/asm/spinlock.h:304:	 * moving to next core. Do a git log of this file for details
+arch/arm/include/asm/arch_gicv3.h:266:#define gits_read_baser(c)		__gic_readq_nonatomic(c)
+arch/arm/include/asm/arch_gicv3.h:267:#define gits_write_baser(v, c)		__gic_writeq_nonatomic(v, c)
+arch/arm/include/asm/arch_gicv3.h:287:#define gits_read_typer(c)		__gic_readq_nonatomic(c)
+arch/arm/include/asm/arch_gicv3.h:292:#define gits_read_cbaser(c)		__gic_readq_nonatomic(c)
+arch/arm/include/asm/arch_gicv3.h:293:#define gits_write_cbaser(v, c)		__gic_writeq_nonatomic(v, c)
+arch/arm/include/asm/arch_gicv3.h:298:#define gits_write_cwriter(v, c)	__gic_writeq_nonatomic(v, c)
+arch/arm/include/asm/arch_gicv3.h:303:#define gits_write_vpropbaser(v, c)	__gic_writeq_nonatomic(v, c)
+arch/arm/include/asm/arch_gicv3.h:309:static inline void gits_write_vpendbaser(u64 val, void * __iomem addr)
+arch/arm/include/asm/arch_gicv3.h:326:#define gits_read_vpendbaser(c)		__gic_readq_nonatomic(c)
+arch/arm/mach-orion5x/ts78xx-setup.c:245:		 * nanddump.  This all however was changed by git commit
+arch/arm64/include/asm/arch_gicv3.h:128:#define gits_read_baser(c)		readq_relaxed(c)
+arch/arm64/include/asm/arch_gicv3.h:129:#define gits_write_baser(v, c)		writeq_relaxed(v, c)
+arch/arm64/include/asm/arch_gicv3.h:131:#define gits_read_cbaser(c)		readq_relaxed(c)
+arch/arm64/include/asm/arch_gicv3.h:132:#define gits_write_cbaser(v, c)		writeq_relaxed(v, c)
+arch/arm64/include/asm/arch_gicv3.h:134:#define gits_write_cwriter(v, c)	writeq_relaxed(v, c)
+arch/arm64/include/asm/arch_gicv3.h:142:#define gits_write_vpropbaser(v, c)	writeq_relaxed(v, c)
+arch/arm64/include/asm/arch_gicv3.h:144:#define gits_write_vpendbaser(v, c)	writeq_relaxed(v, c)
+arch/arm64/include/asm/arch_gicv3.h:145:#define gits_read_vpendbaser(c)		readq_relaxed(c)
+block/bfq-iosched.c:840: * or git grep. To help these processes get their job done as soon as
+block/bfq-iosched.c:873: * services or commands such as systemd or git grep. For brevity,
+drivers/block/drbd/drbd_main.c:3933:	   git hash of the source code. */
+drivers/firmware/iscsi_ibft.c:23: *    New changelog entries are in the git log from now on.  Not here.
+drivers/fmc/Kconfig:17:	  is at git://ohwr.org/fmc-projects/fmc-bus.git .
+drivers/gpio/gpio-merrifield.c:285:		writel(value, gitr);
+drivers/gpio/gpio-merrifield.c:290:		writel(value, gitr);
+drivers/gpu/drm/etnaviv/cmdstream.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/etnaviv/cmdstream.xml.h:8:git clone git://0x04.net/rules-ng-ng
+drivers/gpu/drm/etnaviv/common.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/etnaviv/common.xml.h:8:git clone git://0x04.net/rules-ng-ng
+drivers/gpu/drm/etnaviv/state.xml.h:7:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/etnaviv/state.xml.h:9:git clone git://0x04.net/rules-ng-ng
+drivers/gpu/drm/etnaviv/state_hi.xml.h:7:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/etnaviv/state_hi.xml.h:9:git clone git://0x04.net/rules-ng-ng
+drivers/gpu/drm/i915/gvt/cmd_parser.c:293: * git://anongit.freedesktop.org/vaapi/intel-driver
+drivers/gpu/drm/msm/adreno/a2xx.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/adreno/a3xx.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/adreno/a4xx.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/adreno/a5xx.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/adreno/adreno_common.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/adreno/adreno_pm4.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/dp/dp_link.h:167: * git bit depth value. This function assumes that bit depth has
+drivers/gpu/drm/msm/dsi/dsi.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/dsi/mmss_cc.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/dsi/sfpb.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/edp/edp.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/hdmi/hdmi.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/hdmi/qfprom.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/mdp/mdp4/mdp4.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/mdp/mdp5/mdp5.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/msm/mdp/mdp_common.xml.h:6:This file was generated by the rules-ng-ng headergen tool in this git repository:
+drivers/gpu/drm/omapdrm/TODO:17:. git://anongit.freedesktop.org/xorg/driver/xf86-video-omap
+drivers/irqchip/irq-gic-v3-its.c:1472:	return gits_read_baser(its->base + GITS_BASER + (idx << 3));
+drivers/irqchip/irq-gic-v3-its.c:2470:	val = gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
+drivers/irqchip/irq-gic-v3-its.c:2475:		val = gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
+drivers/irqchip/irq-gic-v3-its.c:3040:	tmp = gits_read_cbaser(its->base + GITS_CBASER);
+drivers/mailbox/bcm2835-mailbox.c:15: *    obtained from branch "rpi-3.6.y" of git://github.com/raspberrypi/
+drivers/media/dvb-frontends/drxd_map_firm.h:27: * If ever needed, the other lines can be easily obtained via git history.
+drivers/media/i2c/s5k4ecgx.c:327: * The firmware generator can be found in following git repository:
+drivers/media/i2c/s5k4ecgx.c:328: * git://git.linaro.org/people/sangwook/fimc-v4l2-app.git
+drivers/media/tuners/r820t.c:7: * that it is part of rtl-sdr git tree, released under GPLv2:
+drivers/mtd/devices/bcm47xxsflash.c:232:	 * example when the hardware is too old or when we git page boundary.
+drivers/net/wireless/ath/wil6210/cfg80211.c:170: * git://w1.fi/srv/git/hostap.git; the values here are just a copy of that
+drivers/net/wireless/ath/wil6210/ftm.h:24: * git://w1.fi/srv/git/hostap.git; the values here are just a copy of that
+drivers/net/wireless/intel/iwlwifi/iwl-drv.c:253:			"check git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git\n");
+drivers/platform/x86/thinkpad_acpi.c:37: *  			changelog now lives in git commit history, and will
+drivers/staging/fbtft/README:14:    git clone https://github.com/notro/fbtft.git
+drivers/staging/fbtft/README:21:    git clone https://github.com/notro/fbtft.git
+drivers/staging/irda/net/irlan/irlan_common.c:324:	 * As the state machines don't need it, git rid of it here...
+drivers/staging/irda/net/irlan/irlan_common.c:436:	 * As the state machines don't need it, git rid of it here...
+drivers/staging/qca-wifi-host-cmn/os_if/linux/qca_vendor.h:32: * git://w1.fi/srv/git/hostap.git; the values here are just a copy of that
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_genversion:26:	# attempt to work out git version. only do so
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_genversion:32:			$version = "no git version";
+drivers/uio/Kconfig:70:	    git clone git://ifup.org/philips/uioport.git
+drivers/uio/Kconfig:152:	  for download in a git repository:
+drivers/uio/Kconfig:154:	    git clone git://rtime.felk.cvut.cz/mf6xx.git
+drivers/usb/serial/option.c:12:  History: see the git log.
+drivers/usb/serial/usb_wwan.c:12:  History: see the git log.
+drivers/watchdog/bcm2835_wdt.c:5: * branch "rpi-3.6.y" of git://github.com/raspberrypi/linux.git was used
+include/crypto/hash.h:36: *	        git grep _DIGEST_SIZE include/crypto.
+include/crypto/skcipher.h:74: *		 found via git grep "_MIN_KEY_SIZE" include/crypto/
+include/crypto/skcipher.h:79: *		 found via git grep "_MAX_KEY_SIZE" include/crypto/
+include/linux/crypto.h:220: *		 found via git grep "_MIN_KEY_SIZE" include/crypto/
+include/linux/crypto.h:225: *		 found via git grep "_MAX_KEY_SIZE" include/crypto/
+include/linux/crypto.h:315: *		     for this field can be found via git grep "_MIN_KEY_SIZE"
+include/linux/crypto.h:321: *		    field can be found via git grep "_MAX_KEY_SIZE"
+include/linux/mtd/rawnand.h:14: *	See git changelog.
+include/net/mac80211.h:5164: *     you'd need the _irqsafe version, look at the git history
+init/Kconfig:97:	  release tree by looking for git tags that belong to the current
+init/Kconfig:101:	  if a git-based tree is found.  The string generated by this will be
+init/Kconfig:108:	    $ git rev-parse --verify HEAD
+kernel/trace/Kconfig:466:	  git://git.kernel.dk/blktrace.git
+lib/sha1.c:6: * This was based on the git SHA1 implementation.
+samples/bpf/README.rst:26:This will creates a local "usr/include" directory in the git/build top
+samples/bpf/README.rst:56: $ git clone http://llvm.org/git/llvm.git
+samples/bpf/README.rst:58: $ git clone --depth 1 http://llvm.org/git/clang.git
+scripts/checkkconfigsymbols.py:206:    """Reset current git tree to %commit."""
+scripts/checkkconfigsymbols.py:276:    for gitfile in get_files():
+scripts/checkkconfigsymbols.py:291:    """Return a list of all files in the current git directory."""
+scripts/checkkconfigsymbols.py:298:    for gitfile in stdout.rsplit("\n"):
+scripts/checkkconfigsymbols.py:299:        if ".git" in gitfile or "ChangeLog" in gitfile or      \
+scripts/checkkconfigsymbols.py:300:                ".log" in gitfile or os.path.isdir(gitfile) or \
+scripts/checkkconfigsymbols.py:301:                gitfile.startswith("tools/"):
+scripts/checkkconfigsymbols.py:328:    for gitfile in get_files():
+scripts/checkkconfigsymbols.py:332:            if ignore and not re.match(ignore, gitfile):
+scripts/checkpatch.pl:87:  -g, --git                  treat FILE as a single commit or git revision range
+scripts/checkpatch.pl:88:                             single git commit with:
+scripts/checkpatch.pl:92:                             multiple git commits with:
+scripts/checkpatch.pl:96:                             git merges are ignored
+scripts/checkpatch.pl:121:                             file.  It's your fault if there's no backup or git
+scripts/checkpatch.pl:883:sub git_commit_info {
+scripts/checkpatch.pl:901:#		    git log --format='%H %s' -1 $line |
+scripts/checkpatch.pl:923:# If input is git commits, extract all commits from the commit expressions.
+scripts/checkpatch.pl:925:die "$P: No git repository found\n" if ($git && !-e ".git");
+scripts/checkpatch.pl:948:	die "$P: no git commits after extraction!\n" if (@commits == 0);
+scripts/checkpatch.pl:957:			die "$P: $filename: git format-patch failed - $!\n";
+scripts/checkpatch.pl:2552:				# line (i.e. git show). There will be no more
+scripts/checkpatch.pl:2718:# Check for git id commit length and improperly formed commit descriptions
+scripts/checkpatch.pl:2767:			($id, $description) = git_commit_info($orig_commit,
+scripts/checkpatch.pl:2773:				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
+scripts/dtc/dtx_diff:30:       -S           linux kernel source tree is at root of current git repo
+scripts/dtc/update-dtc-source.sh:5:# This script assumes that the dtc and the linux git trees are in the
+scripts/dtc/update-dtc-source.sh:8:# in the kernel and creates a git commit updating them to the new
+scripts/dtc/update-dtc-source.sh:15:# relevant files into the kernel tree and create a git commit. The commit
+scripts/dtc/update-dtc-source.sh:66:       git add libfdt/${f}
+scripts/get_maintainer.pl:411:	# (see man git-shortlog)
+scripts/get_maintainer.pl:511:	# of a git format-patch generated file (subject tags, etc...)
+scripts/get_maintainer.pl:828:    --git => include recent git \*-by: signers
+scripts/get_maintainer.pl:831:    --git-fallback => use git when no exact MAINTAINERS pattern (default: $email_git_fallback)
+scripts/get_maintainer.pl:836:    --git-blame => use git blame to find modified commits for patch or file
+scripts/get_maintainer.pl:838:    --git-since => git history to use (default: $email_git_since)
+scripts/get_maintainer.pl:847:    --roles => show roles (status:subsystem, git-signer, list, etc...)
+scripts/get_maintainer.pl:875:      Used with "--git", git signators for _all_ files in and below
+scripts/get_maintainer.pl:876:          directory are examined as git recurses directories.
+scripts/get_maintainer.pl:884:  Using "--roles" or "--rolestats" with git send-email --cc-cmd or any
+scripts/get_maintainer.pl:891:  If git is not installed, but mercurial (hg) is installed and an .hg
+scripts/get_maintainer.pl:1347:sub git_execute_cmd {
+scripts/get_maintainer.pl:1527:	warn("Using a git repository produces better results.\n");
+scripts/get_maintainer.pl:1528:	warn("Try Linus Torvalds' latest git repository using:\n");
+scripts/get_maintainer.pl:1529:	warn("git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git\n");
+scripts/get_maintainer.pl:1617:g  use git history      [$email_git]
+scripts/get_maintainer.pl:1618:gf use git-fallback     [$email_git_fallback]
+scripts/get_maintainer.pl:1619:b  use git blame        [$email_git_blame]
+scripts/get_maintainer.pl:1634:tg toggle git entries
+scripts/get_maintainer.pl:1787:If you have git or hg installed, you can choose to summarize the commit
+scripts/objdiff:12:# $ git checkout COMMIT_A
+scripts/objdiff:16:# $ git checkout COMMIT_B
+scripts/objdiff:31:	echo >&2 "ERROR: Not a git repository."
+scripts/package/builddeb:262:The git repository for mainline kernel development is at:
+scripts/setlocalversion:5:# control systems git, mercurial (hg) and subversion (svn).
+scripts/setlocalversion:46:	# Check for git and a git repo.
+scripts/setlocalversion:55:			# running further git commands
+scripts/setlocalversion:71:		# Is this git on svn?
+scripts/setlocalversion:72:		if git config --get svn-remote.svn.url >/dev/null; then
+scripts/setlocalversion:77:		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+scripts/setlocalversion:81:		# All done with git
+scripts/setlocalversion:166:	# annotated or signed tagged state (as git describe only
+scripts/setlocalversion:167:	# looks at signed or annotated tags - git tag -a/-s) and
+tools/lib/subcmd/pager.c:14: * This is split up from the rest of git so that we can do
+tools/perf/Documentation/examples.txt:85:    23.57%       git-repack  /lib64/libc-2.5.so
+tools/perf/Documentation/examples.txt:86:    21.81%              git  /lib64/libc-2.5.so
+tools/perf/Documentation/examples.txt:87:    14.59%              git  ./git
+tools/perf/Documentation/examples.txt:88:    11.79%       git-repack  ./git
+tools/perf/Documentation/examples.txt:89:     7.12%              git  /lib64/ld-2.5.so
+tools/perf/Documentation/examples.txt:90:     3.16%       git-repack  /lib64/libpthread-2.5.so
+tools/perf/Documentation/examples.txt:91:     2.09%       git-repack  /bin/bash
+tools/perf/Documentation/examples.txt:95:     1.12%       git-repack  /lib64/ld-2.5.so
+tools/perf/Documentation/examples.txt:97:     0.90%  git-update-serv  /lib64/libc-2.5.so
+tools/perf/Documentation/examples.txt:98:     0.73%  git-update-serv  /lib64/ld-2.5.so
+tools/perf/Documentation/examples.txt:100:     0.64%       git-repack  /usr/lib64/libz.so.1.2.3
+tools/perf/Documentation/examples.txt:110:     9.35%       git-repack  ./git                       [.] insert_obj_hash
+tools/perf/Documentation/examples.txt:111:     9.12%              git  ./git                       [.] insert_obj_hash
+tools/perf/Documentation/examples.txt:112:     7.31%              git  /lib64/libc-2.5.so          [.] memcpy
+tools/perf/Documentation/examples.txt:113:     6.34%       git-repack  /lib64/libc-2.5.so          [.] _int_malloc
+tools/perf/Documentation/examples.txt:114:     6.24%       git-repack  /lib64/libc-2.5.so          [.] memcpy
+tools/perf/Documentation/examples.txt:115:     5.82%       git-repack  /lib64/libc-2.5.so          [.] __GI___fork
+tools/perf/Documentation/examples.txt:116:     5.47%              git  /lib64/libc-2.5.so          [.] _int_malloc
+tools/perf/Documentation/examples.txt:117:     2.99%              git  /lib64/libc-2.5.so          [.] memset
+tools/perf/Documentation/examples.txt:137:    23.25%       git-repack  /lib64/libc-2.5.so
+tools/perf/Documentation/examples.txt:148:    21.61%              git  /lib64/libc-2.5.so
+tools/perf/Documentation/examples.txt:152:                |           --83.33%-- git_config_from_file
+tools/perf/Documentation/examples.txt:153:                |                     git_config
+tools/perf/Documentation/manpage-base.xsl:11:     git.docbook.backslash and git.docbook.dot params
+tools/perf/Documentation/perf-timechart.txt:99:$ perf timechart record git pull
+tools/perf/arch/x86/tests/gen-insn-x86-dat.sh:43:echo "Done (use git diff to see the changes)"
+tools/perf/perf-completion.sh:4:# Taken from git.git's completion script.
+tools/perf/util/PERF-VERSION-GEN:14:# First check if there is a .git to get the version from git describe
+tools/perf/util/evsel.c:2035:	 * used for cross-endian analysis. See git commit 65014ab3
+tools/perf/util/evsel.c:2412:	 * used for cross-endian analysis. See git commit 65014ab3
+tools/perf/util/llvm-utils.c:206:"     \tYou may want to try git trunk:\n"
+tools/power/cpupower/bench/cpufreq-bench_script.sh:27:# it was 80, cmp. with git commit 808009131046b62ac434dbc796
+tools/power/cpupower/bench/cpufreq-bench_script.sh:31:# E.g. before git commit cef9615a853ebc4972084f7 one could only set
+tools/power/cpupower/utils/cpupower.c:7: *  kernel git repo): subcommand builtins and param parsing.
+tools/power/cpupower/utils/idle_monitor/mperf_monitor.c:253:		 * Compare with Linus kernel git commit: acf01734b1747b1ec4
+tools/power/cpupower/utils/version-gen.sh:12:# First check if there is a .git to get the version from git describe
+tools/testing/ktest/examples/README:10:crosstests.conf - this config shows an example of testing a git repo against
+tools/testing/ktest/examples/crosstests.conf:29:# Update the BUILD_DIR option to the location of your git repo you want to test.
+tools/testing/ktest/examples/include/bisect.conf:15:# Set TEST to 'bisect' to do a normal git bisect. You need
+tools/testing/ktest/examples/include/bisect.conf:71:# the git bisect. You can even change what commit it is currently at.
+tools/testing/ktest/examples/include/defaults.conf:56:# Point build dir to the git repo you use
+tools/testing/ktest/examples/include/patchcheck.conf:3:# This contains a test that takes two git commits and will test each
+tools/testing/ktest/examples/include/patchcheck.conf:10:# to end with (inclusive). This is similar to doing a git rebase -i PATCH_START~1
+tools/testing/ktest/examples/include/patchcheck.conf:11:# and then testing each commit and doing a git rebase --continue.
+tools/testing/ktest/examples/include/patchcheck.conf:12:# You can use a SHA1, a git tag, or anything that git will accept for a checkout
+tools/testing/ktest/examples/include/patchcheck.conf:28:# do a git checkout of this branch before starting. Obviously both
+tools/testing/ktest/examples/test.conf:52:DO_POST_BUILD := git reset --hard
+tools/testing/ktest/ktest.pl:1961:	dodie "Failed to get git $commit";
+tools/testing/ktest/ktest.pl:2740:	dodie "Failed to git bisect";
+tools/testing/ktest/ktest.pl:2920:	    print " Ignore config option and perform new git bisect log?\n";
+tools/testing/ktest/ktest.pl:2925:	} elsif (read_yn "read git log and continue?") {
+tools/testing/ktest/ktest.pl:2994:	dodie "could not capture git bisect log";
+tools/testing/ktest/ktest.pl:2997:	dodie "could not reset git bisect";
+tools/testing/ktest/ktest.pl:3451:	    dodie "could not get git list";
+tools/testing/ktest/ktest.pl:3454:	    dodie "could not get git list";
+tools/testing/ktest/ktest.pl:3461:	# git cherry adds a '+' we want to remove
+tools/testing/ktest/sample.conf:447:#   patchcheck - Do a test on a series of commits in git (see PATCHCHECK below)
+tools/testing/ktest/sample.conf:507:#POST_TEST = cd ${BUILD_DIR}; git reset --hard
+tools/testing/ktest/sample.conf:514:# patch before each build that is made. Use the POST_BUILD to do a git reset --hard
+tools/testing/ktest/sample.conf:533:#POST_BUILD = cd ${BUILD_DIR} && git reset --hard
+tools/testing/ktest/sample.conf:880:#  If the BUILD_DIR is a git repository, then you can set this option
+tools/testing/ktest/sample.conf:895:#  This expects the BUILD_DIR to be a git repository, and
+tools/testing/ktest/sample.conf:905:#   that git checkout allows (branch name, tage, HEAD~3).
+tools/testing/ktest/sample.conf:909:#  PATCHCHECK_CHERRY if set to non zero, then git cherry will be
+tools/testing/ktest/sample.conf:912:#      git cherry ${PATCHCHECK_START} ${PATCHCHECK_END}
+tools/testing/ktest/sample.conf:949:#  You can specify a git bisect if the BUILD_DIR is a git repository.
+tools/testing/ktest/sample.conf:960:# BISECT_GOOD is the commit (SHA1) to label as good (accepts all git good commit types)
+tools/testing/ktest/sample.conf:961:# BISECT_BAD is the commit to label as bad (accepts all git bad commit types)
+tools/testing/ktest/sample.conf:970:#   reason for the failure, and perhaps even find a git commit
+tools/testing/ktest/sample.conf:973:#   git bisect log > /path/to/replay/file
+tools/testing/ktest/sample.conf:980:#    git bisect start, git bisect good, and git bisect bad, and
+tools/testing/ktest/sample.conf:981:#    then it will run git bisect replay on this file, before
+tools/testing/ktest/sample.conf:989:#   will checkout that commit after doing the initial git bisect start,
+tools/testing/ktest/sample.conf:990:#   git bisect good, git bisect bad, and running the git bisect replay
+tools/testing/ktest/sample.conf:1004:#   To just run the git bisect on a specific path, set BISECT_FILES.
+tools/testing/ktest/sample.conf:1026:#   This is basicall the same as running git bisect yourself
+tools/testing/selftests/powerpc/Makefile:10:GIT_VERSION = $(shell git describe --always --long --dirty || echo "unknown")
+tools/testing/selftests/powerpc/include/subunit.h:49:	printf("tags: git_version:%s\n", value);
