@@ -6,3 +6,4 @@ packing/kernel
 packing/new-boot.img
 dtbo/new-dtbo.img
 dtbo/temp
+toolchain/

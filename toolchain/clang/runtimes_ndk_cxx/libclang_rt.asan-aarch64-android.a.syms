@@ -23,6 +23,7 @@
   __interceptor_atoi;
   __interceptor_atol;
   __interceptor_atoll;
+  __interceptor_bcmp;
   __interceptor_bsd_signal;
   __interceptor_calloc;
   __interceptor_cfree;
@@ -124,7 +125,9 @@
   __interceptor_munlock;
   __interceptor_munlockall;
   __interceptor_opendir;
+  __interceptor_pclose;
   __interceptor_poll;
+  __interceptor_popen;
   __interceptor_posix_memalign;
   __interceptor_prctl;
   __interceptor_pread;
@@ -149,6 +152,7 @@
   __interceptor_pthread_rwlockattr_getpshared;
   __interceptor_pthread_setcancelstate;
   __interceptor_pthread_setcanceltype;
+  __interceptor_pthread_sigmask;
   __interceptor_puts;
   __interceptor_pvalloc;
   __interceptor_pwrite;
@@ -159,11 +163,16 @@
   __interceptor_readlinkat;
   __interceptor_readv;
   __interceptor_realloc;
+  __interceptor_reallocarray;
   __interceptor_realpath;
   __interceptor_recv;
   __interceptor_recvfrom;
   __interceptor_recvmmsg;
   __interceptor_recvmsg;
+  __interceptor_regcomp;
+  __interceptor_regerror;
+  __interceptor_regexec;
+  __interceptor_regfree;
   __interceptor_remquo;
   __interceptor_remquof;
   __interceptor_remquol;
@@ -235,9 +244,11 @@
   __interceptor_time;
   __interceptor_times;
   __interceptor_tmpnam;
+  __interceptor_ttyname;
   __interceptor_ttyname_r;
   __interceptor_valloc;
   __interceptor_vasprintf;
+  __interceptor_vfork;
   __interceptor_vfprintf;
   __interceptor_vfscanf;
   __interceptor_vprintf;
@@ -250,6 +261,7 @@
   __interceptor_waitid;
   __interceptor_waitpid;
   __interceptor_wcscat;
+  __interceptor_wcsdup;
   __interceptor_wcslen;
   __interceptor_wcsncat;
   __interceptor_wcsnlen;
@@ -297,6 +309,7 @@
   __sanitizer_get_ownership;
   __sanitizer_get_unmapped_bytes;
   __sanitizer_install_malloc_and_free_hooks;
+  __sanitizer_on_print;
   __sanitizer_print_memory_profile;
   __sanitizer_print_stack_trace;
   __sanitizer_ptr_cmp;
@@ -384,6 +397,7 @@
   __sanitizer_syscall_post_impl_getpid;
   __sanitizer_syscall_post_impl_getppid;
   __sanitizer_syscall_post_impl_getpriority;
+  __sanitizer_syscall_post_impl_getrandom;
   __sanitizer_syscall_post_impl_getresgid;
   __sanitizer_syscall_post_impl_getresuid;
   __sanitizer_syscall_post_impl_getrlimit;
@@ -690,6 +704,7 @@
   __sanitizer_syscall_pre_impl_getpid;
   __sanitizer_syscall_pre_impl_getppid;
   __sanitizer_syscall_pre_impl_getpriority;
+  __sanitizer_syscall_pre_impl_getrandom;
   __sanitizer_syscall_pre_impl_getresgid;
   __sanitizer_syscall_pre_impl_getresuid;
   __sanitizer_syscall_pre_impl_getrlimit;
@@ -952,6 +967,7 @@
   atoi;
   atol;
   atoll;
+  bcmp;
   bsd_signal;
   calloc;
   cfree;
@@ -1052,7 +1068,9 @@
   munlock;
   munlockall;
   opendir;
+  pclose;
   poll;
+  popen;
   posix_memalign;
   prctl;
   pread;
@@ -1077,6 +1095,7 @@
   pthread_rwlockattr_getpshared;
   pthread_setcancelstate;
   pthread_setcanceltype;
+  pthread_sigmask;
   puts;
   pvalloc;
   pwrite;
@@ -1087,10 +1106,15 @@
   readlinkat;
   readv;
   realloc;
+  reallocarray;
   recv;
   recvfrom;
   recvmmsg;
   recvmsg;
+  regcomp;
+  regerror;
+  regexec;
+  regfree;
   remquo;
   remquof;
   remquol;
@@ -1162,9 +1186,11 @@
   time;
   times;
   tmpnam;
+  ttyname;
   ttyname_r;
   valloc;
   vasprintf;
+  vfork;
   vfprintf;
   vfscanf;
   vprintf;
@@ -1177,6 +1203,7 @@
   waitid;
   waitpid;
   wcscat;
+  wcsdup;
   wcslen;
   wcsncat;
   wcsnlen;

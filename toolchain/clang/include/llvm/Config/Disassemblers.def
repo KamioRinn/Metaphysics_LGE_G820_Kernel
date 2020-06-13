@@ -1,9 +1,9 @@
 /*===- llvm/Config/Disassemblers.def - LLVM Assembly Parsers ----*- C++ -*-===*\
 |*                                                                            *|
-|*                     The LLVM Compiler Infrastructure                       *|
-|*                                                                            *|
-|* This file is distributed under the University of Illinois Open Source      *|
-|* License. See LICENSE.TXT for details.                                      *|
+|* Part of the LLVM Project, under the Apache License v2.0 with LLVM          *|
+|* Exceptions.                                                                *|
+|* See https://llvm.org/LICENSE.txt for license information.                  *|
+|* SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception                    *|
 |*                                                                            *|
 |*===----------------------------------------------------------------------===*|
 |*                                                                            *|
@@ -24,10 +24,10 @@
 #  error Please define the macro LLVM_DISASSEMBLER(TargetName)
 #endif
 
-LLVM_DISASSEMBLER(AArch64)
-LLVM_DISASSEMBLER(ARM)
 LLVM_DISASSEMBLER(BPF)
 LLVM_DISASSEMBLER(X86)
+LLVM_DISASSEMBLER(ARM)
+LLVM_DISASSEMBLER(AArch64)
 
 
 #undef LLVM_DISASSEMBLER

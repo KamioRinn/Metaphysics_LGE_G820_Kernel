@@ -1,9 +1,8 @@
 //===- VirtualFileSystem.h - Virtual File System Layer ----------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -24,6 +23,7 @@
 #include "llvm/Support/Chrono.h"
 #include "llvm/Support/ErrorOr.h"
 #include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Path.h"
 #include "llvm/Support/SourceMgr.h"
 #include <cassert>
 #include <cstdint>
@@ -58,15 +58,15 @@ public:
 
   Status() = default;
   Status(const llvm::sys::fs::file_status &Status);
-  Status(StringRef Name, llvm::sys::fs::UniqueID UID,
+  Status(const Twine &Name, llvm::sys::fs::UniqueID UID,
          llvm::sys::TimePoint<> MTime, uint32_t User, uint32_t Group,
          uint64_t Size, llvm::sys::fs::file_type Type,
          llvm::sys::fs::perms Perms);
 
   /// Get a copy of a Status with a different name.
-  static Status copyWithNewName(const Status &In, StringRef NewName);
+  static Status copyWithNewName(const Status &In, const Twine &NewName);
   static Status copyWithNewName(const llvm::sys::fs::file_status &In,
-                                StringRef NewName);
+                                const Twine &NewName);
 
   /// Returns the name that should be used for this file or directory.
   StringRef getName() const { return Name; }
@@ -126,7 +126,7 @@ public:
 /// Only information available on most platforms is included.
 class directory_entry {
   std::string Path;
-  llvm::sys::fs::file_type Type;
+  llvm::sys::fs::file_type Type = llvm::sys::fs::file_type::type_unknown;
 
 public:
   directory_entry() = default;
@@ -298,7 +298,15 @@ public:
 
 /// Gets an \p vfs::FileSystem for the 'real' file system, as seen by
 /// the operating system.
+/// The working directory is linked to the process's working directory.
+/// (This is usually thread-hostile).
 IntrusiveRefCntPtr<FileSystem> getRealFileSystem();
+
+/// Create an \p vfs::FileSystem for the 'real' file system, as seen by
+/// the operating system.
+/// It has its own working directory, independent of (but initially equal to)
+/// that of the process.
+std::unique_ptr<FileSystem> createPhysicalFileSystem();
 
 /// A file system that allows overlaying one \p AbstractFileSystem on top
 /// of another.
@@ -335,15 +343,24 @@ public:
 
   using iterator = FileSystemList::reverse_iterator;
   using const_iterator = FileSystemList::const_reverse_iterator;
+  using reverse_iterator = FileSystemList::iterator;
+  using const_reverse_iterator = FileSystemList::const_iterator;
 
   /// Get an iterator pointing to the most recently added file system.
   iterator overlays_begin() { return FSList.rbegin(); }
   const_iterator overlays_begin() const { return FSList.rbegin(); }
 
-  /// Get an iterator pointing one-past the least recently added file
-  /// system.
+  /// Get an iterator pointing one-past the least recently added file system.
   iterator overlays_end() { return FSList.rend(); }
   const_iterator overlays_end() const { return FSList.rend(); }
+
+  /// Get an iterator pointing to the least recently added file system.
+  reverse_iterator overlays_rbegin() { return FSList.begin(); }
+  const_reverse_iterator overlays_rbegin() const { return FSList.begin(); }
+
+  /// Get an iterator pointing one-past the most recently added file system.
+  reverse_iterator overlays_rend() { return FSList.end(); }
+  const_reverse_iterator overlays_rend() const { return FSList.end(); }
 };
 
 /// By default, this delegates all calls to the underlying file system. This
@@ -383,6 +400,8 @@ protected:
 
 private:
   IntrusiveRefCntPtr<FileSystem> FS;
+
+  virtual void anchor();
 };
 
 namespace detail {
@@ -493,6 +512,256 @@ struct YAMLVFSEntry {
   std::string RPath;
 };
 
+class VFSFromYamlDirIterImpl;
+class RedirectingFileSystemParser;
+
+/// A virtual file system parsed from a YAML file.
+///
+/// Currently, this class allows creating virtual directories and mapping
+/// virtual file paths to existing external files, available in \c ExternalFS.
+///
+/// The basic structure of the parsed file is:
+/// \verbatim
+/// {
+///   'version': <version number>,
+///   <optional configuration>
+///   'roots': [
+///              <directory entries>
+///            ]
+/// }
+/// \endverbatim
+///
+/// All configuration options are optional.
+///   'case-sensitive': <boolean, default=(true for Posix, false for Windows)>
+///   'use-external-names': <boolean, default=true>
+///   'overlay-relative': <boolean, default=false>
+///   'fallthrough': <boolean, default=true>
+///
+/// Virtual directories are represented as
+/// \verbatim
+/// {
+///   'type': 'directory',
+///   'name': <string>,
+///   'contents': [ <file or directory entries> ]
+/// }
+/// \endverbatim
+///
+/// The default attributes for virtual directories are:
+/// \verbatim
+/// MTime = now() when created
+/// Perms = 0777
+/// User = Group = 0
+/// Size = 0
+/// UniqueID = unspecified unique value
+/// \endverbatim
+///
+/// Re-mapped files are represented as
+/// \verbatim
+/// {
+///   'type': 'file',
+///   'name': <string>,
+///   'use-external-name': <boolean> # Optional
+///   'external-contents': <path to external file>
+/// }
+/// \endverbatim
+///
+/// and inherit their attributes from the external contents.
+///
+/// In both cases, the 'name' field may contain multiple path components (e.g.
+/// /path/to/file). However, any directory that contains more than one child
+/// must be uniquely represented by a directory entry.
+class RedirectingFileSystem : public vfs::FileSystem {
+public:
+  enum EntryKind { EK_Directory, EK_File };
+
+  /// A single file or directory in the VFS.
+  class Entry {
+    EntryKind Kind;
+    std::string Name;
+
+  public:
+    Entry(EntryKind K, StringRef Name) : Kind(K), Name(Name) {}
+    virtual ~Entry() = default;
+
+    StringRef getName() const { return Name; }
+    EntryKind getKind() const { return Kind; }
+  };
+
+  class RedirectingDirectoryEntry : public Entry {
+    std::vector<std::unique_ptr<Entry>> Contents;
+    Status S;
+
+  public:
+    RedirectingDirectoryEntry(StringRef Name,
+                              std::vector<std::unique_ptr<Entry>> Contents,
+                              Status S)
+        : Entry(EK_Directory, Name), Contents(std::move(Contents)),
+          S(std::move(S)) {}
+    RedirectingDirectoryEntry(StringRef Name, Status S)
+        : Entry(EK_Directory, Name), S(std::move(S)) {}
+
+    Status getStatus() { return S; }
+
+    void addContent(std::unique_ptr<Entry> Content) {
+      Contents.push_back(std::move(Content));
+    }
+
+    Entry *getLastContent() const { return Contents.back().get(); }
+
+    using iterator = decltype(Contents)::iterator;
+
+    iterator contents_begin() { return Contents.begin(); }
+    iterator contents_end() { return Contents.end(); }
+
+    static bool classof(const Entry *E) { return E->getKind() == EK_Directory; }
+  };
+
+  class RedirectingFileEntry : public Entry {
+  public:
+    enum NameKind { NK_NotSet, NK_External, NK_Virtual };
+
+  private:
+    std::string ExternalContentsPath;
+    NameKind UseName;
+
+  public:
+    RedirectingFileEntry(StringRef Name, StringRef ExternalContentsPath,
+                         NameKind UseName)
+        : Entry(EK_File, Name), ExternalContentsPath(ExternalContentsPath),
+          UseName(UseName) {}
+
+    StringRef getExternalContentsPath() const { return ExternalContentsPath; }
+
+    /// whether to use the external path as the name for this file.
+    bool useExternalName(bool GlobalUseExternalName) const {
+      return UseName == NK_NotSet ? GlobalUseExternalName
+                                  : (UseName == NK_External);
+    }
+
+    NameKind getUseName() const { return UseName; }
+
+    static bool classof(const Entry *E) { return E->getKind() == EK_File; }
+  };
+
+private:
+  friend class VFSFromYamlDirIterImpl;
+  friend class RedirectingFileSystemParser;
+
+  bool shouldUseExternalFS() const {
+    return ExternalFSValidWD && IsFallthrough;
+  }
+
+  // In a RedirectingFileSystem, keys can be specified in Posix or Windows
+  // style (or even a mixture of both), so this comparison helper allows
+  // slashes (representing a root) to match backslashes (and vice versa).  Note
+  // that, other than the root, patch components should not contain slashes or
+  // backslashes.
+  bool pathComponentMatches(llvm::StringRef lhs, llvm::StringRef rhs) const {
+    if ((CaseSensitive ? lhs.equals(rhs) : lhs.equals_lower(rhs)))
+      return true;
+    return (lhs == "/" && rhs == "\\") || (lhs == "\\" && rhs == "/");
+  }
+
+  /// The root(s) of the virtual file system.
+  std::vector<std::unique_ptr<Entry>> Roots;
+
+  /// The current working directory of the file system.
+  std::string WorkingDirectory;
+
+  /// Whether the current working directory is valid for the external FS.
+  bool ExternalFSValidWD = false;
+
+  /// The file system to use for external references.
+  IntrusiveRefCntPtr<FileSystem> ExternalFS;
+
+  /// If IsRelativeOverlay is set, this represents the directory
+  /// path that should be prefixed to each 'external-contents' entry
+  /// when reading from YAML files.
+  std::string ExternalContentsPrefixDir;
+
+  /// @name Configuration
+  /// @{
+
+  /// Whether to perform case-sensitive comparisons.
+  ///
+  /// Currently, case-insensitive matching only works correctly with ASCII.
+  bool CaseSensitive =
+#ifdef _WIN32
+      false;
+#else
+      true;
+#endif
+
+  /// IsRelativeOverlay marks whether a ExternalContentsPrefixDir path must
+  /// be prefixed in every 'external-contents' when reading from YAML files.
+  bool IsRelativeOverlay = false;
+
+  /// Whether to use to use the value of 'external-contents' for the
+  /// names of files.  This global value is overridable on a per-file basis.
+  bool UseExternalNames = true;
+
+  /// Whether to attempt a file lookup in external file system after it wasn't
+  /// found in VFS.
+  bool IsFallthrough = true;
+  /// @}
+
+  /// Virtual file paths and external files could be canonicalized without "..",
+  /// "." and "./" in their paths. FIXME: some unittests currently fail on
+  /// win32 when using remove_dots and remove_leading_dotslash on paths.
+  bool UseCanonicalizedPaths =
+#ifdef _WIN32
+      false;
+#else
+      true;
+#endif
+
+  RedirectingFileSystem(IntrusiveRefCntPtr<FileSystem> ExternalFS);
+
+  /// Looks up the path <tt>[Start, End)</tt> in \p From, possibly
+  /// recursing into the contents of \p From if it is a directory.
+  ErrorOr<Entry *> lookupPath(llvm::sys::path::const_iterator Start,
+                              llvm::sys::path::const_iterator End,
+                              Entry *From) const;
+
+  /// Get the status of a given an \c Entry.
+  ErrorOr<Status> status(const Twine &Path, Entry *E);
+
+public:
+  /// Looks up \p Path in \c Roots.
+  ErrorOr<Entry *> lookupPath(const Twine &Path) const;
+
+  /// Parses \p Buffer, which is expected to be in YAML format and
+  /// returns a virtual file system representing its contents.
+  static RedirectingFileSystem *
+  create(std::unique_ptr<MemoryBuffer> Buffer,
+         SourceMgr::DiagHandlerTy DiagHandler, StringRef YAMLFilePath,
+         void *DiagContext, IntrusiveRefCntPtr<FileSystem> ExternalFS);
+
+  ErrorOr<Status> status(const Twine &Path) override;
+  ErrorOr<std::unique_ptr<File>> openFileForRead(const Twine &Path) override;
+
+  std::error_code getRealPath(const Twine &Path,
+                              SmallVectorImpl<char> &Output) const override;
+
+  llvm::ErrorOr<std::string> getCurrentWorkingDirectory() const override;
+
+  std::error_code setCurrentWorkingDirectory(const Twine &Path) override;
+
+  std::error_code isLocal(const Twine &Path, bool &Result) override;
+
+  directory_iterator dir_begin(const Twine &Dir, std::error_code &EC) override;
+
+  void setExternalContentsPrefixDir(StringRef PrefixDir);
+
+  StringRef getExternalContentsPrefixDir() const;
+
+  void dump(raw_ostream &OS) const;
+  void dumpEntry(raw_ostream &OS, Entry *E, int NumSpaces = 0) const;
+#if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
+  LLVM_DUMP_METHOD void dump() const;
+#endif
+};
+
 /// Collect all pairs of <virtual path, real path> entries from the
 /// \p YAMLFilePath. This is used by the module dependency collector to forward
 /// the entries into the reproducer output VFS YAML file.
@@ -525,6 +794,8 @@ public:
     IsOverlayRelative = true;
     OverlayDir.assign(OverlayDirectory.str());
   }
+
+  const std::vector<YAMLVFSEntry> &getMappings() const { return Mappings; }
 
   void write(llvm::raw_ostream &OS);
 };

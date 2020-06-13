@@ -1,9 +1,8 @@
 //===-- llvm/Constant.h - Constant class definition -------------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -87,9 +86,19 @@ public:
   /// floating-point constant with all NaN elements.
   bool isNaN() const;
 
+  /// Return true if this constant and a constant 'Y' are element-wise equal.
+  /// This is identical to just comparing the pointers, with the exception that
+  /// for vectors, if only one of the constants has an `undef` element in some
+  /// lane, the constants still match.
+  bool isElementWiseEqual(Value *Y) const;
+
   /// Return true if this is a vector constant that includes any undefined
   /// elements.
   bool containsUndefElement() const;
+
+  /// Return true if this is a vector constant that includes any constant
+  /// expressions.
+  bool containsConstantExpression() const;
 
   /// Return true if evaluation of this constant could trap. This is true for
   /// things like constant expressions that could divide by zero.
@@ -179,6 +188,10 @@ public:
     return const_cast<Constant*>(
                       static_cast<const Constant *>(this)->stripPointerCasts());
   }
+
+  /// Try to replace undefined constant C or undefined elements in C with
+  /// Replacement. If no changes are made, the constant C is returned.
+  static Constant *replaceUndefsWith(Constant *C, Constant *Replacement);
 };
 
 } // end namespace llvm

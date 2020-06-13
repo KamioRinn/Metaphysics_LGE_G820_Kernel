@@ -1,9 +1,8 @@
 //===- DeclarationName.h - Representation of declaration names --*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -529,7 +528,7 @@ public:
 
   static int compare(DeclarationName LHS, DeclarationName RHS);
 
-  void print(raw_ostream &OS, const PrintingPolicy &Policy);
+  void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
 
   void dump() const;
 };
@@ -729,9 +728,10 @@ public:
   /// getNamedTypeInfo - Returns the source type info associated to
   /// the name. Assumes it is a constructor, destructor or conversion.
   TypeSourceInfo *getNamedTypeInfo() const {
-    assert(Name.getNameKind() == DeclarationName::CXXConstructorName ||
-           Name.getNameKind() == DeclarationName::CXXDestructorName ||
-           Name.getNameKind() == DeclarationName::CXXConversionFunctionName);
+    if (Name.getNameKind() != DeclarationName::CXXConstructorName &&
+        Name.getNameKind() != DeclarationName::CXXDestructorName &&
+        Name.getNameKind() != DeclarationName::CXXConversionFunctionName)
+      return nullptr;
     return LocInfo.NamedType.TInfo;
   }
 
@@ -747,7 +747,8 @@ public:
   /// getCXXOperatorNameRange - Gets the range of the operator name
   /// (without the operator keyword). Assumes it is a (non-literal) operator.
   SourceRange getCXXOperatorNameRange() const {
-    assert(Name.getNameKind() == DeclarationName::CXXOperatorName);
+    if (Name.getNameKind() != DeclarationName::CXXOperatorName)
+      return SourceRange();
     return SourceRange(
      SourceLocation::getFromRawEncoding(LocInfo.CXXOperatorName.BeginOpNameLoc),
      SourceLocation::getFromRawEncoding(LocInfo.CXXOperatorName.EndOpNameLoc)
@@ -766,7 +767,8 @@ public:
   /// operator name (not the operator keyword).
   /// Assumes it is a literal operator.
   SourceLocation getCXXLiteralOperatorNameLoc() const {
-    assert(Name.getNameKind() == DeclarationName::CXXLiteralOperatorName);
+    if (Name.getNameKind() != DeclarationName::CXXLiteralOperatorName)
+      return SourceLocation();
     return SourceLocation::
       getFromRawEncoding(LocInfo.CXXLiteralOperatorName.OpNameLoc);
   }
@@ -790,7 +792,7 @@ public:
   std::string getAsString() const;
 
   /// printName - Print the human-readable name to a stream.
-  void printName(raw_ostream &OS) const;
+  void printName(raw_ostream &OS, PrintingPolicy Policy) const;
 
   /// getBeginLoc - Retrieve the location of the first token.
   SourceLocation getBeginLoc() const { return NameLoc; }
@@ -827,11 +829,7 @@ inline const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
   return PD;
 }
 
-inline raw_ostream &operator<<(raw_ostream &OS,
-                                     DeclarationNameInfo DNInfo) {
-  DNInfo.printName(OS);
-  return OS;
-}
+raw_ostream &operator<<(raw_ostream &OS, DeclarationNameInfo DNInfo);
 
 } // namespace clang
 
@@ -859,9 +857,26 @@ struct DenseMapInfo<clang::DeclarationName> {
   }
 };
 
-template <>
-struct isPodLike<clang::DeclarationName> { static const bool value = true; };
-
 } // namespace llvm
+
+// The definition of AssumedTemplateStorage is factored out of TemplateName to
+// resolve a cyclic dependency between it and DeclarationName (via Type).
+namespace clang {
+
+/// A structure for storing the information associated with a name that has
+/// been assumed to be a template name (despite finding no TemplateDecls).
+class AssumedTemplateStorage : public UncommonTemplateNameStorage {
+  friend class ASTContext;
+
+  AssumedTemplateStorage(DeclarationName Name)
+      : UncommonTemplateNameStorage(Assumed, 0), Name(Name) {}
+  DeclarationName Name;
+
+public:
+  /// Get the name of the template.
+  DeclarationName getDeclName() const { return Name; }
+};
+
+} // namespace clang
 
 #endif // LLVM_CLANG_AST_DECLARATIONNAME_H

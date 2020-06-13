@@ -21,6 +21,7 @@
   __interceptor_asctime;
   __interceptor_asctime_r;
   __interceptor_asprintf;
+  __interceptor_bcmp;
   __interceptor_bind;
   __interceptor_bsd_signal;
   __interceptor_calloc;
@@ -71,6 +72,8 @@
   __interceptor_fwrite;
   __interceptor_getaddrinfo;
   __interceptor_getcwd;
+  __interceptor_getgrgid;
+  __interceptor_getgrnam;
   __interceptor_getgroups;
   __interceptor_gethostbyaddr;
   __interceptor_gethostbyname;
@@ -81,6 +84,8 @@
   __interceptor_getmntent;
   __interceptor_getnameinfo;
   __interceptor_getpeername;
+  __interceptor_getpwnam;
+  __interceptor_getpwuid;
   __interceptor_getresgid;
   __interceptor_getresuid;
   __interceptor_getsockname;
@@ -142,9 +147,11 @@
   __interceptor_open64;
   __interceptor_opendir;
   __interceptor_pause;
+  __interceptor_pclose;
   __interceptor_pipe;
   __interceptor_pipe2;
   __interceptor_poll;
+  __interceptor_popen;
   __interceptor_posix_memalign;
   __interceptor_prctl;
   __interceptor_pread;
@@ -170,6 +177,7 @@
   __interceptor_pthread_condattr_getpshared;
   __interceptor_pthread_create;
   __interceptor_pthread_detach;
+  __interceptor_pthread_exit;
   __interceptor_pthread_getschedparam;
   __interceptor_pthread_join;
   __interceptor_pthread_kill;
@@ -213,11 +221,16 @@
   __interceptor_readlinkat;
   __interceptor_readv;
   __interceptor_realloc;
+  __interceptor_reallocarray;
   __interceptor_realpath;
   __interceptor_recv;
   __interceptor_recvfrom;
   __interceptor_recvmmsg;
   __interceptor_recvmsg;
+  __interceptor_regcomp;
+  __interceptor_regerror;
+  __interceptor_regexec;
+  __interceptor_regfree;
   __interceptor_remquo;
   __interceptor_remquof;
   __interceptor_remquol;
@@ -297,6 +310,7 @@
   __interceptor_tmpfile;
   __interceptor_tmpfile64;
   __interceptor_tmpnam;
+  __interceptor_ttyname;
   __interceptor_ttyname_r;
   __interceptor_unlink;
   __interceptor_usleep;
@@ -315,6 +329,7 @@
   __interceptor_waitid;
   __interceptor_waitpid;
   __interceptor_wcscat;
+  __interceptor_wcsdup;
   __interceptor_wcslen;
   __interceptor_wcsncat;
   __interceptor_wcsnlen;
@@ -359,6 +374,7 @@
   __sanitizer_get_unmapped_bytes;
   __sanitizer_install_malloc_and_free_hooks;
   __sanitizer_malloc_hook;
+  __sanitizer_on_print;
   __sanitizer_print_stack_trace;
   __sanitizer_report_error_summary;
   __sanitizer_sandbox_on_notify;
@@ -441,6 +457,7 @@
   __sanitizer_syscall_post_impl_getpid;
   __sanitizer_syscall_post_impl_getppid;
   __sanitizer_syscall_post_impl_getpriority;
+  __sanitizer_syscall_post_impl_getrandom;
   __sanitizer_syscall_post_impl_getresgid;
   __sanitizer_syscall_post_impl_getresuid;
   __sanitizer_syscall_post_impl_getrlimit;
@@ -747,6 +764,7 @@
   __sanitizer_syscall_pre_impl_getpid;
   __sanitizer_syscall_pre_impl_getppid;
   __sanitizer_syscall_pre_impl_getpriority;
+  __sanitizer_syscall_pre_impl_getrandom;
   __sanitizer_syscall_pre_impl_getresgid;
   __sanitizer_syscall_pre_impl_getresuid;
   __sanitizer_syscall_pre_impl_getrlimit;
@@ -1028,6 +1046,7 @@
   asctime;
   asctime_r;
   asprintf;
+  bcmp;
   bind;
   bsd_signal;
   calloc;
@@ -1078,6 +1097,8 @@
   fwrite;
   getaddrinfo;
   getcwd;
+  getgrgid;
+  getgrnam;
   getgroups;
   gethostbyaddr;
   gethostbyname;
@@ -1088,6 +1109,8 @@
   getmntent;
   getnameinfo;
   getpeername;
+  getpwnam;
+  getpwuid;
   getresgid;
   getresuid;
   getsockname;
@@ -1148,9 +1171,11 @@
   open64;
   opendir;
   pause;
+  pclose;
   pipe;
   pipe2;
   poll;
+  popen;
   posix_memalign;
   prctl;
   pread;
@@ -1170,6 +1195,7 @@
   pthread_condattr_getpshared;
   pthread_create;
   pthread_detach;
+  pthread_exit;
   pthread_getschedparam;
   pthread_join;
   pthread_kill;
@@ -1213,10 +1239,15 @@
   readlinkat;
   readv;
   realloc;
+  reallocarray;
   recv;
   recvfrom;
   recvmmsg;
   recvmsg;
+  regcomp;
+  regerror;
+  regexec;
+  regfree;
   remquo;
   remquof;
   remquol;
@@ -1296,6 +1327,7 @@
   tmpfile;
   tmpfile64;
   tmpnam;
+  ttyname;
   ttyname_r;
   unlink;
   usleep;
@@ -1314,6 +1346,7 @@
   waitid;
   waitpid;
   wcscat;
+  wcsdup;
   wcslen;
   wcsncat;
   wcsnlen;

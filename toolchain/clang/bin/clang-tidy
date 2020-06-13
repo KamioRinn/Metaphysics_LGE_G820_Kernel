@@ -124,6 +124,8 @@ class CompilerWrapper(object):
     def exec_clang_with_fallback(self):
         import subprocess
 
+        extra_args_begin = len(self.execargs)
+
         # We only want to pass extra flags to clang and clang++.
         if os.path.basename(__file__) in ['clang', 'clang++']:
             # We may introduce some new warnings after rebasing and we need to
@@ -144,6 +146,10 @@ class CompilerWrapper(object):
             # Delete PREBUILT_COMPILER_PATH_KEY so the fallback doesn't keep
             # calling itself in case of an error.
             del os.environ[PREBUILT_COMPILER_PATH_KEY]
+
+            # Strip extra args added (from DISABLED_WARNINGS_KEY) for clang and
+            # clang++ above.  They may not be recognized by the fallback clang.
+            self.execargs = self.execargs[:extra_args_begin]
 
             os.execv(fallback_arg0, [fallback_arg0] + self.execargs[1:])
 

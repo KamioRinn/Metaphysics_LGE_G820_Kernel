@@ -1,9 +1,8 @@
 //===-- llvm/Instruction.h - Instruction class definition -------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -136,6 +135,9 @@ public:
   bool isExceptionalTerminator() const {
     return isExceptionalTerminator(getOpcode());
   }
+  bool isIndirectTerminator() const {
+    return isIndirectTerminator(getOpcode());
+  }
 
   static const char* getOpcodeName(unsigned OpCode);
 
@@ -203,6 +205,17 @@ public:
     }
   }
 
+  /// Returns true if the OpCode is a terminator with indirect targets.
+  static inline bool isIndirectTerminator(unsigned OpCode) {
+    switch (OpCode) {
+    case Instruction::IndirectBr:
+    case Instruction::CallBr:
+      return true;
+    default:
+      return false;
+    }
+  }
+
   //===--------------------------------------------------------------------===//
   // Metadata manipulation.
   //===--------------------------------------------------------------------===//
@@ -214,6 +227,16 @@ public:
   /// debug location.
   bool hasMetadataOtherThanDebugLoc() const {
     return hasMetadataHashEntry();
+  }
+
+  /// Return true if this instruction has the given type of metadata attached.
+  bool hasMetadata(unsigned KindID) const {
+    return getMetadata(KindID) != nullptr;
+  }
+
+  /// Return true if this instruction has the given type of metadata attached.
+  bool hasMetadata(StringRef Kind) const {
+    return getMetadata(Kind) != nullptr;
   }
 
   /// Get the metadata of given kind attached to this Instruction.
@@ -297,9 +320,6 @@ public:
   /// Returns true on success with profile total weights filled in.
   /// Returns false if no metadata was found.
   bool extractProfTotalWeight(uint64_t &TotalVal) const;
-
-  /// Updates branch_weights metadata by scaling it by \p S / \p T.
-  void updateProfWeight(uint64_t S, uint64_t T);
 
   /// Sets the branch_weights metadata to \p W for CallInst.
   void setProfWeight(uint64_t W);
@@ -582,6 +602,10 @@ public:
     }
   }
 
+  /// Return true if the instruction is a llvm.lifetime.start or
+  /// llvm.lifetime.end marker.
+  bool isLifetimeStartOrEnd() const;
+
   /// Return a pointer to the next non-debug instruction in the same basic
   /// block as 'this', or nullptr if no such instruction exists.
   const Instruction *getNextNonDebugInstruction() const;
@@ -650,6 +674,10 @@ public:
   /// Update the specified successor to point at the provided block. This
   /// instruction must be a terminator.
   void setSuccessor(unsigned Idx, BasicBlock *BB);
+
+  /// Replace specified successor OldBB to point at the provided block.
+  /// This instruction must be a terminator.
+  void replaceSuccessorWith(BasicBlock *OldBB, BasicBlock *NewBB);
 
   /// Methods for support type inquiry through isa, cast, and dyn_cast:
   static bool classof(const Value *V) {

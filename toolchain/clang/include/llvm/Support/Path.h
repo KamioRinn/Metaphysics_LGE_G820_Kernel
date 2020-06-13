@@ -1,9 +1,8 @@
 //===- llvm/Support/Path.h - Path Operating System Concept ------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -53,10 +52,10 @@ enum class Style { windows, posix, native };
 class const_iterator
     : public iterator_facade_base<const_iterator, std::input_iterator_tag,
                                   const StringRef> {
-  StringRef Path;      ///< The entire path.
-  StringRef Component; ///< The current component. Not necessarily in Path.
-  size_t    Position;  ///< The iterators current position within Path.
-  Style S;             ///< The path style to use.
+  StringRef Path;          ///< The entire path.
+  StringRef Component;     ///< The current component. Not necessarily in Path.
+  size_t    Position = 0;  ///< The iterators current position within Path.
+  Style S = Style::native; ///< The path style to use.
 
   // An end iterator has Position = Path.size() + 1.
   friend const_iterator begin(StringRef path, Style style);
@@ -79,10 +78,10 @@ public:
 class reverse_iterator
     : public iterator_facade_base<reverse_iterator, std::input_iterator_tag,
                                   const StringRef> {
-  StringRef Path;      ///< The entire path.
-  StringRef Component; ///< The current component. Not necessarily in Path.
-  size_t    Position;  ///< The iterators current position within Path.
-  Style S;             ///< The path style to use.
+  StringRef Path;          ///< The entire path.
+  StringRef Component;     ///< The current component. Not necessarily in Path.
+  size_t    Position = 0;  ///< The iterators current position within Path.
+  Style S = Style::native; ///< The path style to use.
 
   friend reverse_iterator rbegin(StringRef path, Style style);
   friend reverse_iterator rend(StringRef path);
@@ -121,6 +120,8 @@ reverse_iterator rend(StringRef path);
 /// @{
 
 /// Remove the last component from \a path unless it is the root dir.
+///
+/// Similar to the POSIX "dirname" utility.
 ///
 /// @code
 ///   directory/filename.cpp => directory/
@@ -296,7 +297,7 @@ StringRef parent_path(StringRef path, Style style = Style::native);
 ///
 /// @param path Input path.
 /// @result The filename part of \a path. This is defined as the last component
-///         of \a path.
+///         of \a path. Similar to the POSIX "basename" utility.
 StringRef filename(StringRef path, Style style = Style::native);
 
 /// Get stem.

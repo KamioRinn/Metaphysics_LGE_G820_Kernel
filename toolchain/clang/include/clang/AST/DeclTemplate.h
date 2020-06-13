@@ -1,9 +1,8 @@
 //===- DeclTemplate.h - Classes for representing C++ templates --*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -169,6 +168,16 @@ public:
     return HasRequiresClause ? *getTrailingObjects<Expr *>() : nullptr;
   }
 
+  /// \brief All associated constraints derived from this template parameter
+  /// list, including the requires clause and any constraints derived from
+  /// constrained-parameters.
+  ///
+  /// The constraints in the resulting list are to be treated as if in a
+  /// conjunction ("and").
+  void getAssociatedConstraints(llvm::SmallVectorImpl<const Expr *> &AC) const;
+
+  bool hasAssociatedConstraints() const;
+
   SourceLocation getTemplateLoc() const { return TemplateLoc; }
   SourceLocation getLAngleLoc() const { return LAngleLoc; }
   SourceLocation getRAngleLoc() const { return RAngleLoc; }
@@ -176,6 +185,11 @@ public:
   SourceRange getSourceRange() const LLVM_READONLY {
     return SourceRange(TemplateLoc, RAngleLoc);
   }
+
+  void print(raw_ostream &Out, const ASTContext &Context,
+             bool OmitTemplateKW = false) const;
+  void print(raw_ostream &Out, const ASTContext &Context,
+             const PrintingPolicy &Policy, bool OmitTemplateKW = false) const;
 
 public:
   // FIXME: workaround for MSVC 2013; remove when no longer needed
@@ -365,33 +379,7 @@ public:
 // Kinds of Templates
 //===----------------------------------------------------------------------===//
 
-/// Stores the template parameter list and associated constraints for
-/// \c TemplateDecl objects that track associated constraints.
-class ConstrainedTemplateDeclInfo {
-  friend TemplateDecl;
-
-public:
-  ConstrainedTemplateDeclInfo() = default;
-
-  TemplateParameterList *getTemplateParameters() const {
-    return TemplateParams;
-  }
-
-  Expr *getAssociatedConstraints() const { return AssociatedConstraints; }
-
-protected:
-  void setTemplateParameters(TemplateParameterList *TParams) {
-    TemplateParams = TParams;
-  }
-
-  void setAssociatedConstraints(Expr *AC) { AssociatedConstraints = AC; }
-
-  TemplateParameterList *TemplateParams = nullptr;
-  Expr *AssociatedConstraints = nullptr;
-};
-
-
-/// The base class of all kinds of template declarations (e.g.,
+/// \brief The base class of all kinds of template declarations (e.g.,
 /// class, function, etc.).
 ///
 /// The TemplateDecl class stores the list of template parameters and a
@@ -400,54 +388,32 @@ class TemplateDecl : public NamedDecl {
   void anchor() override;
 
 protected:
+  // Construct a template decl with name, parameters, and templated element.
+  TemplateDecl(Kind DK, DeclContext *DC, SourceLocation L, DeclarationName Name,
+               TemplateParameterList *Params, NamedDecl *Decl);
+
   // Construct a template decl with the given name and parameters.
   // Used when there is no templated element (e.g., for tt-params).
-  TemplateDecl(ConstrainedTemplateDeclInfo *CTDI, Kind DK, DeclContext *DC,
-               SourceLocation L, DeclarationName Name,
-               TemplateParameterList *Params)
-      : NamedDecl(DK, DC, L, Name), TemplatedDecl(nullptr),
-        TemplateParams(CTDI) {
-    this->setTemplateParameters(Params);
-  }
-
   TemplateDecl(Kind DK, DeclContext *DC, SourceLocation L, DeclarationName Name,
                TemplateParameterList *Params)
-      : TemplateDecl(nullptr, DK, DC, L, Name, Params) {}
-
-  // Construct a template decl with name, parameters, and templated element.
-  TemplateDecl(ConstrainedTemplateDeclInfo *CTDI, Kind DK, DeclContext *DC,
-               SourceLocation L, DeclarationName Name,
-               TemplateParameterList *Params, NamedDecl *Decl)
-      : NamedDecl(DK, DC, L, Name), TemplatedDecl(Decl),
-        TemplateParams(CTDI) {
-    this->setTemplateParameters(Params);
-  }
-
-  TemplateDecl(Kind DK, DeclContext *DC, SourceLocation L, DeclarationName Name,
-               TemplateParameterList *Params, NamedDecl *Decl)
-      : TemplateDecl(nullptr, DK, DC, L, Name, Params, Decl) {}
+      : TemplateDecl(DK, DC, L, Name, Params, nullptr) {}
 
 public:
+  friend class ASTDeclReader;
+  friend class ASTDeclWriter;
+
   /// Get the list of template parameters
   TemplateParameterList *getTemplateParameters() const {
-    const auto *const CTDI =
-        TemplateParams.dyn_cast<ConstrainedTemplateDeclInfo *>();
-    return CTDI ? CTDI->getTemplateParameters()
-                : TemplateParams.get<TemplateParameterList *>();
+    return TemplateParams;
   }
 
-  /// Get the constraint-expression from the associated requires-clause (if any)
-  const Expr *getRequiresClause() const {
-    const TemplateParameterList *const TP = getTemplateParameters();
-    return TP ? TP->getRequiresClause() : nullptr;
-  }
+  /// \brief Get the total constraint-expression associated with this template,
+  /// including constraint-expressions derived from the requires-clause,
+  /// trailing requires-clause (for functions and methods) and constrained
+  /// template parameters.
+  void getAssociatedConstraints(llvm::SmallVectorImpl<const Expr *> &AC) const;
 
-  Expr *getAssociatedConstraints() const {
-    const auto *const C = cast<TemplateDecl>(getCanonicalDecl());
-    const auto *const CTDI =
-        C->TemplateParams.dyn_cast<ConstrainedTemplateDeclInfo *>();
-    return CTDI ? CTDI->getAssociatedConstraints() : nullptr;
-  }
+  bool hasAssociatedConstraints() const;
 
   /// Get the underlying, templated declaration.
   NamedDecl *getTemplatedDecl() const { return TemplatedDecl; }
@@ -466,29 +432,10 @@ public:
 
 protected:
   NamedDecl *TemplatedDecl;
-
-  /// The template parameter list and optional requires-clause
-  /// associated with this declaration; alternatively, a
-  /// \c ConstrainedTemplateDeclInfo if the associated constraints of the
-  /// template are being tracked by this particular declaration.
-  llvm::PointerUnion<TemplateParameterList *,
-                     ConstrainedTemplateDeclInfo *>
-      TemplateParams;
+  TemplateParameterList *TemplateParams;
 
   void setTemplateParameters(TemplateParameterList *TParams) {
-    if (auto *const CTDI =
-            TemplateParams.dyn_cast<ConstrainedTemplateDeclInfo *>()) {
-      CTDI->setTemplateParameters(TParams);
-    } else {
-      TemplateParams = TParams;
-    }
-  }
-
-  void setAssociatedConstraints(Expr *AC) {
-    assert(isCanonicalDecl() &&
-           "Attaching associated constraints to non-canonical Decl");
-    TemplateParams.get<ConstrainedTemplateDeclInfo *>()
-        ->setAssociatedConstraints(AC);
+    TemplateParams = TParams;
   }
 
 public:
@@ -505,29 +452,13 @@ public:
 /// Provides information about a function template specialization,
 /// which is a FunctionDecl that has been explicitly specialization or
 /// instantiated from a function template.
-class FunctionTemplateSpecializationInfo : public llvm::FoldingSetNode {
-  FunctionTemplateSpecializationInfo(FunctionDecl *FD,
-                                     FunctionTemplateDecl *Template,
-                                     TemplateSpecializationKind TSK,
-                                     const TemplateArgumentList *TemplateArgs,
-                       const ASTTemplateArgumentListInfo *TemplateArgsAsWritten,
-                                     SourceLocation POI)
-      : Function(FD), Template(Template, TSK - 1),
-        TemplateArguments(TemplateArgs),
-        TemplateArgumentsAsWritten(TemplateArgsAsWritten),
-        PointOfInstantiation(POI) {}
-
-public:
-  static FunctionTemplateSpecializationInfo *
-  Create(ASTContext &C, FunctionDecl *FD, FunctionTemplateDecl *Template,
-         TemplateSpecializationKind TSK,
-         const TemplateArgumentList *TemplateArgs,
-         const TemplateArgumentListInfo *TemplateArgsAsWritten,
-         SourceLocation POI);
-
-  /// The function template specialization that this structure
-  /// describes.
-  FunctionDecl *Function;
+class FunctionTemplateSpecializationInfo final
+    : public llvm::FoldingSetNode,
+      private llvm::TrailingObjects<FunctionTemplateSpecializationInfo,
+                                    MemberSpecializationInfo *> {
+  /// The function template specialization that this structure describes and a
+  /// flag indicating if the function is a member specialization.
+  llvm::PointerIntPair<FunctionDecl *, 1, bool> Function;
 
   /// The function template from which this function template
   /// specialization was generated.
@@ -535,16 +466,49 @@ public:
   /// The two bits contain the top 4 values of TemplateSpecializationKind.
   llvm::PointerIntPair<FunctionTemplateDecl *, 2> Template;
 
+public:
   /// The template arguments used to produce the function template
   /// specialization from the function template.
   const TemplateArgumentList *TemplateArguments;
 
   /// The template arguments as written in the sources, if provided.
+  /// FIXME: Normally null; tail-allocate this.
   const ASTTemplateArgumentListInfo *TemplateArgumentsAsWritten;
 
   /// The point at which this function template specialization was
   /// first instantiated.
   SourceLocation PointOfInstantiation;
+
+private:
+  FunctionTemplateSpecializationInfo(
+      FunctionDecl *FD, FunctionTemplateDecl *Template,
+      TemplateSpecializationKind TSK, const TemplateArgumentList *TemplateArgs,
+      const ASTTemplateArgumentListInfo *TemplateArgsAsWritten,
+      SourceLocation POI, MemberSpecializationInfo *MSInfo)
+      : Function(FD, MSInfo ? 1 : 0), Template(Template, TSK - 1),
+        TemplateArguments(TemplateArgs),
+        TemplateArgumentsAsWritten(TemplateArgsAsWritten),
+        PointOfInstantiation(POI) {
+    if (MSInfo)
+      getTrailingObjects<MemberSpecializationInfo *>()[0] = MSInfo;
+  }
+
+  size_t numTrailingObjects(OverloadToken<MemberSpecializationInfo*>) const {
+    return Function.getInt();
+  }
+
+public:
+  friend TrailingObjects;
+
+  static FunctionTemplateSpecializationInfo *
+  Create(ASTContext &C, FunctionDecl *FD, FunctionTemplateDecl *Template,
+         TemplateSpecializationKind TSK,
+         const TemplateArgumentList *TemplateArgs,
+         const TemplateArgumentListInfo *TemplateArgsAsWritten,
+         SourceLocation POI, MemberSpecializationInfo *MSInfo);
+
+  /// Retrieve the declaration of the function template specialization.
+  FunctionDecl *getFunction() const { return Function.getPointer(); }
 
   /// Retrieve the template from which this function was specialized.
   FunctionTemplateDecl *getTemplate() const { return Template.getPointer(); }
@@ -588,9 +552,44 @@ public:
     PointOfInstantiation = POI;
   }
 
+  /// Get the specialization info if this function template specialization is
+  /// also a member specialization:
+  ///
+  /// \code
+  /// template<typename> struct A {
+  ///   template<typename> void f();
+  ///   template<> void f<int>(); // ClassScopeFunctionSpecializationDecl
+  /// };
+  /// \endcode
+  ///
+  /// Here, A<int>::f<int> is a function template specialization that is
+  /// an explicit specialization of A<int>::f, but it's also a member
+  /// specialization (an implicit instantiation in this case) of A::f<int>.
+  /// Further:
+  ///
+  /// \code
+  /// template<> template<> void A<int>::f<int>() {}
+  /// \endcode
+  ///
+  /// ... declares a function template specialization that is an explicit
+  /// specialization of A<int>::f, and is also an explicit member
+  /// specialization of A::f<int>.
+  ///
+  /// Note that the TemplateSpecializationKind of the MemberSpecializationInfo
+  /// need not be the same as that returned by getTemplateSpecializationKind(),
+  /// and represents the relationship between the function and the class-scope
+  /// explicit specialization in the original templated class -- whereas our
+  /// TemplateSpecializationKind represents the relationship between the
+  /// function and the function template, and should always be
+  /// TSK_ExplicitSpecialization whenever we have MemberSpecializationInfo.
+  MemberSpecializationInfo *getMemberSpecializationInfo() const {
+    return numTrailingObjects(OverloadToken<MemberSpecializationInfo *>())
+               ? getTrailingObjects<MemberSpecializationInfo *>()[0]
+               : nullptr;
+  }
+
   void Profile(llvm::FoldingSetNodeID &ID) {
-    Profile(ID, TemplateArguments->asArray(),
-            Function->getASTContext());
+    Profile(ID, TemplateArguments->asArray(), getFunction()->getASTContext());
   }
 
   static void
@@ -751,6 +750,7 @@ class RedeclarableTemplateDecl : public TemplateDecl,
     return getMostRecentDecl();
   }
 
+  void anchor() override;
 protected:
   template <typename EntryType> struct SpecEntryTraits {
     using DeclType = EntryType;
@@ -832,17 +832,10 @@ protected:
   virtual CommonBase *newCommon(ASTContext &C) const = 0;
 
   // Construct a template decl with name, parameters, and templated element.
-  RedeclarableTemplateDecl(ConstrainedTemplateDeclInfo *CTDI, Kind DK,
-                           ASTContext &C, DeclContext *DC, SourceLocation L,
-                           DeclarationName Name, TemplateParameterList *Params,
-                           NamedDecl *Decl)
-      : TemplateDecl(CTDI, DK, DC, L, Name, Params, Decl), redeclarable_base(C)
-        {}
-
   RedeclarableTemplateDecl(Kind DK, ASTContext &C, DeclContext *DC,
                            SourceLocation L, DeclarationName Name,
                            TemplateParameterList *Params, NamedDecl *Decl)
-      : RedeclarableTemplateDecl(nullptr, DK, C, DC, L, Name, Params, Decl) {}
+      : TemplateDecl(DK, DC, L, Name, Params, Decl), redeclarable_base(C) {}
 
 public:
   friend class ASTDeclReader;
@@ -955,7 +948,7 @@ SpecEntryTraits<FunctionTemplateSpecializationInfo> {
   using DeclType = FunctionDecl;
 
   static DeclType *getDecl(FunctionTemplateSpecializationInfo *I) {
-    return I->Function;
+    return I->getFunction();
   }
 
   static ArrayRef<TemplateArgument>
@@ -1564,8 +1557,8 @@ public:
 
   /// Retrieve the default argument, if any.
   const TemplateArgumentLoc &getDefaultArgument() const {
-    static const TemplateArgumentLoc None;
-    return DefaultArgument.isSet() ? *DefaultArgument.get() : None;
+    static const TemplateArgumentLoc NoneLoc;
+    return DefaultArgument.isSet() ? *DefaultArgument.get() : NoneLoc;
   }
 
   /// Retrieve the location of the default argument, if any.
@@ -1744,6 +1737,20 @@ public:
 
   bool isExplicitSpecialization() const {
     return getSpecializationKind() == TSK_ExplicitSpecialization;
+  }
+
+  /// Is this an explicit specialization at class scope (within the class that
+  /// owns the primary template)? For example:
+  ///
+  /// \code
+  /// template<typename T> struct Outer {
+  ///   template<typename U> struct Inner;
+  ///   template<> struct Inner; // class-scope explicit specialization
+  /// };
+  /// \endcode
+  bool isClassScopeExplicitSpecialization() const {
+    return isExplicitSpecialization() &&
+           isa<CXXRecordDecl>(getLexicalDeclContext());
   }
 
   /// True if this declaration is an explicit specialization,
@@ -1955,6 +1962,20 @@ public:
     return TemplateParams;
   }
 
+  /// \brief All associated constraints of this partial specialization,
+  /// including the requires clause and any constraints derived from
+  /// constrained-parameters.
+  ///
+  /// The constraints in the resulting list are to be treated as if in a
+  /// conjunction ("and").
+  void getAssociatedConstraints(llvm::SmallVectorImpl<const Expr *> &AC) const {
+    TemplateParams->getAssociatedConstraints(AC);
+  }
+
+  bool hasAssociatedConstraints() const {
+    return TemplateParams->hasAssociatedConstraints();
+  }
+
   /// Get the template arguments as written.
   const ASTTemplateArgumentListInfo *getTemplateArgsAsWritten() const {
     return ArgsAsWritten;
@@ -2074,16 +2095,10 @@ protected:
   llvm::FoldingSetVector<ClassTemplatePartialSpecializationDecl> &
   getPartialSpecializations();
 
-  ClassTemplateDecl(ConstrainedTemplateDeclInfo *CTDI, ASTContext &C,
-                    DeclContext *DC, SourceLocation L, DeclarationName Name,
-                    TemplateParameterList *Params, NamedDecl *Decl)
-      : RedeclarableTemplateDecl(CTDI, ClassTemplate, C, DC, L, Name, Params,
-                                 Decl) {}
-
   ClassTemplateDecl(ASTContext &C, DeclContext *DC, SourceLocation L,
                     DeclarationName Name, TemplateParameterList *Params,
                     NamedDecl *Decl)
-      : ClassTemplateDecl(nullptr, C, DC, L, Name, Params, Decl) {}
+      : RedeclarableTemplateDecl(ClassTemplate, C, DC, L, Name, Params, Decl) {}
 
   CommonBase *newCommon(ASTContext &C) const override;
 
@@ -2109,14 +2124,12 @@ public:
     return getTemplatedDecl()->isThisDeclarationADefinition();
   }
 
-  // FIXME: remove default argument for AssociatedConstraints
-  /// Create a class template node.
+  /// \brief Create a class template node.
   static ClassTemplateDecl *Create(ASTContext &C, DeclContext *DC,
                                    SourceLocation L,
                                    DeclarationName Name,
                                    TemplateParameterList *Params,
-                                   NamedDecl *Decl,
-                                   Expr *AssociatedConstraints = nullptr);
+                                   NamedDecl *Decl);
 
   /// Create an empty class template node.
   static ClassTemplateDecl *CreateDeserialized(ASTContext &C, unsigned ID);
@@ -2394,8 +2407,6 @@ public:
 
 /// Declaration of a function specialization at template class scope.
 ///
-/// This is a non-standard extension needed to support MSVC.
-///
 /// For example:
 /// \code
 /// template <class T>
@@ -2408,17 +2419,18 @@ public:
 /// "template<> foo(int a)" will be saved in Specialization as a normal
 /// CXXMethodDecl. Then during an instantiation of class A, it will be
 /// transformed into an actual function specialization.
+///
+/// FIXME: This is redundant; we could store the same information directly on
+/// the CXXMethodDecl as a DependentFunctionTemplateSpecializationInfo.
 class ClassScopeFunctionSpecializationDecl : public Decl {
   CXXMethodDecl *Specialization;
-  bool HasExplicitTemplateArgs;
-  TemplateArgumentListInfo TemplateArgs;
+  const ASTTemplateArgumentListInfo *TemplateArgs;
 
-  ClassScopeFunctionSpecializationDecl(DeclContext *DC, SourceLocation Loc,
-                                       CXXMethodDecl *FD, bool Args,
-                                       TemplateArgumentListInfo TemplArgs)
+  ClassScopeFunctionSpecializationDecl(
+      DeclContext *DC, SourceLocation Loc, CXXMethodDecl *FD,
+      const ASTTemplateArgumentListInfo *TemplArgs)
       : Decl(Decl::ClassScopeFunctionSpecialization, DC, Loc),
-        Specialization(FD), HasExplicitTemplateArgs(Args),
-        TemplateArgs(std::move(TemplArgs)) {}
+        Specialization(FD), TemplateArgs(TemplArgs) {}
 
   ClassScopeFunctionSpecializationDecl(EmptyShell Empty)
       : Decl(Decl::ClassScopeFunctionSpecialization, Empty) {}
@@ -2430,17 +2442,20 @@ public:
   friend class ASTDeclWriter;
 
   CXXMethodDecl *getSpecialization() const { return Specialization; }
-  bool hasExplicitTemplateArgs() const { return HasExplicitTemplateArgs; }
-  const TemplateArgumentListInfo& templateArgs() const { return TemplateArgs; }
+  bool hasExplicitTemplateArgs() const { return TemplateArgs; }
+  const ASTTemplateArgumentListInfo *getTemplateArgsAsWritten() const {
+    return TemplateArgs;
+  }
 
-  static ClassScopeFunctionSpecializationDecl *Create(ASTContext &C,
-                                                      DeclContext *DC,
-                                                      SourceLocation Loc,
-                                                      CXXMethodDecl *FD,
-                                                   bool HasExplicitTemplateArgs,
-                                        TemplateArgumentListInfo TemplateArgs) {
+  static ClassScopeFunctionSpecializationDecl *
+  Create(ASTContext &C, DeclContext *DC, SourceLocation Loc, CXXMethodDecl *FD,
+         bool HasExplicitTemplateArgs,
+         const TemplateArgumentListInfo &TemplateArgs) {
     return new (C, DC) ClassScopeFunctionSpecializationDecl(
-        DC, Loc, FD, HasExplicitTemplateArgs, std::move(TemplateArgs));
+        DC, Loc, FD,
+        HasExplicitTemplateArgs
+            ? ASTTemplateArgumentListInfo::Create(C, TemplateArgs)
+            : nullptr);
   }
 
   static ClassScopeFunctionSpecializationDecl *
@@ -2453,10 +2468,6 @@ public:
     return K == Decl::ClassScopeFunctionSpecialization;
   }
 };
-
-/// Implementation of inline functions that require the template declarations
-inline AnyFunctionDecl::AnyFunctionDecl(FunctionTemplateDecl *FTD)
-    : Function(FTD) {}
 
 /// Represents a variable template specialization, which refers to
 /// a variable template with a given set of template arguments.
@@ -2579,6 +2590,11 @@ public:
 
   bool isExplicitSpecialization() const {
     return getSpecializationKind() == TSK_ExplicitSpecialization;
+  }
+
+  bool isClassScopeExplicitSpecialization() const {
+    return isExplicitSpecialization() &&
+           isa<CXXRecordDecl>(getLexicalDeclContext());
   }
 
   /// True if this declaration is an explicit specialization,
@@ -2788,7 +2804,21 @@ public:
     return ArgsAsWritten;
   }
 
-  /// Retrieve the member variable template partial specialization from
+  /// \brief All associated constraints of this partial specialization,
+  /// including the requires clause and any constraints derived from
+  /// constrained-parameters.
+  ///
+  /// The constraints in the resulting list are to be treated as if in a
+  /// conjunction ("and").
+  void getAssociatedConstraints(llvm::SmallVectorImpl<const Expr *> &AC) const {
+    TemplateParams->getAssociatedConstraints(AC);
+  }
+
+  bool hasAssociatedConstraints() const {
+    return TemplateParams->hasAssociatedConstraints();
+  }
+
+  /// \brief Retrieve the member variable template partial specialization from
   /// which this particular variable template partial specialization was
   /// instantiated.
   ///
@@ -3010,6 +3040,40 @@ public:
   // Implement isa/cast/dyncast support
   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
   static bool classofKind(Kind K) { return K == VarTemplate; }
+};
+
+// \brief Declaration of a C++2a concept.
+class ConceptDecl : public TemplateDecl, public Mergeable<ConceptDecl> {
+protected:
+  Expr *ConstraintExpr;
+
+  ConceptDecl(DeclContext *DC, SourceLocation L, DeclarationName Name,
+              TemplateParameterList *Params, Expr *ConstraintExpr)
+      : TemplateDecl(Concept, DC, L, Name, Params),
+        ConstraintExpr(ConstraintExpr) {};
+public:
+  static ConceptDecl *Create(ASTContext &C, DeclContext *DC,
+                             SourceLocation L, DeclarationName Name,
+                             TemplateParameterList *Params,
+                             Expr *ConstraintExpr);
+  static ConceptDecl *CreateDeserialized(ASTContext &C, unsigned ID);
+
+  Expr *getConstraintExpr() const {
+    return ConstraintExpr;
+  }
+
+  SourceRange getSourceRange() const override LLVM_READONLY {
+    return SourceRange(getTemplateParameters()->getTemplateLoc(),
+                       ConstraintExpr->getEndLoc());
+  }
+
+  // Implement isa/cast/dyncast/etc.
+  static bool classof(const Decl *D) { return classofKind(D->getKind()); }
+  static bool classofKind(Kind K) { return K == Concept; }
+
+  friend class ASTReader;
+  friend class ASTDeclReader;
+  friend class ASTDeclWriter;
 };
 
 inline NamedDecl *getAsNamedDecl(TemplateParameter P) {

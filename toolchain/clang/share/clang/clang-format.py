@@ -2,11 +2,19 @@
 # - Change 'binary' if clang-format is not on the path (see below).
 # - Add to your .vimrc:
 #
-#   map <C-I> :pyf <path-to-this-file>/clang-format.py<cr>
-#   imap <C-I> <c-o>:pyf <path-to-this-file>/clang-format.py<cr>
+#   if has('python')
+#     map <C-I> :pyf <path-to-this-file>/clang-format.py<cr>
+#     imap <C-I> <c-o>:pyf <path-to-this-file>/clang-format.py<cr>
+#   elseif has('python3')
+#     map <C-I> :py3f <path-to-this-file>/clang-format.py<cr>
+#     imap <C-I> <c-o>:py3f <path-to-this-file>/clang-format.py<cr>
+#   endif
 #
-# The first line enables clang-format for NORMAL and VISUAL mode, the second
-# line adds support for INSERT mode. Change "C-I" to another binding if you
+# The if-elseif-endif conditional should pick either the python3 or python2 
+# integration depending on your vim setup.
+# 
+# The first mapping enables clang-format for NORMAL and VISUAL mode, the second
+# mapping adds support for INSERT mode. Change "C-I" to another binding if you
 # need clang-format on a different key (C-I stands for Ctrl+i).
 #
 # With this integration you can press the bound key and clang-format will
@@ -20,7 +28,11 @@
 # like:
 # :function FormatFile()
 # :  let l:lines="all"
-# :  pyf <path-to-this-file>/clang-format.py
+# :  if has('python')
+# :    pyf <path-to-this-file>/clang-format.py
+# :  elseif has('python3')
+# :    py3f <path-to-this-file>/clang-format.py
+# :  endif
 # :endfunction
 #
 # It operates on the current, potentially unsaved buffer and does not create
@@ -44,7 +56,7 @@ if vim.eval('exists("g:clang_format_path")') == "1":
 # 'clang-format --help' for a list of supported styles. The default looks for
 # a '.clang-format' or '_clang-format' file to indicate the style that should be
 # used.
-style = 'file'
+style = None
 fallback_style = None
 if vim.eval('exists("g:clang_format_fallback_style")') == "1":
   fallback_style = vim.eval('g:clang_format_fallback_style')
@@ -91,9 +103,11 @@ def main():
     startupinfo.wShowWindow = subprocess.SW_HIDE
 
   # Call formatter.
-  command = [binary, '-style', style, '-cursor', str(cursor)]
+  command = [binary, '-cursor', str(cursor)]
   if lines != ['-lines', 'all']:
     command += lines
+  if style:
+    command.extend(['-style', style])
   if fallback_style:
     command.extend(['-fallback-style', fallback_style])
   if vim.current.buffer.name:

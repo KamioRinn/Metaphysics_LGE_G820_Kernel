@@ -1,9 +1,8 @@
 //===- ASTReader.h - AST File Reader ----------------------------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -57,7 +56,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/iterator.h"
 #include "llvm/ADT/iterator_range.h"
-#include "llvm/Bitcode/BitstreamReader.h"
+#include "llvm/Bitstream/BitstreamReader.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/MemoryBuffer.h"
@@ -98,7 +97,7 @@ class HeaderSearchOptions;
 class LangOptions;
 class LazyASTUnresolvedSet;
 class MacroInfo;
-class MemoryBufferCache;
+class InMemoryModuleCache;
 class NamedDecl;
 class NamespaceDecl;
 class ObjCCategoryDecl;
@@ -440,9 +439,6 @@ private:
 
   /// The module manager which manages modules and their dependencies
   ModuleManager ModuleMgr;
-
-  /// The cache that manages memory buffers for PCM files.
-  MemoryBufferCache &PCMCache;
 
   /// A dummy identifier resolver used to merge TU-scope declarations in
   /// C, for the cases where we don't have a Sema object to provide a real
@@ -934,6 +930,9 @@ private:
   /// Whether validate system input files.
   bool ValidateSystemInputs;
 
+  /// Whether validate headers and module maps using hash based on contents.
+  bool ValidateASTInputFilesContent;
+
   /// Whether we are allowed to use the global module index.
   bool UseGlobalIndex;
 
@@ -1207,6 +1206,7 @@ private:
 
   struct InputFileInfo {
     std::string Filename;
+    uint64_t ContentHash;
     off_t StoredSize;
     time_t StoredTime;
     bool Overridden;
@@ -1440,7 +1440,10 @@ private:
   /// do with non-routine failures (e.g., corrupted AST file).
   void Error(StringRef Msg) const;
   void Error(unsigned DiagID, StringRef Arg1 = StringRef(),
-             StringRef Arg2 = StringRef()) const;
+             StringRef Arg2 = StringRef(), StringRef Arg3 = StringRef()) const;
+  void Error(unsigned DiagID, StringRef Arg1, StringRef Arg2,
+             unsigned Select) const;
+  void Error(llvm::Error &&Err) const;
 
 public:
   /// Load the AST file and validate its contents against the given
@@ -1482,13 +1485,15 @@ public:
   ///
   /// \param ReadTimer If non-null, a timer used to track the time spent
   /// deserializing.
-  ASTReader(Preprocessor &PP, ASTContext *Context,
-            const PCHContainerReader &PCHContainerRdr,
+  ASTReader(Preprocessor &PP, InMemoryModuleCache &ModuleCache,
+            ASTContext *Context, const PCHContainerReader &PCHContainerRdr,
             ArrayRef<std::shared_ptr<ModuleFileExtension>> Extensions,
             StringRef isysroot = "", bool DisableValidation = false,
             bool AllowASTWithCompilerErrors = false,
             bool AllowConfigurationMismatch = false,
-            bool ValidateSystemInputs = false, bool UseGlobalIndex = true,
+            bool ValidateSystemInputs = false,
+            bool ValidateASTInputFilesContent = false,
+            bool UseGlobalIndex = true,
             std::unique_ptr<llvm::Timer> ReadTimer = {});
   ASTReader(const ASTReader &) = delete;
   ASTReader &operator=(const ASTReader &) = delete;
@@ -1581,7 +1586,7 @@ public:
   /// Takes ownership of \p L.
   void addListener(std::unique_ptr<ASTReaderListener> L) {
     if (Listener)
-      L = llvm::make_unique<ChainedASTReaderListener>(std::move(L),
+      L = std::make_unique<ChainedASTReaderListener>(std::move(L),
                                                       std::move(Listener));
     Listener = std::move(L);
   }
@@ -1597,7 +1602,7 @@ public:
       auto Old = Reader.takeListener();
       if (Old) {
         Chained = true;
-        L = llvm::make_unique<ChainedASTReaderListener>(std::move(L),
+        L = std::make_unique<ChainedASTReaderListener>(std::move(L),
                                                         std::move(Old));
       }
       Reader.setListener(std::move(L));
@@ -2224,6 +2229,9 @@ public:
   llvm::APFloat ReadAPFloat(const RecordData &Record,
                             const llvm::fltSemantics &Sem, unsigned &Idx);
 
+  /// Read an APValue
+  APValue ReadAPValue(const RecordData &Record, unsigned &Idx);
+
   // Read a string
   static std::string ReadString(const RecordData &Record, unsigned &Idx);
 
@@ -2234,6 +2242,10 @@ public:
 
   // Read a path
   std::string ReadPath(ModuleFile &F, const RecordData &Record, unsigned &Idx);
+
+  // Read a path
+  std::string ReadPath(StringRef BaseDirectory, const RecordData &Record,
+                       unsigned &Idx);
 
   // Skip a path
   static void SkipPath(const RecordData &Record, unsigned &Idx) {
@@ -2376,7 +2388,8 @@ public:
 
   /// Reads a record with id AbbrevID from Cursor, resetting the
   /// internal state.
-  unsigned readRecord(llvm::BitstreamCursor &Cursor, unsigned AbbrevID);
+  Expected<unsigned> readRecord(llvm::BitstreamCursor &Cursor,
+                                unsigned AbbrevID);
 
   /// Is this a module file for a module (rather than a PCH or similar).
   bool isModule() const { return F->isModule(); }
@@ -2428,6 +2441,14 @@ public:
                                      serialization::DeclID ID) {
     return Reader->ReadVisibleDeclContextStorage(*F, F->DeclsCursor, Offset,
                                                  ID);
+  }
+
+  ExplicitSpecifier readExplicitSpec() {
+    uint64_t Kind = readInt();
+    bool HasExpr = Kind & 0x1;
+    Kind = Kind >> 1;
+    return ExplicitSpecifier(HasExpr ? readExpr() : nullptr,
+                             static_cast<ExplicitSpecKind>(Kind));
   }
 
   void readExceptionSpec(SmallVectorImpl<QualType> &ExceptionStorage,
@@ -2604,6 +2625,8 @@ public:
     return Reader->ReadSourceRange(*F, Record, Idx);
   }
 
+  APValue readAPValue() { return Reader->ReadAPValue(Record, Idx); }
+
   /// Read an integral value, advancing Idx.
   llvm::APInt readAPInt() {
     return Reader->ReadAPInt(Record, Idx);
@@ -2666,7 +2689,10 @@ struct SavedStreamPosition {
       : Cursor(Cursor), Offset(Cursor.GetCurrentBitNo()) {}
 
   ~SavedStreamPosition() {
-    Cursor.JumpToBit(Offset);
+    if (llvm::Error Err = Cursor.JumpToBit(Offset))
+      llvm::report_fatal_error(
+          "Cursor should always be able to go back, failed: " +
+          toString(std::move(Err)));
   }
 
 private:

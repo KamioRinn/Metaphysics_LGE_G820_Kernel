@@ -6,9 +6,19 @@ except ImportError:
     from SimpleHTTPServer import SimpleHTTPRequestHandler
 import os
 import sys
-import urllib, urlparse
+try:
+    from urlparse import urlparse
+    from urllib import unquote
+except ImportError:
+    from urllib.parse import urlparse, unquote
+
 import posixpath
-import StringIO
+
+if sys.version_info.major >= 3:
+    from io import StringIO, BytesIO
+else:
+    from io import BytesIO, BytesIO as StringIO
+
 import re
 import shutil
 import threading
@@ -112,7 +122,7 @@ class ReporterThread(threading.Thread):
         except Reporter.ReportFailure as e:
             self.status = e.value
         except Exception as e:
-            s = StringIO.StringIO()
+            s = StringIO()
             import traceback
             print('<b>Unhandled Exception</b><br><pre>', file=s)
             traceback.print_exc(file=s)
@@ -198,8 +208,8 @@ def parse_query(qs, fields=None):
             value = ''
         else:
             name, value = chunk.split('=', 1)
-        name = urllib.unquote(name.replace('+', ' '))
-        value = urllib.unquote(value.replace('+', ' '))
+        name = unquote(name.replace('+', ' '))
+        value = unquote(value.replace('+', ' '))
         item = fields.get(name)
         if item is None:
             fields[name] = [value]
@@ -270,7 +280,7 @@ class ScanViewRequestHandler(SimpleHTTPRequestHandler):
 
     def handle_exception(self, exc):
         import traceback
-        s = StringIO.StringIO()
+        s = StringIO()
         print("INTERNAL ERROR\n", file=s)
         traceback.print_exc(file=s)
         f = self.send_string(s.getvalue(), 'text/plain')
@@ -654,9 +664,9 @@ File Bug</h3>
             fields = {}
         self.fields = fields
 
-        o = urlparse.urlparse(self.path)
+        o = urlparse(self.path)
         self.fields = parse_query(o.query, fields)
-        path = posixpath.normpath(urllib.unquote(o.path))
+        path = posixpath.normpath(unquote(o.path))
 
         # Split the components and strip the root prefix.
         components = path.split('/')[1:]
@@ -734,15 +744,16 @@ File Bug</h3>
         return f
 
     def send_string(self, s, ctype='text/html', headers=True, mtime=None):
+        encoded_s = s.encode()
         if headers:
             self.send_response(200)
             self.send_header("Content-type", ctype)
-            self.send_header("Content-Length", str(len(s)))
+            self.send_header("Content-Length", str(len(encoded_s)))
             if mtime is None:
                 mtime = self.dynamic_mtime
             self.send_header("Last-Modified", self.date_time_string(mtime))
             self.end_headers()
-        return StringIO.StringIO(s)
+        return BytesIO(encoded_s)
 
     def send_patched_file(self, path, ctype):
         # Allow a very limited set of variables. This is pretty gross.
@@ -753,11 +764,11 @@ File Bug</h3>
             variables['report'] = m.group(2)
 
         try:
-            f = open(path,'r')
+            f = open(path,'rb')
         except IOError:
             return self.send_404()
         fs = os.fstat(f.fileno())
-        data = f.read()
+        data = f.read().decode('utf-8')
         for a,b in kReportReplacements:
             data = a.sub(b % variables, data)
         return self.send_string(data, ctype, mtime=fs.st_mtime)

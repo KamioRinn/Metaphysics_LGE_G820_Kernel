@@ -39,6 +39,7 @@
 .Case("interrupt", true)
 .Case("argument_with_type_tag", true)
 .Case("pointer_with_type_tag", true)
+.Case("__clang_arm_mve_alias", true)
 .Case("availability", true)
 .Case("blocks", true)
 .Case("callable_when", true)
@@ -77,10 +78,17 @@
 #if defined(CLANG_ATTR_VARIADIC_IDENTIFIER_ARG_LIST)
 .Case("cpu_dispatch", true)
 .Case("cpu_specific", true)
+.Case("callback", true)
 #endif // CLANG_ATTR_VARIADIC_IDENTIFIER_ARG_LIST
+
+#if defined(CLANG_ATTR_THIS_ISA_IDENTIFIER_ARG_LIST)
+.Case("callback", true)
+#endif // CLANG_ATTR_THIS_ISA_IDENTIFIER_ARG_LIST
 
 #if defined(CLANG_ATTR_TYPE_ARG_LIST)
 .Case("iboutletcollection", true)
+.Case("Owner", true)
+.Case("Pointer", true)
 .Case("vec_type_hint", true)
 #endif // CLANG_ATTR_TYPE_ARG_LIST
 

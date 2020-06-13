@@ -1,9 +1,8 @@
 //===-- CommandFlags.h - Command Line Flags Interface -----------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -103,21 +102,27 @@ static cl::opt<llvm::ExceptionHandling> ExceptionModel(
         clEnumValN(ExceptionHandling::Wasm, "wasm",
                    "WebAssembly exception handling")));
 
-static cl::opt<TargetMachine::CodeGenFileType> FileType(
-    "filetype", cl::init(TargetMachine::CGFT_AssemblyFile),
+static cl::opt<CodeGenFileType> FileType(
+    "filetype", cl::init(CGFT_AssemblyFile),
     cl::desc(
         "Choose a file type (not all types are supported by all targets):"),
-    cl::values(clEnumValN(TargetMachine::CGFT_AssemblyFile, "asm",
+    cl::values(clEnumValN(CGFT_AssemblyFile, "asm",
                           "Emit an assembly ('.s') file"),
-               clEnumValN(TargetMachine::CGFT_ObjectFile, "obj",
+               clEnumValN(CGFT_ObjectFile, "obj",
                           "Emit a native object ('.o') file"),
-               clEnumValN(TargetMachine::CGFT_Null, "null",
+               clEnumValN(CGFT_Null, "null",
                           "Emit nothing, for performance testing")));
 
-static cl::opt<bool>
-    DisableFPElim("disable-fp-elim",
-                  cl::desc("Disable frame pointer elimination optimization"),
-                  cl::init(false));
+static cl::opt<llvm::FramePointer::FP> FramePointerUsage(
+    "frame-pointer", cl::desc("Specify frame pointer elimination optimization"),
+    cl::init(llvm::FramePointer::None),
+    cl::values(
+        clEnumValN(llvm::FramePointer::All, "all",
+                   "Disable frame pointer elimination"),
+        clEnumValN(llvm::FramePointer::NonLeaf, "non-leaf",
+                   "Disable frame pointer elimination for non-leaf frame"),
+        clEnumValN(llvm::FramePointer::None, "none",
+                   "Enable frame pointer elimination")));
 
 static cl::opt<bool> EnableUnsafeFPMath(
     "enable-unsafe-fp-math",
@@ -146,7 +151,7 @@ static cl::opt<bool>
                                     "attribute not to use exceptions"),
                            cl::init(false));
 
-static cl::opt<llvm::FPDenormal::DenormalMode> DenormalMode(
+static cl::opt<llvm::FPDenormal::DenormalMode> DenormalFPMath(
     "denormal-fp-math",
     cl::desc("Select which denormal numbers the code is permitted to require"),
     cl::init(FPDenormal::IEEE),
@@ -266,6 +271,16 @@ static cl::opt<bool>
     EnableAddrsig("addrsig", cl::desc("Emit an address-significance table"),
                   cl::init(false));
 
+static cl::opt<bool>
+    EnableDebugEntryValues("debug-entry-values",
+                           cl::desc("Emit debug info about parameter's entry values"),
+                           cl::init(false));
+
+static cl::opt<bool>
+    ForceDwarfFrameSection("force-dwarf-frame-section",
+                           cl::desc("Always emit a debug frame section."),
+                           cl::init(false));
+
 // Common utility function tightly tied to the options listed here. Initializes
 // a TargetOptions object with CodeGen flags and returns it.
 static TargetOptions InitTargetOptionsFromCodeGenFlags() {
@@ -276,7 +291,7 @@ static TargetOptions InitTargetOptionsFromCodeGenFlags() {
   Options.NoNaNsFPMath = EnableNoNaNsFPMath;
   Options.NoSignedZerosFPMath = EnableNoSignedZerosFPMath;
   Options.NoTrappingFPMath = EnableNoTrappingFPMath;
-  Options.FPDenormalMode = DenormalMode;
+  Options.FPDenormalMode = DenormalFPMath;
   Options.HonorSignDependentRoundingFPMathOption =
       EnableHonorSignDependentRoundingFPMath;
   if (FloatABIForCalls != FloatABI::Default)
@@ -295,6 +310,8 @@ static TargetOptions InitTargetOptionsFromCodeGenFlags() {
   Options.ExceptionModel = ExceptionModel;
   Options.EmitStackSizeSection = EnableStackSizeSection;
   Options.EmitAddrsig = EnableAddrsig;
+  Options.EnableDebugEntryValues = EnableDebugEntryValues;
+  Options.ForceDwarfFrameSection = ForceDwarfFrameSection;
 
   Options.MCOptions = InitMCTargetOptionsFromFlags();
 
@@ -368,9 +385,14 @@ setFunctionAttributes(StringRef CPU, StringRef Features, Module &M) {
       NewAttrs.addAttribute("target-cpu", CPU);
     if (!Features.empty())
       NewAttrs.addAttribute("target-features", Features);
-    if (DisableFPElim.getNumOccurrences() > 0)
-      NewAttrs.addAttribute("no-frame-pointer-elim",
-                            DisableFPElim ? "true" : "false");
+    if (FramePointerUsage.getNumOccurrences() > 0) {
+      if (FramePointerUsage == llvm::FramePointer::All)
+        NewAttrs.addAttribute("frame-pointer", "all");
+      else if (FramePointerUsage == llvm::FramePointer::NonLeaf)
+        NewAttrs.addAttribute("frame-pointer", "non-leaf");
+      else if (FramePointerUsage == llvm::FramePointer::None)
+        NewAttrs.addAttribute("frame-pointer", "none");
+    }
     if (DisableTailCalls.getNumOccurrences() > 0)
       NewAttrs.addAttribute("disable-tail-calls",
                             toStringRef(DisableTailCalls));

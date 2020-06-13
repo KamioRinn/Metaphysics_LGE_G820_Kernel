@@ -96,38 +96,39 @@ const CommandInfo Commands[] = {
   { "result", "", 85, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { "return", "", 86, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { "returns", "", 87, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "rtfonly", "endrtfonly", 88, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-  { "endrtfonly", "", 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-  { "sa", "", 90, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "section", "", 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-  { "security", "", 92, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
-  { "see", "", 93, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "seealso", "", 94, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "short", "", 95, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "since", "", 96, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "struct", "", 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 },
-  { "subpage", "", 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-  { "subsection", "", 99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-  { "subsubsection", "", 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-  { "superclass", "", 101, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
-  { "template", "", 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-  { "templatefield", "", 103, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "textblock", "/textblock", 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-  { "/textblock", "", 105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-  { "throw", "", 106, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "throws", "", 107, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "todo", "", 108, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "tparam", "", 109, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "typedef", "", 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-  { "union", "", 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 },
-  { "var", "", 112, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-  { "verbatim", "endverbatim", 113, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-  { "endverbatim", "", 114, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-  { "version", "", 115, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "warning", "", 116, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { "weakgroup", "", 117, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-  { "xmlonly", "endxmlonly", 118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-  { "endxmlonly", "", 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 }
+  { "retval", "", 88, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "rtfonly", "endrtfonly", 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+  { "endrtfonly", "", 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+  { "sa", "", 91, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "section", "", 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+  { "security", "", 93, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
+  { "see", "", 94, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "seealso", "", 95, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "short", "", 96, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "since", "", 97, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "struct", "", 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 },
+  { "subpage", "", 99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+  { "subsection", "", 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+  { "subsubsection", "", 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+  { "superclass", "", 102, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
+  { "template", "", 103, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+  { "templatefield", "", 104, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "textblock", "/textblock", 105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+  { "/textblock", "", 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+  { "throw", "", 107, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "throws", "", 108, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "todo", "", 109, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "tparam", "", 110, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "typedef", "", 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+  { "union", "", 112, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 },
+  { "var", "", 113, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+  { "verbatim", "endverbatim", 114, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+  { "endverbatim", "", 115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+  { "version", "", 116, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "warning", "", 117, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { "weakgroup", "", 118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+  { "xmlonly", "endxmlonly", 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+  { "endxmlonly", "", 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 }
 };
 } // unnamed namespace
 
@@ -181,7 +182,7 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case 's':	 // 1 string to match.
       if (Name[1] != 'a')
         break;
-      return &Commands[90];	 // "sa"
+      return &Commands[91];	 // "sa"
     }
     break;
   case 3:	 // 10 strings to match.
@@ -232,11 +233,11 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case 's':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ee", 2) != 0)
         break;
-      return &Commands[93];	 // "see"
+      return &Commands[94];	 // "see"
     case 'v':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ar", 2) != 0)
         break;
-      return &Commands[112];	 // "var"
+      return &Commands[113];	 // "var"
     }
     break;
   case 4:	 // 8 strings to match.
@@ -278,7 +279,7 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case 't':	 // 1 string to match.
       if (memcmp(Name.data()+1, "odo", 3) != 0)
         break;
-      return &Commands[108];	 // "todo"
+      return &Commands[109];	 // "todo"
     }
     break;
   case 5:	 // 10 strings to match.
@@ -319,24 +320,24 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
       case 'h':	 // 1 string to match.
         if (memcmp(Name.data()+2, "ort", 3) != 0)
           break;
-        return &Commands[95];	 // "short"
+        return &Commands[96];	 // "short"
       case 'i':	 // 1 string to match.
         if (memcmp(Name.data()+2, "nce", 3) != 0)
           break;
-        return &Commands[96];	 // "since"
+        return &Commands[97];	 // "since"
       }
       break;
     case 't':	 // 1 string to match.
       if (memcmp(Name.data()+1, "hrow", 4) != 0)
         break;
-      return &Commands[106];	 // "throw"
+      return &Commands[107];	 // "throw"
     case 'u':	 // 1 string to match.
       if (memcmp(Name.data()+1, "nion", 4) != 0)
         break;
-      return &Commands[111];	 // "union"
+      return &Commands[112];	 // "union"
     }
     break;
-  case 6:	 // 11 strings to match.
+  case 6:	 // 12 strings to match.
     switch (Name[0]) {
     default: break;
     case 'a':	 // 1 string to match.
@@ -366,7 +367,7 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
       if (memcmp(Name.data()+1, "ethod", 5) != 0)
         break;
       return &Commands[60];	 // "method"
-    case 'r':	 // 3 strings to match.
+    case 'r':	 // 4 strings to match.
       if (Name[1] != 'e')
         break;
       switch (Name[2]) {
@@ -379,27 +380,36 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
         if (memcmp(Name.data()+3, "ult", 3) != 0)
           break;
         return &Commands[85];	 // "result"
-      case 't':	 // 1 string to match.
-        if (memcmp(Name.data()+3, "urn", 3) != 0)
-          break;
-        return &Commands[86];	 // "return"
+      case 't':	 // 2 strings to match.
+        switch (Name[3]) {
+        default: break;
+        case 'u':	 // 1 string to match.
+          if (memcmp(Name.data()+4, "rn", 2) != 0)
+            break;
+          return &Commands[86];	 // "return"
+        case 'v':	 // 1 string to match.
+          if (memcmp(Name.data()+4, "al", 2) != 0)
+            break;
+          return &Commands[88];	 // "retval"
+        }
+        break;
       }
       break;
     case 's':	 // 1 string to match.
       if (memcmp(Name.data()+1, "truct", 5) != 0)
         break;
-      return &Commands[97];	 // "struct"
+      return &Commands[98];	 // "struct"
     case 't':	 // 2 strings to match.
       switch (Name[1]) {
       default: break;
       case 'h':	 // 1 string to match.
         if (memcmp(Name.data()+2, "rows", 4) != 0)
           break;
-        return &Commands[107];	 // "throws"
+        return &Commands[108];	 // "throws"
       case 'p':	 // 1 string to match.
         if (memcmp(Name.data()+2, "aram", 4) != 0)
           break;
-        return &Commands[109];	 // "tparam"
+        return &Commands[110];	 // "tparam"
       }
       break;
     }
@@ -461,7 +471,7 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
       case 't':	 // 1 string to match.
         if (memcmp(Name.data()+2, "fonly", 5) != 0)
           break;
-        return &Commands[88];	 // "rtfonly"
+        return &Commands[89];	 // "rtfonly"
       }
       break;
     case 's':	 // 3 strings to match.
@@ -473,35 +483,35 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
         case 'c':	 // 1 string to match.
           if (memcmp(Name.data()+3, "tion", 4) != 0)
             break;
-          return &Commands[91];	 // "section"
+          return &Commands[92];	 // "section"
         case 'e':	 // 1 string to match.
           if (memcmp(Name.data()+3, "also", 4) != 0)
             break;
-          return &Commands[94];	 // "seealso"
+          return &Commands[95];	 // "seealso"
         }
         break;
       case 'u':	 // 1 string to match.
         if (memcmp(Name.data()+2, "bpage", 5) != 0)
           break;
-        return &Commands[98];	 // "subpage"
+        return &Commands[99];	 // "subpage"
       }
       break;
     case 't':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ypedef", 6) != 0)
         break;
-      return &Commands[110];	 // "typedef"
+      return &Commands[111];	 // "typedef"
     case 'v':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ersion", 6) != 0)
         break;
-      return &Commands[115];	 // "version"
+      return &Commands[116];	 // "version"
     case 'w':	 // 1 string to match.
       if (memcmp(Name.data()+1, "arning", 6) != 0)
         break;
-      return &Commands[116];	 // "warning"
+      return &Commands[117];	 // "warning"
     case 'x':	 // 1 string to match.
       if (memcmp(Name.data()+1, "mlonly", 6) != 0)
         break;
-      return &Commands[118];	 // "xmlonly"
+      return &Commands[119];	 // "xmlonly"
     }
     break;
   case 8:	 // 14 strings to match.
@@ -571,15 +581,15 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case 's':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ecurity", 7) != 0)
         break;
-      return &Commands[92];	 // "security"
+      return &Commands[93];	 // "security"
     case 't':	 // 1 string to match.
       if (memcmp(Name.data()+1, "emplate", 7) != 0)
         break;
-      return &Commands[102];	 // "template"
+      return &Commands[103];	 // "template"
     case 'v':	 // 1 string to match.
       if (memcmp(Name.data()+1, "erbatim", 7) != 0)
         break;
-      return &Commands[113];	 // "verbatim"
+      return &Commands[114];	 // "verbatim"
     }
     break;
   case 9:	 // 11 strings to match.
@@ -631,11 +641,11 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case 't':	 // 1 string to match.
       if (memcmp(Name.data()+1, "extblock", 8) != 0)
         break;
-      return &Commands[104];	 // "textblock"
+      return &Commands[105];	 // "textblock"
     case 'w':	 // 1 string to match.
       if (memcmp(Name.data()+1, "eakgroup", 8) != 0)
         break;
-      return &Commands[117];	 // "weakgroup"
+      return &Commands[118];	 // "weakgroup"
     }
     break;
   case 10:	 // 11 strings to match.
@@ -644,7 +654,7 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case '/':	 // 1 string to match.
       if (memcmp(Name.data()+1, "textblock", 9) != 0)
         break;
-      return &Commands[105];	 // "/textblock"
+      return &Commands[106];	 // "/textblock"
     case 'a':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ddtogroup", 9) != 0)
         break;
@@ -685,11 +695,11 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
       case 'r':	 // 1 string to match.
         if (memcmp(Name.data()+4, "tfonly", 6) != 0)
           break;
-        return &Commands[89];	 // "endrtfonly"
+        return &Commands[90];	 // "endrtfonly"
       case 'x':	 // 1 string to match.
         if (memcmp(Name.data()+4, "mlonly", 6) != 0)
           break;
-        return &Commands[119];	 // "endxmlonly"
+        return &Commands[120];	 // "endxmlonly"
       }
       break;
     case 'h':	 // 1 string to match.
@@ -704,11 +714,11 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
       case 'b':	 // 1 string to match.
         if (memcmp(Name.data()+3, "section", 7) != 0)
           break;
-        return &Commands[99];	 // "subsection"
+        return &Commands[100];	 // "subsection"
       case 'p':	 // 1 string to match.
         if (memcmp(Name.data()+3, "erclass", 7) != 0)
           break;
-        return &Commands[101];	 // "superclass"
+        return &Commands[102];	 // "superclass"
       }
       break;
     }
@@ -732,7 +742,7 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
       case 'v':	 // 1 string to match.
         if (memcmp(Name.data()+4, "erbatim", 7) != 0)
           break;
-        return &Commands[114];	 // "endverbatim"
+        return &Commands[115];	 // "endverbatim"
       }
       break;
     case 'h':	 // 1 string to match.
@@ -787,11 +797,11 @@ const CommandInfo *CommandTraits::getBuiltinCommandInfo(
     case 's':	 // 1 string to match.
       if (memcmp(Name.data()+1, "ubsubsection", 12) != 0)
         break;
-      return &Commands[100];	 // "subsubsection"
+      return &Commands[101];	 // "subsubsection"
     case 't':	 // 1 string to match.
       if (memcmp(Name.data()+1, "emplatefield", 12) != 0)
         break;
-      return &Commands[103];	 // "templatefield"
+      return &Commands[104];	 // "templatefield"
     }
     break;
   }

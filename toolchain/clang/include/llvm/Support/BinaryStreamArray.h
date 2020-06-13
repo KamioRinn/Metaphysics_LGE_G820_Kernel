@@ -1,9 +1,8 @@
 //===- BinaryStreamArray.h - Array backed by an arbitrary stream *- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 
@@ -134,9 +133,9 @@ public:
   Extractor &getExtractor() { return E; }
 
   BinaryStreamRef getUnderlyingStream() const { return Stream; }
-  void setUnderlyingStream(BinaryStreamRef S, uint32_t Skew = 0) {
-    Stream = S;
-    this->Skew = Skew;
+  void setUnderlyingStream(BinaryStreamRef NewStream, uint32_t NewSkew = 0) {
+    Stream = NewStream;
+    Skew = NewSkew;
   }
 
   void drop_front() { Skew += begin()->length(); }
@@ -144,7 +143,7 @@ public:
 private:
   BinaryStreamRef Stream;
   Extractor E;
-  uint32_t Skew;
+  uint32_t Skew = 0;
 };
 
 template <typename ValueType, typename Extractor>
@@ -287,7 +286,7 @@ public:
       // an exact multiple of the element size.
       consumeError(std::move(EC));
     }
-    assert(llvm::alignmentAdjustment(Data.data(), alignof(T)) == 0);
+    assert(isAddrAligned(Align::Of<T>(), Data.data()));
     return *reinterpret_cast<const T *>(Data.data());
   }
 

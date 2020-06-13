@@ -1,9 +1,8 @@
 //===-- llvm/IntrinsicInst.h - Intrinsic Instruction Wrappers ---*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -26,6 +25,7 @@
 
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/FPEnv.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/GlobalVariable.h"
 #include "llvm/IR/Instructions.h"
@@ -209,56 +209,89 @@ namespace llvm {
   /// This is the common base class for constrained floating point intrinsics.
   class ConstrainedFPIntrinsic : public IntrinsicInst {
   public:
-    enum RoundingMode {
-      rmInvalid,
-      rmDynamic,
-      rmToNearest,
-      rmDownward,
-      rmUpward,
-      rmTowardZero
-    };
-
-    enum ExceptionBehavior {
-      ebInvalid,
-      ebIgnore,
-      ebMayTrap,
-      ebStrict
-    };
-
     bool isUnaryOp() const;
     bool isTernaryOp() const;
-    RoundingMode getRoundingMode() const;
-    ExceptionBehavior getExceptionBehavior() const;
+    Optional<fp::RoundingMode> getRoundingMode() const;
+    Optional<fp::ExceptionBehavior> getExceptionBehavior() const;
 
     // Methods for support type inquiry through isa, cast, and dyn_cast:
+    static bool classof(const IntrinsicInst *I);
+    static bool classof(const Value *V) {
+      return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+    }
+  };
+
+  /// This class represents an intrinsic that is based on a binary operation.
+  /// This includes op.with.overflow and saturating add/sub intrinsics.
+  class BinaryOpIntrinsic : public IntrinsicInst {
+  public:
     static bool classof(const IntrinsicInst *I) {
       switch (I->getIntrinsicID()) {
-      case Intrinsic::experimental_constrained_fadd:
-      case Intrinsic::experimental_constrained_fsub:
-      case Intrinsic::experimental_constrained_fmul:
-      case Intrinsic::experimental_constrained_fdiv:
-      case Intrinsic::experimental_constrained_frem:
-      case Intrinsic::experimental_constrained_fma:
-      case Intrinsic::experimental_constrained_sqrt:
-      case Intrinsic::experimental_constrained_pow:
-      case Intrinsic::experimental_constrained_powi:
-      case Intrinsic::experimental_constrained_sin:
-      case Intrinsic::experimental_constrained_cos:
-      case Intrinsic::experimental_constrained_exp:
-      case Intrinsic::experimental_constrained_exp2:
-      case Intrinsic::experimental_constrained_log:
-      case Intrinsic::experimental_constrained_log10:
-      case Intrinsic::experimental_constrained_log2:
-      case Intrinsic::experimental_constrained_rint:
-      case Intrinsic::experimental_constrained_nearbyint:
-      case Intrinsic::experimental_constrained_maxnum:
-      case Intrinsic::experimental_constrained_minnum:
-      case Intrinsic::experimental_constrained_ceil:
-      case Intrinsic::experimental_constrained_floor:
-      case Intrinsic::experimental_constrained_round:
-      case Intrinsic::experimental_constrained_trunc:
+      case Intrinsic::uadd_with_overflow:
+      case Intrinsic::sadd_with_overflow:
+      case Intrinsic::usub_with_overflow:
+      case Intrinsic::ssub_with_overflow:
+      case Intrinsic::umul_with_overflow:
+      case Intrinsic::smul_with_overflow:
+      case Intrinsic::uadd_sat:
+      case Intrinsic::sadd_sat:
+      case Intrinsic::usub_sat:
+      case Intrinsic::ssub_sat:
         return true;
-      default: return false;
+      default:
+        return false;
+      }
+    }
+    static bool classof(const Value *V) {
+      return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+    }
+
+    Value *getLHS() const { return const_cast<Value*>(getArgOperand(0)); }
+    Value *getRHS() const { return const_cast<Value*>(getArgOperand(1)); }
+
+    /// Returns the binary operation underlying the intrinsic.
+    Instruction::BinaryOps getBinaryOp() const;
+
+    /// Whether the intrinsic is signed or unsigned.
+    bool isSigned() const;
+
+    /// Returns one of OBO::NoSignedWrap or OBO::NoUnsignedWrap.
+    unsigned getNoWrapKind() const;
+  };
+
+  /// Represents an op.with.overflow intrinsic.
+  class WithOverflowInst : public BinaryOpIntrinsic {
+  public:
+    static bool classof(const IntrinsicInst *I) {
+      switch (I->getIntrinsicID()) {
+      case Intrinsic::uadd_with_overflow:
+      case Intrinsic::sadd_with_overflow:
+      case Intrinsic::usub_with_overflow:
+      case Intrinsic::ssub_with_overflow:
+      case Intrinsic::umul_with_overflow:
+      case Intrinsic::smul_with_overflow:
+        return true;
+      default:
+        return false;
+      }
+    }
+    static bool classof(const Value *V) {
+      return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+    }
+  };
+
+  /// Represents a saturating add/sub intrinsic.
+  class SaturatingInst : public BinaryOpIntrinsic {
+  public:
+    static bool classof(const IntrinsicInst *I) {
+      switch (I->getIntrinsicID()) {
+      case Intrinsic::uadd_sat:
+      case Intrinsic::sadd_sat:
+      case Intrinsic::usub_sat:
+      case Intrinsic::ssub_sat:
+        return true;
+      default:
+        return false;
       }
     }
     static bool classof(const Value *V) {
@@ -305,11 +338,11 @@ namespace llvm {
       setArgOperand(ARG_DEST, Ptr);
     }
 
-    void setDestAlignment(unsigned Align) {
+    void setDestAlignment(unsigned Alignment) {
       removeParamAttr(ARG_DEST, Attribute::Alignment);
-      if (Align > 0)
-        addParamAttr(ARG_DEST,
-                     Attribute::getWithAlignment(getContext(), Align));
+      if (Alignment > 0)
+        addParamAttr(ARG_DEST, Attribute::getWithAlignment(getContext(),
+                                                           Align(Alignment)));
     }
 
     void setLength(Value *L) {
@@ -354,11 +387,12 @@ namespace llvm {
       BaseCL::setArgOperand(ARG_SOURCE, Ptr);
     }
 
-    void setSourceAlignment(unsigned Align) {
+    void setSourceAlignment(unsigned Alignment) {
       BaseCL::removeParamAttr(ARG_SOURCE, Attribute::Alignment);
-      if (Align > 0)
-        BaseCL::addParamAttr(ARG_SOURCE, Attribute::getWithAlignment(
-                                             BaseCL::getContext(), Align));
+      if (Alignment > 0)
+        BaseCL::addParamAttr(ARG_SOURCE,
+                             Attribute::getWithAlignment(BaseCL::getContext(),
+                                                         Align(Alignment)));
     }
   };
 

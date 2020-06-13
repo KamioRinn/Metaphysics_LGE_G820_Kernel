@@ -2,10 +2,9 @@
 #
 #=- run-find-all-symbols.py - Parallel find-all-symbols runner -*- python  -*-=#
 #
-#                     The LLVM Compiler Infrastructure
-#
-# This file is distributed under the University of Illinois Open Source
-# License. See LICENSE.TXT for details.
+# Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+# See https://llvm.org/LICENSE.txt for license information.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 #===------------------------------------------------------------------------===#
 
@@ -89,6 +88,9 @@ def main():
   # Load the database and extract all files.
   database = json.load(open(os.path.join(build_path, db_path)))
   files = [entry['file'] for entry in database]
+
+  # Filter out .rc files on Windows. CMake includes them for some reason.
+  files = [f for f in files if not f.endswith('.rc')]
 
   max_task = args.j
   if max_task == 0:

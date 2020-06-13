@@ -1,9 +1,8 @@
 //===--- LLVM.h - Import various common LLVM datatypes ----------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,6 +17,7 @@
 // This should be the only #include, force #includes of all the others on
 // clients.
 #include "llvm/ADT/Hashing.h"
+#include "llvm/ADT/StringRef.h"
 #include "llvm/Support/Casting.h"
 #include <utility>
 
@@ -30,6 +30,7 @@ class Twine;
 class MemoryBuffer;
 class MemoryBufferRef;
 template <typename T> class ArrayRef;
+template <typename T> class MutableArrayRef;
 template <unsigned InternalLen> class SmallString;
 template <typename T, unsigned N> class SmallVector;
 template <typename T> class ErrorOr;
@@ -54,6 +55,9 @@ struct WasmSignature;
 } // namespace llvm
 
 namespace lld {
+llvm::raw_ostream &outs();
+llvm::raw_ostream &errs();
+
 // Casting operators.
 using llvm::cast;
 using llvm::cast_or_null;
@@ -63,6 +67,7 @@ using llvm::isa;
 
 // ADT's.
 using llvm::ArrayRef;
+using llvm::MutableArrayRef;
 using llvm::Error;
 using llvm::ErrorOr;
 using llvm::Expected;
