@@ -83,6 +83,11 @@ static const struct of_device_id dsi_display_dt_match[] = {
 
 #if IS_ENABLED(CONFIG_LGE_DISPLAY_COMMON)
 static struct dsi_display *primary_display;
+/* Dim layer add-on */
+struct dsi_display *dsi_display_get_main_display(void)
+{
+	return primary_display;
+}
 
 extern int lge_dsi_panel_drv_post_init(struct dsi_panel *panel);
 extern struct lge_blmap* lge_get_blmap(struct dsi_panel *panel, enum lge_blmap_type type);
@@ -5488,7 +5493,10 @@ int dsi_display_dev_probe(struct platform_device *pdev)
 	boot_disp->disp = display;
 #if IS_ENABLED(CONFIG_LGE_DISPLAY_COMMON)
 	if (index == DSI_PRIMARY)
+	{
 		primary_display = display;
+		pr_info("%s: Panel Name = %s\n", __func__, display->name);
+	}
 #endif
 
 	display->disp_node = disp_node;
