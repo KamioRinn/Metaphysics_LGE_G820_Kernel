@@ -5,6 +5,7 @@
 #include "sde_kms.h"
 #include "sde_connector.h"
 #include "sde_encoder.h"
+#include <linux/module.h>
 #include <linux/backlight.h>
 #include <linux/kallsyms.h>
 #include <linux/leds.h>
@@ -28,6 +29,11 @@
 extern bool is_dd_connected(void);
 extern bool is_dd_button_enabled(void);
 extern int lge_backlight_device_update_status(struct backlight_device *bd);
+#endif
+
+#ifdef CONFIG_DRM_SDE_EXPO
+	bool dc_enabled = true;
+	module_param(dc_enabled, bool, 0644);
 #endif
 
 extern int lge_ddic_dsi_panel_tx_cmd_set(struct dsi_panel *panel,
@@ -278,7 +284,8 @@ int lge_backlight_device_update_status(struct backlight_device *bd)
 	}
 
 #ifdef CONFIG_DRM_SDE_EXPO
-	bl_lvl = expo_calc_backlight(bl_lvl);
+	if (dc_enabled)
+		bl_lvl = expo_calc_backlight(bl_lvl);
 #endif
 
 	mutex_lock(&display->display_lock);
