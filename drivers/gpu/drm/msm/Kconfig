@@ -218,3 +218,11 @@ config LGE_DD_TEMP_BRINGUP
 	bool "LGE_DD_TEMP_BRINGUP"
 	help
 	TEMP DD bringup feature.
+
+config DRM_SDE_EXPO
+	bool "Enable sde exposure dim layer driver"
+	depends on DRM_MSM
+	help
+	  The SDE DRM exposure dim layer provides exposure adjustment
+	  function without change panel hardware brightness to avoid PWM
+	  flicker on OLED devices.

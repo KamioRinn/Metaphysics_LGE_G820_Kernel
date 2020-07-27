@@ -132,6 +132,10 @@ static int lge_backlight_ex_device_update_status(struct backlight_device *bd)
 			bl_lvl = 1;
 	}
 
+#ifdef CONFIG_DRM_SDE_EXPO
+	bl_lvl = expo_calc_backlight(bl_lvl);
+#endif
+
 	mutex_lock(&display->display_lock);
 	if (((panel->lge.lp_state == LGE_PANEL_LP2) || (panel->lge.lp_state == LGE_PANEL_LP1))
 			&& panel->lge.allow_bl_update_ex) {
