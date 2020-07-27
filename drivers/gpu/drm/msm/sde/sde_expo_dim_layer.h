@@ -18,7 +18,7 @@
 #ifndef SDE_EXPO_DIM_LAYER_H
 #define SDE_EXPO_DIM_LAYER_H
 
-#define BL_DC_THRESHOLD 241
+#define BL_DC_THRESHOLD 770
 
 enum {
 	BRIGHTNESS = 0,

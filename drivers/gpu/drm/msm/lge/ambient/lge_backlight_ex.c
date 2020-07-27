@@ -9,6 +9,9 @@
 #include "dsi_drm.h"
 #include "dsi_display.h"
 #include "sde_crtc.h"
+#ifdef CONFIG_DRM_SDE_EXPO
+#include "sde_expo_dim_layer.h"
+#endif
 
 #include "../brightness/lge_brightness_def.h"
 #include "../lge_dsi_panel.h"
