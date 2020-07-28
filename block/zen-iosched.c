@@ -5,6 +5,7 @@
  * Copyright (C) 2012 Brandon Berhent <bbedward@gmail.com>
  *           (C) 2014 LoungeKatt <twistedumbrella@gmail.com>
  *           (c) 2015 Fixes to stop crashing on 3.10 by Matthew Alex <matthewalex@outlook.com>
+ *           (c) 2016 Port and fixes for Linux 3.18 by engstk <eng.stk@sapo.pt>
  *
  * FCFS, dispatches are back-inserted, deadlines ensure fairness.
  * Should work best with devices where there is no travel delay.
@@ -50,9 +51,9 @@ zen_merged_requests(struct request_queue *q, struct request *req,
 	 * and move into next position (next will be deleted) in fifo
 	 */
 	if (!list_empty(&req->queuelist) && !list_empty(&next->queuelist)) {
-		if (time_before(rq_fifo_time(next), rq_fifo_time(req))) {
+		if (time_before((unsigned long)next->fifo_time, (unsigned long)req->fifo_time)) {
 			list_move(&req->queuelist, &next->queuelist);
-			rq_set_fifo_time(req, rq_fifo_time(next));
+			req->fifo_time = next->fifo_time;
 		}
 	}
 
@@ -66,7 +67,7 @@ static void zen_add_request(struct request_queue *q, struct request *rq)
 	const int sync = rq_is_sync(rq);
 
 	if (zdata->fifo_expire[sync]) {
-		rq_set_fifo_time(rq, jiffies + zdata->fifo_expire[sync]);
+		rq->fifo_time = jiffies + zdata->fifo_expire[sync];
 		list_add_tail(&rq->queuelist, &zdata->fifo_list[sync]);
 	}
 }
@@ -93,7 +94,7 @@ zen_expired_request(struct zen_data *zdata, int ddir)
                 return NULL;
 
         rq = rq_entry_fifo(zdata->fifo_list[ddir].next);
-        if (time_after_eq(jiffies, rq_fifo_time(rq)))
+        if (time_after_eq(jiffies, (unsigned long)rq->fifo_time))
                 return rq;
 
         return NULL;
@@ -110,7 +111,7 @@ zen_check_fifo(struct zen_data *zdata)
         struct request *rq_async = zen_expired_request(zdata, ASYNC);
 
         if (rq_async && rq_sync) {
-			if (time_after(rq_fifo_time(rq_async), rq_fifo_time(rq_sync)))
+			if (time_after((unsigned long)rq_async->fifo_time, (unsigned long)rq_sync->fifo_time))
 				return rq_sync;
         } else if (rq_sync) {
 			return rq_sync;
@@ -257,7 +258,7 @@ static struct elv_fs_entry zen_attrs[] = {
 };
 
 static struct elevator_type iosched_zen = {
-	.ops = {
+	.ops.sq = {
 		.elevator_merge_req_fn		= zen_merged_requests,
 		.elevator_dispatch_fn		= zen_dispatch_requests,
 		.elevator_add_req_fn		= zen_add_request,
