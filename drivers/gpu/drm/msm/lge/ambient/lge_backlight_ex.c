@@ -115,6 +115,10 @@ static int lge_backlight_ex_device_update_status(struct backlight_device *bd)
 	bl_type = LGE_BLMAP_EX;
 	blmap = lge_get_blmap(panel, bl_type);
 
+#ifdef CONFIG_DRM_SDE_EXPO
+	brightness = expo_calc_backlight(brightness);
+#endif
+
 	if (blmap) {
 		// DUMMY panel doesn't have blmap, so this code is mandatory
 		if(blmap->size == 0)	return -EINVAL;
@@ -134,10 +138,6 @@ static int lge_backlight_ex_device_update_status(struct backlight_device *bd)
 		if (!bl_lvl && brightness)
 			bl_lvl = 1;
 	}
-
-#ifdef CONFIG_DRM_SDE_EXPO
-	bl_lvl = expo_calc_backlight(bl_lvl);
-#endif
 
 	mutex_lock(&display->display_lock);
 	if (((panel->lge.lp_state == LGE_PANEL_LP2) || (panel->lge.lp_state == LGE_PANEL_LP1))

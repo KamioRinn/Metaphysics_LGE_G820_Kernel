@@ -19,6 +19,12 @@
 #include "sde_crtc.h"
 #include "sde_expo_dim_layer.h"
 
+#include <linux/module.h>
+
+bool dc_enabled = true;
+bool dc_mode = true;
+module_param(dc_enabled, bool, 0644);
+
 static int interpolate(int x, int xa, int xb, int ya, int yb)
 {
 	int bf, factor, plus;
@@ -87,13 +93,23 @@ u32 expo_calc_backlight(u32 bl_lvl)
 {
 	u32 override_level;
 
-	if (bl_lvl && bl_lvl < BL_DC_THRESHOLD) {
+	if (bl_lvl && bl_lvl < BL_DC_THRESHOLD && dc_enabled) {
 		override_level = BL_DC_THRESHOLD;
 	} else {
 		override_level = bl_lvl;
 	}
 
-	expo_crtc_set_dim_layer(bl_lvl);
-
+	if (dc_enabled) {
+		if (!dc_mode) {
+			dc_mode = true;
+		}
+		expo_crtc_set_dim_layer(bl_lvl);
+	} else {
+		if (dc_mode) {
+			dc_mode = false;
+			expo_crtc_set_dim_layer(260);
+		} 
+	}
+	
 	return override_level;
 }
