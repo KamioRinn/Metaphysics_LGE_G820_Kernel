@@ -2543,8 +2543,6 @@ QDF_STATUS wma_config_bmiss_bcnt_params(uint32_t vdev_id, uint32_t first_cnt,
  */
 void wma_check_and_set_wake_timer(uint32_t time);
 
-<<<<<<< HEAD
-=======
 /**
  * wma_force_objmgr_vdev_peer_cleanup() - Cleanup ObjMgr Vdev peers during SSR
  * @wma_handle: WMA handle
@@ -2554,5 +2552,4 @@ void wma_check_and_set_wake_timer(uint32_t time);
  */
 void wma_force_objmgr_vdev_peer_cleanup(tp_wma_handle wma, uint8_t vdev_id);
 
->>>>>>> b059a9f536c58dee082e79271e41f84e57c92ce7
 #endif

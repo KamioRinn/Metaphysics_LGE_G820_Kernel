@@ -15503,11 +15503,7 @@ int wlan_hdd_cfg80211_init(struct device *dev,
 	    || pCfg->isEseIniFeatureEnabled
 #endif
 	    ) {
-// LGE_CHANGE_S, Do not use SUPPORTS_FW_ROAM because we support BSSID selection by framework
-#ifndef FEATURE_SUPPORT_LGE
 		wiphy->flags |= WIPHY_FLAG_SUPPORTS_FW_ROAM;
-#endif
-// LGE_CHANGE_E, Do not use SUPPORTS_FW_ROAM because we support BSSID selection by framework
 	}
 #ifdef FEATURE_WLAN_TDLS
 	wiphy->flags |= WIPHY_FLAG_SUPPORTS_TDLS
@@ -16399,7 +16395,7 @@ static int __wlan_hdd_cfg80211_change_iface(struct wiphy *wiphy,
 	hdd_debug("Device_mode = %d, IFTYPE = 0x%x",
 	       adapter->device_mode, type);
 
-	status = hdd_psoc_idle_restart(hdd_ctx);
+	status = hdd_trigger_psoc_idle_restart(hdd_ctx);
 	if (status) {
 		hdd_err("Failed to start modules");
 		return -EINVAL;
