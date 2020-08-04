@@ -1103,10 +1103,10 @@ static int moisture_mode_on(struct smb_charger* chg) {
 
 	if (moisture_charging == 0) {
 	// 1. change UVLO to 10.3v
-		rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_CFG_REG, USBIN_ADAPTER_ALLOW_12V);
+		rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_OVERRIDE_REG, FORCE_12V);
 		if (rc < 0) {
-			pr_err("Couldn't write 0x%02x to USBIN_ADAPTER_ALLOW_CFG rc=%d\n",
-				USBIN_ADAPTER_ALLOW_12V, rc);
+			pr_err("Couldn't write 0x%02x to USBIN_ADAPTER_ALLOW_OVERRIDE_REG rc=%d\n",
+				FORCE_12V, rc);
 			return rc;
 		}
 
@@ -1155,14 +1155,6 @@ static int moisture_mode_off(struct smb_charger* chg) {
 
 	// ~2. enable apsd
 	smblib_masked_write(chg, USBIN_OPTIONS_1_CFG_REG, BC1P2_SRC_DETECT_BIT, BC1P2_SRC_DETECT_BIT);
-
-	// ~1. change UVLO to default
-	rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_CFG_REG, USBIN_ADAPTER_ALLOW_5V_OR_9V_TO_12V);
-	if (rc < 0) {
-		pr_err("Couldn't write 0x%02x to USBIN_ADAPTER_ALLOW_CFG rc=%d\n",
-			USBIN_ADAPTER_ALLOW_5V_OR_9V_TO_12V, rc);
-		return rc;
-	}
 
 	return 0;
 }
@@ -1224,16 +1216,16 @@ static bool fake_hvdcp_enable(struct smb_charger *chg, bool enable) {
 	int rc;
 
 	if (fake_hvdcp_property(chg)) {
-		vallow = enable ? USBIN_ADAPTER_ALLOW_5V_TO_9V
-			: USBIN_ADAPTER_ALLOW_5V_OR_9V_TO_12V;
-		rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_CFG_REG, vallow);
+		vallow = enable ? FORCE_9V
+			: FORCE_12V;
+		rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_OVERRIDE_REG, vallow);
 		if (rc >= 0) {
 			if (enable)
 				vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true, 3000000);
 			return true;
 		}
 		else
-			pr_err("Couldn't write 0x%02x to USBIN_ADAPTER_ALLOW_CFG rc=%d\n",
+			pr_err("Couldn't write 0x%02x to USBIN_ADAPTER_ALLOW_OVERRIDE_REG rc=%d\n",
 				vallow, rc);
 	}
 	else
