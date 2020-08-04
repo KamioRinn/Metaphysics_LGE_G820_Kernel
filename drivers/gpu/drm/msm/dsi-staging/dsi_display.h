@@ -675,6 +675,11 @@ int dsi_display_pre_kickoff(struct drm_connector *connector,
  *
  * Return: enum dsi_pixel_format type
  */
+
+#if IS_ENABLED(CONFIG_LGE_DISPLAY_COMMON)
+int dsi_display_post_kickoff(struct dsi_display *display);
+#endif
+
 enum dsi_pixel_format dsi_display_get_dst_format(
 		struct drm_connector *connector,
 		void *display);
@@ -695,5 +700,7 @@ int dsi_display_cont_splash_config(void *display);
  */
 int dsi_display_get_panel_vfp(void *display,
 	int h_active, int v_active);
+
+struct dsi_display *dsi_display_get_main_display(void);
 
 #endif /* _DSI_DISPLAY_H_ */

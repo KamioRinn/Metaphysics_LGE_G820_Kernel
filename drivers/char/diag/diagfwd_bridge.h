@@ -54,6 +54,8 @@ extern struct diagfwd_bridge_info bridge_info[NUM_REMOTE_DEV];
 int diagfwd_bridge_close(int id);
 int diagfwd_bridge_write(int id, unsigned char *buf, int len);
 uint16_t diag_get_remote_device_mask(void);
+int diagfwd_bridge_mux_connect_bypass(int id, int mode);
+int diagfwd_bridge_mux_disconnect_bypass(int id, int mode);
 
 /* The following functions must be called by Diag remote devices only. */
 int diagfwd_bridge_register(int id, int ctxt, struct diag_remote_dev_ops *ops);

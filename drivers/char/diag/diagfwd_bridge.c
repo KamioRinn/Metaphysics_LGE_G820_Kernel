@@ -24,8 +24,13 @@
 #include "diagfwd_mhi.h"
 #include "diag_dci.h"
 #include "diag_ipc_logging.h"
+#include "lg_diag_bypass.h"
 
 #define BRIDGE_TO_MUX(x)	(x + DIAG_MUX_BRIDGE_BASE)
+
+#ifdef CONFIG_LGE_DIAG_BYPASS
+extern int diag_bypass_enable;
+#endif
 
 struct diagfwd_bridge_info bridge_info[NUM_REMOTE_DEV] = {
 	{
@@ -286,3 +291,13 @@ void diag_unregister_bridge(void)
 	else if (IS_ENABLED(CONFIG_MHI_BUS))
 		diag_unregister_mhi();
 }
+
+#ifdef CONFIG_LGE_DIAG_BYPASS
+int diagfwd_bridge_mux_connect_bypass(int id, int mode) {
+    return diagfwd_bridge_mux_connect(id, mode);
+}
+
+int diagfwd_bridge_mux_disconnect_bypass(int id, int mode) {
+    return diagfwd_bridge_mux_disconnect(id, mode);
+}
+#endif

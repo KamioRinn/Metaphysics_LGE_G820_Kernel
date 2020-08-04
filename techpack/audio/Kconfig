@@ -1,0 +1,168 @@
+config PINCTRL_WCD
+	tristate "PINCTRL_WCD"
+	default y
+config AUDIO_EXT_CLK
+	tristate "AUDIO_EXT_CLK"
+	default y
+config SND_SOC_WCD9XXX_V2
+	tristate "SND_SOC_WCD9XXX_V2"
+	default y
+config SND_SOC_WCD_MBHC
+	tristate "SND_SOC_WCD_MBHC"
+	default y
+config SND_SOC_WCD9360
+	tristate "SND_SOC_WCD9360"
+	default y
+config SND_SOC_WCD_DSP_MGR
+	tristate "SND_SOC_WCD_DSP_MGR"
+	default y
+config SND_SOC_WCD_SPI
+	tristate "SND_SOC_WCD_SPI"
+	default y
+config SND_SOC_WCD934X
+	tristate "SND_SOC_WCD934X"
+	default y
+config SND_SOC_WCD934X_MBHC
+	tristate "SND_SOC_WCD934X_MBHC"
+	default y
+config SND_SOC_WCD934X_DSD
+	tristate "SND_SOC_WCD934X_DSD"
+	default y
+config SND_SOC_WCD_CPE
+	tristate "SND_SOC_WCD_CPE"
+	default y
+config SND_SOC_WSA881X
+	tristate "SND_SOC_WSA881X"
+	default y
+config SOUNDWIRE_WCD_CTRL
+	tristate "SOUNDWIRE_WCD_CTRL"
+	default y
+config WCD9XXX_CODEC_CORE
+	tristate "WCD9XXX_CODEC_CORE"
+	default y
+config MSM_CDC_PINCTRL
+	tristate "MSM_CDC_PINCTRL"
+	default y
+config MSM_QDSP6V2_CODECS
+	tristate "MSM_QDSP6V2_CODECS"
+	default y
+config MSM_ULTRASOUND
+	tristate "MSM_ULTRASOUND"
+	default y
+config MSM_QDSP6_APRV2_RPMSG
+	tristate "MSM_QDSP6_APRV2_RPMSG"
+	default y
+config MSM_ADSP_LOADER
+	tristate "MSM_ADSP_LOADER"
+	default y
+config REGMAP_SWR
+	tristate "REGMAP_SWR"
+	default y
+config MSM_QDSP6_SSR
+	tristate "MSM_QDSP6_SSR"
+	default y
+config MSM_QDSP6_PDR
+	tristate "MSM_QDSP6_PDR"
+	default y
+config MSM_QDSP6_NOTIFIER
+	tristate "MSM_QDSP6_NOTIFIER"
+	default y
+config SND_SOC_MSM_HOSTLESS_PCM
+	tristate "SND_SOC_MSM_HOSTLESS_PCM"
+	default y
+config SND_SOC_MSM_QDSP6V2_INTF
+	tristate "SND_SOC_MSM_QDSP6V2_INTF"
+	default y
+config SND_SOC_SM8150
+	tristate "SND_SOC_SM8150"
+	default y
+config MSM_GLINK_SPI_XPRT
+	tristate "MSM_GLINK_SPI_XPRT"
+	default y
+config WCD_DSP_GLINK
+	tristate "WCD_DSP_GLINK"
+	default y
+config SOUNDWIRE
+	tristate "SOUNDWIRE"
+	default y
+config SND_SOC_QDSP6V2
+	tristate "SND_SOC_QDSP6V2"
+	default y
+config SND_SOC_WCD_MBHC_ADC
+	tristate "SND_SOC_WCD_MBHC_ADC"
+	default y
+config QTI_PP
+	tristate "QTI_PP"
+	default y
+config SND_HWDEP_ROUTING
+	tristate "SND_HWDEP_ROUTING"
+	default y
+config DTS_EAGLE
+	tristate "DTS_EAGLE"
+	default y
+config DOLBY_DS2
+	tristate "DOLBY_DS2"
+	default y
+config DOLBY_LICENSE
+	tristate "DOLBY_LICENSE"
+	default y
+config DTS_SRS_TM
+	tristate "DTS_SRS_TM"
+	default y
+config SND_SOC_MSM_STUB
+	tristate "SND_SOC_MSM_STUB"
+	default y
+config MSM_AVTIMER
+	tristate "MSM_AVTIMER"
+	default y
+config SND_SOC_MSM_HDMI_CODEC_RX
+	tristate "SND_SOC_MSM_HDMI_CODEC_RX"
+	default y
+config MACH_LGE
+	tristate "MACH_LGE"
+	default y
+config MACH_SM8150_ALPHA
+	tristate "MACH_SM8150_ALPHA"
+	default y
+config SND_FM_RX_MI2S
+	tristate "SND_FM_RX_MI2S"
+	default y
+config SND_SOC_TFA9872_STEREO	
+	tristate "SND_SOC_TFA9872_STEREO"	
+	default y
+config SND_SOC_TFA9872
+	tristate "SND_SOC_TFA9872"
+	default y
+config SND_SOC_ES9218P
+	tristate "SND_SOC_ES9218P"
+	default y
+config SND_SOC_LGE_ESS_DIGITAL_FILTER
+	tristate "SND_SOC_LGE_ESS_DIGITAL_FILTER"
+	default y
+config SND_SOC_SMA6101
+	tristate "SND_SOC_SMA6101"
+	default y
+config SND_LGE_DTS
+	tristate "SND_LGE_DTS"
+	default y
+config SND_LGE_TX_NXP_LIB
+	tristate "SND_LGE_TX_NXP_LIB"
+	default y
+config SND_LGE_MQA
+	tristate "SND_LGE_MQA"
+	default y
+config SND_LGE_MABL
+	tristate "SND_LGE_MABL"
+	default y
+config SND_LGE_CROSSTALK
+	tristate "SND_LGE_CROSSTALK"
+	default y
+config SND_LGE_STEREO_SPEAKER
+	tristate "SND_LGE_STEREO_SPEAKER"
+	default y
+config SND_LGE_DSDP_DUAL_AUDIO
+	tristate "SND_LGE_DSDP_DUAL_AUDIO"
+	default y
+config SND_LGE_WDSP_SSR
+	tristate "SND_LGE_WDSP_SSR"
+	default y
