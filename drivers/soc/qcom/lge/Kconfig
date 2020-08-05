@@ -194,7 +194,7 @@ config LGE_PM
 	  with battery FET and Fuel gauge
 
 config LGE_PM_DEBUG
-	tristate " Support LGE PM Debug feature"
+	tristate "Support LGE PM Debug feature"
 	default n
 	depends on MACH_LGE
 	help

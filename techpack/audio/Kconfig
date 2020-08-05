@@ -119,10 +119,10 @@ config SND_SOC_MSM_HDMI_CODEC_RX
 	tristate "SND_SOC_MSM_HDMI_CODEC_RX"
 	default y
 config MACH_LGE
-	tristate "MACH_LGE"
+	boolean "MACH_LGE"
 	default y
 config MACH_SM8150_ALPHA
-	tristate "MACH_SM8150_ALPHA"
+	boolean "MACH_SM8150_ALPHA"
 	default y
 config SND_FM_RX_MI2S
 	tristate "SND_FM_RX_MI2S"
