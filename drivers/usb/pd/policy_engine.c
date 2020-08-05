@@ -577,6 +577,7 @@ struct usbpd {
 	struct regulator	*vconn;
 	bool			vbus_enabled;
 	bool			vconn_enabled;
+    // wdnmd deleted your mom
 	bool			vconn_is_external;
 
 	u8			tx_msgid[SOPII_MSG + 1];

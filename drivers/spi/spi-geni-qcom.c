@@ -1463,6 +1463,7 @@ static irqreturn_t geni_spi_irq(int irq, void *data)
 		return IRQ_HANDLED;
 	}
 	m_irq = geni_read_reg(mas->base, SE_GENI_M_IRQ_STATUS);
+
 	if (mas->cur_xfer_mode == FIFO_MODE) {
 		if ((m_irq & M_RX_FIFO_WATERMARK_EN) ||
 						(m_irq & M_RX_FIFO_LAST_EN))
