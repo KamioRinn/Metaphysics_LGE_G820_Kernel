@@ -73,7 +73,6 @@
 #include <qdf_crypto.h>
 #include "wma_twt.h"
 #include <wlan_mlme_main.h>
-#include <wlan_logging_sock_svc.h>
 
 /**
  * wma_send_bcn_buf_ll() - prepare and send beacon buffer to fw for LL
@@ -2472,8 +2471,6 @@ out:
 	if (key_info->sendRsp)
 		wma_send_msg_high_priority(wma_handle, WMA_SET_STAKEY_RSP,
 					   (void *)key_info, 0);
-	else
-		qdf_mem_free(key_info);
 }
 
 /**

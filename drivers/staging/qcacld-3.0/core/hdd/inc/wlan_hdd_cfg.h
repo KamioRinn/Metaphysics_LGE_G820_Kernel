@@ -534,7 +534,7 @@ enum hdd_dot11_mode {
  * gNeighborScanChannelMaxTime - Set neighbor scan channel max time
  * @Min: 3
  * @Max: 300
- * @Default: 40
+ * @Default: 30
  *
  * This ini is used to set the maximum time in secs spent on each
  * channel in LFR scan inside firmware.
@@ -550,7 +550,7 @@ enum hdd_dot11_mode {
 #define CFG_NEIGHBOR_SCAN_MAX_CHAN_TIME_NAME                  "gNeighborScanChannelMaxTime"
 #define CFG_NEIGHBOR_SCAN_MAX_CHAN_TIME_MIN                   (3)
 #define CFG_NEIGHBOR_SCAN_MAX_CHAN_TIME_MAX                   (300)
-#define CFG_NEIGHBOR_SCAN_MAX_CHAN_TIME_DEFAULT               (40)
+#define CFG_NEIGHBOR_SCAN_MAX_CHAN_TIME_DEFAULT               (30)
 
 /*
  * <ini>
@@ -612,33 +612,6 @@ enum hdd_dot11_mode {
 #define CFG_ENABLE_DFS_CHNL_SCAN_MIN               (0)
 #define CFG_ENABLE_DFS_CHNL_SCAN_MAX               (1)
 #define CFG_ENABLE_DFS_CHNL_SCAN_DEFAULT           (1)
-
-/*
- * <ini>
- * honour_nl_scan_policy_flags - Whether to honour NL80211 scan policy flags
- * @Min: 0
- * @Max: 1
- * @Default: 1
- *
- * This parameter will decide whether to honour scan flags such as
- * NL80211_SCAN_FLAG_HIGH_ACCURACY , NL80211_SCAN_FLAG_LOW_SPAN,
- * NL80211_SCAN_FLAG_LOW_POWER.
- * Acceptable values for this:
- * 0: Config is disabled
- * 1: Config is enabled
- *
- * Related: None
- *
- * Supported Feature: Scan
- *
- * Usage: Internal
- *
- * </ini>
- */
-#define CFG_HONOUR_NL_SCAN_POLICY_FLAGS           "honour_nl_scan_policy_flags"
-#define CFG_HONOUR_NL_SCAN_POLICY_FLAGS_MIN       (0)
-#define CFG_HONOUR_NL_SCAN_POLICY_FLAGS_MAX       (1)
-#define CFG_HONOUR_NL_SCAN_POLICY_FLAGS_DEFAULT   (1)
 
 /*
  * <ini>
@@ -8578,8 +8551,11 @@ enum hdd_link_speed_rpt_type {
 #define CFG_SAP_11AC_OVERRIDE_NAME             "gSAP11ACOverride"
 #define CFG_SAP_11AC_OVERRIDE_MIN              (0)
 #define CFG_SAP_11AC_OVERRIDE_MAX              (1)
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_SAP_11AC_OVERRIDE_DEFAULT          (1)
+#else
 #define CFG_SAP_11AC_OVERRIDE_DEFAULT          (0)
-
+#endif
 /*
  * <ini>
  * gGO11ACOverride - Override bw to 11ac for P2P GO
@@ -11271,8 +11247,11 @@ enum hdd_wext_control {
 #define CFG_PRIVATE_WEXT_CONTROL_NAME           "private_wext_control"
 #define CFG_PRIVATE_WEXT_CONTROL_MIN            (hdd_wext_disabled)
 #define CFG_PRIVATE_WEXT_CONTROL_MAX            (hdd_wext_enabled)
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_PRIVATE_WEXT_CONTROL_DEFAULT        (hdd_wext_enabled)
+#else
 #define CFG_PRIVATE_WEXT_CONTROL_DEFAULT        (hdd_wext_deprecated)
-
+#endif
 /*
  * <ini>
  * gper_roam_mon_time - Minimum time required in seconds to
@@ -11400,8 +11379,8 @@ enum hdd_wext_control {
  * <ini>
  * gAutoBmpsTimerValue - Set Auto BMPS Timer value
  * @Min: 0
- * @Max: 1000
- * @Default: 600
+ * @Max: 120
+ * @Default: 90
  *
  * This ini is used to set Auto BMPS Timer value in seconds
  *
@@ -11415,8 +11394,8 @@ enum hdd_wext_control {
  */
 #define CFG_AUTO_PS_ENABLE_TIMER_NAME          "gAutoBmpsTimerValue"
 #define CFG_AUTO_PS_ENABLE_TIMER_MIN           (0)
-#define CFG_AUTO_PS_ENABLE_TIMER_MAX           (1000)
-#define CFG_AUTO_PS_ENABLE_TIMER_DEFAULT       (600)
+#define CFG_AUTO_PS_ENABLE_TIMER_MAX           (120)
+#define CFG_AUTO_PS_ENABLE_TIMER_DEFAULT       (90)
 
 #ifdef WLAN_ICMP_DISABLE_PS
 /*
@@ -15298,7 +15277,7 @@ enum hdd_external_acs_policy {
  * </ini>
  */
 #define CFG_ACTION_OUI_SWITCH_TO_11N_MODE_NAME    "gActionOUISwitchTo11nMode"
-#define CFG_ACTION_OUI_SWITCH_TO_11N_MODE_DEFAULT "00904C 05 0418BF0CB2 F8 21 40"
+#define CFG_ACTION_OUI_SWITCH_TO_11N_MODE_DEFAULT "00904C 03 0418BF E0 21 40"
 
 /*
  * <ini>
@@ -16386,7 +16365,6 @@ struct hdd_config {
 	uint8_t enableBypass11d;
 	uint8_t enableDFSChnlScan;
 	bool wake_lock_in_user_scan;
-	bool honour_nl_scan_policy_flags;
 	uint8_t enable_dfs_pno_chnl_scan;
 	uint8_t enableDynamicDTIM;
 	uint8_t ShortGI40MhzEnable;
