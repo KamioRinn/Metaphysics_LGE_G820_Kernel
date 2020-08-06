@@ -139,6 +139,11 @@ struct dp_display {
 			struct drm_connector *connector, char *pps_cmd);
 	void (*wakeup_phy_layer)(struct dp_display *dp_display,
 			bool wakeup);
+	int (*get_display_type)(struct dp_display *dp_display,
+			const char **display_type);
+	int (*mst_get_fixed_topology_display_type)(
+			struct dp_display *dp_display, u32 strm_id,
+			const char **display_type);
 #ifdef CONFIG_LGE_DISPLAY_COMMON
 	struct lge_dp_display lge_dp;
 #endif
