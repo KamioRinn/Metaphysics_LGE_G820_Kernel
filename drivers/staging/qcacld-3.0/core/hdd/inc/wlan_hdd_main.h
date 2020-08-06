@@ -3353,10 +3353,11 @@ int hdd_set_limit_off_chan_for_tos(struct hdd_adapter *adapter, enum tos tos,
 /**
  * hdd_drv_ops_inactivity_handler() - Timeout handler for driver ops
  * inactivity timer
+ * @context: pointer to context
  *
  * Return: None
  */
-void hdd_drv_ops_inactivity_handler(void);
+void hdd_drv_ops_inactivity_handler(void *context);
 
 /**
  * hdd_start_driver_ops_timer() - Starts driver ops inactivity timer
@@ -3419,12 +3420,27 @@ void hdd_component_psoc_disable(struct wlan_objmgr_psoc *psoc);
 #ifdef WLAN_FEATURE_MEMDUMP_ENABLE
 int hdd_driver_memdump_init(void);
 void hdd_driver_memdump_deinit(void);
+
+/**
+ * hdd_driver_mem_cleanup() - Frees memory allocated for
+ * driver dump
+ *
+ * This function  frees driver dump memory.
+ *
+ * Return: None
+ */
+void hdd_driver_mem_cleanup(void);
+
 #else /* WLAN_FEATURE_MEMDUMP_ENABLE */
 static inline int hdd_driver_memdump_init(void)
 {
 	return 0;
 }
 static inline void hdd_driver_memdump_deinit(void)
+{
+}
+
+static inline void hdd_driver_mem_cleanup(void)
 {
 }
 #endif /* WLAN_FEATURE_MEMDUMP_ENABLE */
@@ -3625,21 +3641,32 @@ void wlan_hdd_send_tcp_param_update_event(struct hdd_context *hdd_ctx,
 void hdd_hidden_ssid_enable_roaming(hdd_handle_t hdd_handle, uint8_t vdev_id);
 
 /**
+ * hdd_trigger_psoc_idle_restart() - trigger restart of a previously shutdown
+ * idle psoc, if needed
+ * @hdd_ctx: the hdd context which should be restarted
+ *
+ * This API does nothing if the given psoc is already active.
+ *
+ *  Return: Errno
+ */
+int hdd_trigger_psoc_idle_restart(struct hdd_context *hdd_ctx);
+
+/**
  * hdd_psoc_idle_shutdown - perform idle shutdown after interface inactivity
  *                          timeout
- * @hdd_ctx: hdd context
+ * @dev: platform device structure
  *
- * Return: None
+ * Return: 0 for success errorno for failure
  */
-void hdd_psoc_idle_shutdown(void *priv);
+int hdd_psoc_idle_shutdown(struct device *dev);
 
 /**
  * hdd_psoc_idle_restart - perform idle restart after idle shutdown
- * @hdd_ctx: hdd context
+ * @dev: platform device structure
  *
  * Return: 0 for success non-zero error code for failure
  */
-int hdd_psoc_idle_restart(struct hdd_context *hdd_ctx);
+int hdd_psoc_idle_restart(struct device *dev);
 
 /**
  * hdd_psoc_idle_timer_start() - start the idle psoc detection timer

@@ -67,7 +67,7 @@ static void *memdump_get_file_data(struct file *file)
  *
  * Return: None
  */
-static void hdd_driver_mem_cleanup(void)
+void hdd_driver_mem_cleanup(void)
 {
 	struct hdd_context *hdd_ctx;
 
