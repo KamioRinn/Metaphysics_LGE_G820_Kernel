@@ -92,6 +92,8 @@ enum print_reason {
 #define DETACH_DETECT_VOTER		"DETACH_DETECT_VOTER"
 #define CC_MODE_VOTER			"CC_MODE_VOTER"
 #define MAIN_FCC_VOTER			"MAIN_FCC_VOTER"
+#define DCIN_AICL_VOTER			"DCIN_AICL_VOTER"
+#define OVERHEAT_LIMIT_VOTER		"OVERHEAT_LIMIT_VOTER"
 
 #define BOOST_BACK_STORM_COUNT	3
 #define WEAK_CHG_STORM_COUNT	8
@@ -110,6 +112,9 @@ enum print_reason {
 #define TYPEC_DEFAULT_CURRENT_UA	900000
 #define TYPEC_MEDIUM_CURRENT_UA		1500000
 #define TYPEC_HIGH_CURRENT_UA		3000000
+#define DCIN_ICL_MIN_UA			100000
+#define DCIN_ICL_MAX_UA			1500000
+#define DCIN_ICL_STEP_UA		100000
 #define ROLE_REVERSAL_DELAY_MS          2000
 
 #ifdef CONFIG_LGE_USB_MOISTURE_DETECTION
@@ -260,13 +265,13 @@ struct clamp_config {
 };
 
 struct smb_irq_info {
-	const char			*name;
-	const irq_handler_t		handler;
-	const bool			wake;
+	const char					*name;
+	const irq_handler_t			handler;
+	const bool					wake;
 	const struct storm_watch	storm_data;
-	struct smb_irq_data		*irq_data;
-	int				irq;
-	bool				enabled;
+	struct smb_irq_data			*irq_data;
+	int							irq;
+	bool						enabled;
 };
 
 static const unsigned int smblib_extcon_cable[] = {
@@ -331,15 +336,15 @@ struct smb_irq_data {
 
 struct smb_chg_param {
 	const char	*name;
-	u16		reg;
-	int		min_u;
-	int		max_u;
-	int		step_u;
-	int		(*get_proc)(struct smb_chg_param *param,
-				    u8 val_raw);
-	int		(*set_proc)(struct smb_chg_param *param,
-				    int val_u,
-				    u8 *val_raw);
+	u16			reg;
+	int			min_u;
+	int			max_u;
+	int			step_u;
+	int			(*get_proc)(struct smb_chg_param *param,
+					    u8 val_raw);
+	int			(*set_proc)(struct smb_chg_param *param,
+				    	int val_u,
+					    u8 *val_raw);
 };
 
 struct buck_boost_freq {
@@ -400,7 +405,7 @@ struct ext_smb_charger {
 
 struct smb_charger {
 	struct device		*dev;
-	char			*name;
+	char		*name;
 	struct regmap		*regmap;
 	struct smb_irq_info	*irq_info;
 	struct smb_params	param;
@@ -418,9 +423,9 @@ struct smb_charger {
 	struct smb_chg_freq	chg_freq;
 	int			otg_delay_ms;
 	int			*weak_chg_icl_ua;
-	bool			pd_not_supported;
+	bool		pd_not_supported;
 #ifdef CONFIG_LGE_USB_MOISTURE_DETECTION
-	bool			cc_or_sbu_ov;
+	bool		cc_or_sbu_ov;
 #endif
 
 	/* locks */
@@ -428,17 +433,19 @@ struct smb_charger {
 	struct mutex		ps_change_lock;
 	struct mutex		dr_lock;
 	struct mutex		irq_status_lock;
-	spinlock_t		typec_pr_lock;
+	spinlock_t			typec_pr_lock;
+	struct mutex		dcin_aicl_lock;
+	struct mutex		dpdm_lock;
 
 	/* power supplies */
-	struct power_supply		*batt_psy;
-	struct power_supply		*usb_psy;
-	struct power_supply		*dc_psy;
-	struct power_supply		*bms_psy;
-	struct power_supply		*usb_main_psy;
-	struct power_supply		*usb_port_psy;
-	struct power_supply		*wls_psy;
-	struct power_supply		*cp_psy;
+	struct power_supply			*batt_psy;
+	struct power_supply			*usb_psy;
+	struct power_supply			*dc_psy;
+	struct power_supply			*bms_psy;
+	struct power_supply			*usb_main_psy;
+	struct power_supply			*usb_port_psy;
+	struct power_supply			*wls_psy;
+	struct power_supply			*cp_psy;
 	enum power_supply_type		real_charger_type;
 
 	/* dual role class */
@@ -452,110 +459,113 @@ struct smb_charger {
 
 	/* CC Mode */
 	int	adapter_cc_mode;
+	int	thermal_overheat;
 
 	/* regulators */
 	struct smb_regulator	*vbus_vreg;
 	struct smb_regulator	*vconn_vreg;
-	struct regulator	*dpdm_reg;
+	struct regulator		*dpdm_reg;
 
 	/* votables */
-	struct votable		*dc_suspend_votable;
-	struct votable		*fcc_votable;
-	struct votable		*fcc_main_votable;
-	struct votable		*fv_votable;
-	struct votable		*usb_icl_votable;
-	struct votable		*awake_votable;
-	struct votable		*pl_disable_votable;
-	struct votable		*chg_disable_votable;
-	struct votable		*pl_enable_votable_indirect;
-	struct votable		*cp_disable_votable;
-	struct votable		*smb_override_votable;
-	struct votable		*icl_irq_disable_votable;
-	struct votable		*limited_irq_disable_votable;
-	struct votable		*hdc_irq_disable_votable;
-	struct votable		*temp_change_irq_disable_votable;
+	struct votable			*dc_suspend_votable;
+	struct votable			*fcc_votable;
+	struct votable			*fcc_main_votable;
+	struct votable			*fv_votable;
+	struct votable			*usb_icl_votable;
+	struct votable			*awake_votable;
+	struct votable			*pl_disable_votable;
+	struct votable			*chg_disable_votable;
+	struct votable			*pl_enable_votable_indirect;
+	struct votable			*cp_disable_votable;
+	struct votable			*smb_override_votable;
+	struct votable			*icl_irq_disable_votable;
+	struct votable			*limited_irq_disable_votable;
+	struct votable			*hdc_irq_disable_votable;
+	struct votable			*temp_change_irq_disable_votable;
 
 	/* work */
-	struct work_struct	bms_update_work;
-	struct work_struct	pl_update_work;
-	struct work_struct	jeita_update_work;
-	struct work_struct	moisture_protection_work;
+	struct work_struct		bms_update_work;
+	struct work_struct		pl_update_work;
+	struct work_struct		jeita_update_work;
+	struct work_struct		moisture_protection_work;
 #ifdef CONFIG_LGE_USB_MOISTURE_DETECTION
-	struct work_struct	lpd_recheck_work;
+	struct work_struct		lpd_recheck_work;
 #endif
-	struct work_struct	chg_termination_work;
-	struct delayed_work	ps_change_timeout_work;
-	struct delayed_work	clear_hdc_work;
-	struct delayed_work	icl_change_work;
-	struct delayed_work	pl_enable_work;
-	struct delayed_work	uusb_otg_work;
-	struct delayed_work	bb_removal_work;
-	struct delayed_work	lpd_ra_open_work;
-	struct delayed_work	lpd_detach_work;
-	struct delayed_work	thermal_regulation_work;
-	struct delayed_work	usbov_dbc_work;
+	struct work_struct		chg_termination_work;
+	struct work_struct		dcin_aicl_work;
+	struct delayed_work		ps_change_timeout_work;
+	struct delayed_work		clear_hdc_work;
+	struct delayed_work		icl_change_work;
+	struct delayed_work		pl_enable_work;
+	struct delayed_work		uusb_otg_work;
+	struct delayed_work		bb_removal_work;
+	struct delayed_work		lpd_ra_open_work;
+	struct delayed_work		lpd_detach_work;
+	struct delayed_work		thermal_regulation_work;
+	struct delayed_work		usbov_dbc_work;
 #ifdef CONFIG_LGE_USB_MOISTURE_DETECTION
-	struct delayed_work	sbu_ovp_work;
+	struct delayed_work		sbu_ovp_work;
 #endif
-	struct delayed_work	role_reversal_check;
-	struct delayed_work	pr_swap_detach_work;
-	struct delayed_work	pr_lock_clear_work;
+	struct delayed_work		role_reversal_check;
+	struct delayed_work		pr_swap_detach_work;
+	struct delayed_work		pr_lock_clear_work;
 
-	struct alarm		lpd_recheck_timer;
-	struct alarm		moisture_protection_alarm;
-	struct alarm		chg_termination_alarm;
+	struct alarm			lpd_recheck_timer;
+	struct alarm			moisture_protection_alarm;
+	struct alarm			chg_termination_alarm;
+	struct alarm			dcin_aicl_alarm;
 
 	struct charger_param	chg_param;
 	/* secondary charger config */
-	bool			sec_pl_present;
-	bool			sec_cp_present;
-	int			sec_chg_selected;
-	int			cp_reason;
+	bool					sec_pl_present;
+	bool					sec_cp_present;
+	int						sec_chg_selected;
+	int						cp_reason;
 
 	/* pd */
-	int			voltage_min_uv;
-	int			voltage_max_uv;
-	int			pd_active;
-	bool			pd_hard_reset;
-	bool			pr_lock_in_progress;
-	bool			pr_swap_in_progress;
-	bool			early_usb_attach;
-	bool			ok_to_pd;
-	bool			typec_legacy;
-	bool			typec_irq_en;
+	int						voltage_min_uv;
+	int						voltage_max_uv;
+	int						pd_active;
+	bool					pd_hard_reset;
+	bool					pr_lock_in_progress;
+	bool					pr_swap_in_progress;
+	bool					early_usb_attach;
+	bool					ok_to_pd;
+	bool					typec_legacy;
+	bool					typec_irq_en;
 
 	/* cached status */
-	bool			system_suspend_supported;
-	int			boost_threshold_ua;
-	int			system_temp_level;
-	int			thermal_levels;
-	int			*thermal_mitigation;
-	int			dcp_icl_ua;
-	int			fake_capacity;
-	int			fake_batt_status;
-	bool			step_chg_enabled;
-	bool			sw_jeita_enabled;
-	bool			typec_legacy_use_rp_icl;
-	bool			is_hdc;
-	bool			chg_done;
-	int			connector_type;
-	bool			otg_en;
-	bool			suspend_input_on_debug_batt;
-	int			default_icl_ua;
-	int			otg_cl_ua;
-	bool			uusb_apsd_rerun_done;
-	bool			typec_present;
-	int			fake_input_current_limited;
-	int			typec_mode;
-	int			usb_icl_change_irq_enabled;
-	u32			jeita_status;
-	u8			float_cfg;
-	bool			jeita_arb_flag;
-	bool			use_extcon;
-	bool			otg_present;
-	bool			hvdcp_disable;
-	int			hw_max_icl_ua;
-	int			auto_recharge_soc;
+	bool					system_suspend_supported;
+	int						boost_threshold_ua;
+	int						system_temp_level;
+	int						thermal_levels;
+	int						*thermal_mitigation;
+	int						dcp_icl_ua;
+	int						fake_capacity;
+	int						fake_batt_status;
+	bool					step_chg_enabled;
+	bool					sw_jeita_enabled;
+	bool					typec_legacy_use_rp_icl;
+	bool					is_hdc;
+	bool					chg_done;
+	int						connector_type;
+	bool					otg_en;
+	bool					suspend_input_on_debug_batt;
+	int						default_icl_ua;
+	int						otg_cl_ua;
+	bool					uusb_apsd_rerun_done;
+	bool					typec_present;
+	int						fake_input_current_limited;
+	int						typec_mode;
+	int						usb_icl_change_irq_enabled;
+	u32						jeita_status;
+	u8						float_cfg;
+	bool					jeita_arb_flag;
+	bool					use_extcon;
+	bool					otg_present;
+	bool					hvdcp_disable;
+	int						hw_max_icl_ua;
+	int						auto_recharge_soc;
 	enum sink_src_mode	sink_src_mode;
 	enum power_supply_typec_power_role power_role;
 	enum jeita_cfg_stat	jeita_configured;
@@ -563,9 +573,9 @@ struct smb_charger {
 	int			smb_temp_max;
 	u8			typec_try_mode;
 	enum lpd_stage		lpd_stage;
-	bool			lpd_disabled;
+	bool		lpd_disabled;
 	enum lpd_reason		lpd_reason;
-	bool			fcc_stepper_enable;
+	bool		fcc_stepper_enable;
 	int			die_temp;
 	int			smb_temp;
 	int			skin_temp;
@@ -576,19 +586,19 @@ struct smb_charger {
 	u32			jeita_soft_hys_thlds[2];
 	int			jeita_soft_fcc[2];
 	int			jeita_soft_fv[2];
-	bool			moisture_present;
-	bool			uusb_moisture_protection_enabled;
-	bool			hw_die_temp_mitigation;
-	bool			hw_connector_mitigation;
-	bool			hw_skin_temp_mitigation;
-	bool			en_skin_therm_mitigation;
+	bool		moisture_present;
+	bool		uusb_moisture_protection_enabled;
+	bool		hw_die_temp_mitigation;
+	bool		hw_connector_mitigation;
+	bool		hw_skin_temp_mitigation;
+	bool		en_skin_therm_mitigation;
 	int			connector_pull_up;
 	int			smb_pull_up;
 	int			aicl_5v_threshold_mv;
 	int			default_aicl_5v_threshold_mv;
 	int			aicl_cont_threshold_mv;
 	int			default_aicl_cont_threshold_mv;
-	bool			aicl_max_reached;
+	bool		aicl_max_reached;
 	int			charge_full_cc;
 	int			cc_soc_ref;
 	int			last_cc_soc;
@@ -596,14 +606,16 @@ struct smb_charger {
 	int			usbin_forced_max_uv;
 	int			init_thermal_ua;
 	u32			comp_clamp_level;
-	bool			hvdcp3_standalone_config;
+	bool		hvdcp3_standalone_config;
+	int			wls_icl_ua;
+	bool		dpdm_enabled;
 
 	/* workaround flag */
 	u32			wa_flags;
 	int			boost_current_ua;
-	int                     qc2_max_pulses;
+	int			qc2_max_pulses;
 	enum qc2_non_comp_voltage qc2_unsupported_voltage;
-	bool			dbc_usbov;
+	bool		dbc_usbov;
 
 	/* extcon for VBUS / ID notification to USB for uUSB */
 	struct extcon_dev	*extcon;
@@ -622,12 +634,15 @@ struct smb_charger {
 	u32			flash_derating_soc;
 	u32			flash_disable_soc;
 	u32			headroom_mode;
-	bool			flash_init_done;
-	bool			flash_active;
+	bool		flash_init_done;
+	bool		flash_active;
 	u32			irq_status;
 
 	/* wireless */
-	int			wireless_vout;
+	int			dcin_uv_count;
+	ktime_t		dcin_uv_last_time;
+	int			last_wls_vout;
+
 #ifdef CONFIG_LGE_PM
 	struct gpio_desc	*vconn_boost_en_gpio;
 	struct gpio_desc	*load_sw_on_gpio;
@@ -693,6 +708,7 @@ irqreturn_t usb_source_change_irq_handler(int irq, void *data);
 irqreturn_t icl_change_irq_handler(int irq, void *data);
 irqreturn_t typec_state_change_irq_handler(int irq, void *data);
 irqreturn_t typec_attach_detach_irq_handler(int irq, void *data);
+irqreturn_t dcin_uv_irq_handler(int irq, void *data);
 irqreturn_t dc_plugin_irq_handler(int irq, void *data);
 irqreturn_t high_duty_cycle_irq_handler(int irq, void *data);
 irqreturn_t switcher_power_ok_irq_handler(int irq, void *data);
@@ -789,6 +805,8 @@ int smblib_get_prop_charger_temp(struct smb_charger *chg,
 int smblib_get_prop_die_health(struct smb_charger *chg);
 int smblib_get_prop_smb_health(struct smb_charger *chg);
 int smblib_get_prop_connector_health(struct smb_charger *chg);
+int smblib_set_prop_thermal_overheat(struct smb_charger *chg,
+			       int therm_overheat);
 int smblib_get_skin_temp_status(struct smb_charger *chg);
 int smblib_get_prop_vph_voltage_now(struct smb_charger *chg,
 				union power_supply_propval *val);
