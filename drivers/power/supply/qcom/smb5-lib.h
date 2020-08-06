@@ -1,4 +1,4 @@
-/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -15,6 +15,7 @@
 #include <linux/alarmtimer.h>
 #include <linux/ktime.h>
 #include <linux/types.h>
+#include <linux/timer.h>
 #include <linux/interrupt.h>
 #include <linux/irqreturn.h>
 #include <linux/regulator/driver.h>
@@ -515,133 +516,137 @@ struct smb_charger {
 	struct alarm			chg_termination_alarm;
 	struct alarm			dcin_aicl_alarm;
 
+	struct timer_list	apsd_timer;
+
 	struct charger_param	chg_param;
 	/* secondary charger config */
-	bool					sec_pl_present;
-	bool					sec_cp_present;
-	int						sec_chg_selected;
-	int						cp_reason;
+	bool			sec_pl_present;
+	bool			sec_cp_present;
+	int				sec_chg_selected;
+	int				cp_reason;
 
 	/* pd */
-	int						voltage_min_uv;
-	int						voltage_max_uv;
-	int						pd_active;
-	bool					pd_hard_reset;
-	bool					pr_lock_in_progress;
-	bool					pr_swap_in_progress;
-	bool					early_usb_attach;
-	bool					ok_to_pd;
-	bool					typec_legacy;
-	bool					typec_irq_en;
+	int				voltage_min_uv;
+	int				voltage_max_uv;
+	int				pd_active;
+	bool			pd_hard_reset;
+	bool			pr_lock_in_progress;
+	bool			pr_swap_in_progress;
+	bool			early_usb_attach;
+	bool			ok_to_pd;
+	bool			typec_legacy;
+	bool			typec_irq_en;
 
 	/* cached status */
-	bool					system_suspend_supported;
-	int						boost_threshold_ua;
-	int						system_temp_level;
-	int						thermal_levels;
-	int						*thermal_mitigation;
-	int						dcp_icl_ua;
-	int						fake_capacity;
-	int						fake_batt_status;
-	bool					step_chg_enabled;
-	bool					sw_jeita_enabled;
-	bool					typec_legacy_use_rp_icl;
-	bool					is_hdc;
-	bool					chg_done;
-	int						connector_type;
-	bool					otg_en;
-	bool					suspend_input_on_debug_batt;
-	int						default_icl_ua;
-	int						otg_cl_ua;
-	bool					uusb_apsd_rerun_done;
-	bool					typec_present;
-	int						fake_input_current_limited;
-	int						typec_mode;
-	int						usb_icl_change_irq_enabled;
-	u32						jeita_status;
-	u8						float_cfg;
-	bool					jeita_arb_flag;
-	bool					use_extcon;
-	bool					otg_present;
-	bool					hvdcp_disable;
-	int						hw_max_icl_ua;
-	int						auto_recharge_soc;
+	bool			system_suspend_supported;
+	int				boost_threshold_ua;
+	int				system_temp_level;
+	int				thermal_levels;
+	int				*thermal_mitigation;
+	int				dcp_icl_ua;
+	int				fake_capacity;
+	int				fake_batt_status;
+	bool			step_chg_enabled;
+	bool			sw_jeita_enabled;
+	bool			typec_legacy_use_rp_icl;
+	bool			is_hdc;
+	bool			chg_done;
+	int				connector_type;
+	bool			otg_en;
+	bool			suspend_input_on_debug_batt;
+	int				default_icl_ua;
+	int				otg_cl_ua;
+	bool			uusb_apsd_rerun_done;
+	bool			typec_present;
+	int				fake_input_current_limited;
+	int				typec_mode;
+	int				usb_icl_change_irq_enabled;
+	u32				jeita_status;
+	u8				float_cfg;
+	bool			jeita_arb_flag;
+	bool			use_extcon;
+	bool			otg_present;
+	bool			hvdcp_disable;
+	int				hw_max_icl_ua;
+	int				auto_recharge_soc;
 	enum sink_src_mode	sink_src_mode;
 	enum power_supply_typec_power_role power_role;
 	enum jeita_cfg_stat	jeita_configured;
-	int			charger_temp_max;
-	int			smb_temp_max;
-	u8			typec_try_mode;
+	int				charger_temp_max;
+	int				smb_temp_max;
+	u8				typec_try_mode;
 	enum lpd_stage		lpd_stage;
-	bool		lpd_disabled;
+	bool			lpd_disabled;
 	enum lpd_reason		lpd_reason;
-	bool		fcc_stepper_enable;
-	int			die_temp;
-	int			smb_temp;
-	int			skin_temp;
-	int			connector_temp;
-	int			thermal_status;
-	int			main_fcc_max;
-	u32			jeita_soft_thlds[2];
-	u32			jeita_soft_hys_thlds[2];
-	int			jeita_soft_fcc[2];
-	int			jeita_soft_fv[2];
-	bool		moisture_present;
-	bool		uusb_moisture_protection_enabled;
-	bool		hw_die_temp_mitigation;
-	bool		hw_connector_mitigation;
-	bool		hw_skin_temp_mitigation;
-	bool		en_skin_therm_mitigation;
-	int			connector_pull_up;
-	int			smb_pull_up;
-	int			aicl_5v_threshold_mv;
-	int			default_aicl_5v_threshold_mv;
-	int			aicl_cont_threshold_mv;
-	int			default_aicl_cont_threshold_mv;
-	bool		aicl_max_reached;
-	int			charge_full_cc;
-	int			cc_soc_ref;
-	int			last_cc_soc;
-	int			dr_mode;
-	int			usbin_forced_max_uv;
-	int			init_thermal_ua;
-	u32			comp_clamp_level;
-	bool		hvdcp3_standalone_config;
-	int			wls_icl_ua;
-	bool		dpdm_enabled;
+	bool			fcc_stepper_enable;
+	int				die_temp;
+	int				smb_temp;
+	int				skin_temp;
+	int				connector_temp;
+	int				thermal_status;
+	int				main_fcc_max;
+	u32				jeita_soft_thlds[2];
+	u32				jeita_soft_hys_thlds[2];
+	int				jeita_soft_fcc[2];
+	int				jeita_soft_fv[2];
+	bool			moisture_present;
+	bool			uusb_moisture_protection_enabled;
+	bool			hw_die_temp_mitigation;
+	bool			hw_connector_mitigation;
+	bool			hw_skin_temp_mitigation;
+	bool			en_skin_therm_mitigation;
+	int				connector_pull_up;
+	int				smb_pull_up;
+	int				aicl_5v_threshold_mv;
+	int				default_aicl_5v_threshold_mv;
+	int				aicl_cont_threshold_mv;
+	int				default_aicl_cont_threshold_mv;
+	bool			aicl_max_reached;
+	int				charge_full_cc;
+	int				cc_soc_ref;
+	int				last_cc_soc;
+	int				dr_mode;
+	int				usbin_forced_max_uv;
+	int				init_thermal_ua;
+	u32				comp_clamp_level;
+	bool			hvdcp3_standalone_config;
+	int				wls_icl_ua;
+	bool			dpdm_enabled;
+	bool			apsd_ext_timeout;
+	bool			qc3p5_detected;
 
 	/* workaround flag */
-	u32			wa_flags;
-	int			boost_current_ua;
-	int			qc2_max_pulses;
+	u32				wa_flags;
+	int				boost_current_ua;
+	int				qc2_max_pulses;
 	enum qc2_non_comp_voltage qc2_unsupported_voltage;
-	bool		dbc_usbov;
+	bool			dbc_usbov;
 
 	/* extcon for VBUS / ID notification to USB for uUSB */
 	struct extcon_dev	*extcon;
 
 	/* battery profile */
-	int			batt_profile_fcc_ua;
-	int			batt_profile_fv_uv;
+	int				batt_profile_fcc_ua;
+	int				batt_profile_fv_uv;
 
-	int			usb_icl_delta_ua;
-	int			pulse_cnt;
+	int				usb_icl_delta_ua;
+	int				pulse_cnt;
 
-	int			die_health;
-	int			connector_health;
+	int				die_health;
+	int				connector_health;
 
 	/* flash */
-	u32			flash_derating_soc;
-	u32			flash_disable_soc;
-	u32			headroom_mode;
-	bool		flash_init_done;
-	bool		flash_active;
-	u32			irq_status;
+	u32				flash_derating_soc;
+	u32				flash_disable_soc;
+	u32				headroom_mode;
+	bool			flash_init_done;
+	bool			flash_active;
+	u32				irq_status;
 
 	/* wireless */
-	int			dcin_uv_count;
-	ktime_t		dcin_uv_last_time;
-	int			last_wls_vout;
+	int				dcin_uv_count;
+	ktime_t			dcin_uv_last_time;
+	int				last_wls_vout;
 
 #ifdef CONFIG_LGE_PM
 	struct gpio_desc	*vconn_boost_en_gpio;
@@ -832,6 +837,7 @@ int smblib_set_prop_rechg_soc_thresh(struct smb_charger *chg,
 				const union power_supply_propval *val);
 void smblib_suspend_on_debug_battery(struct smb_charger *chg);
 int smblib_rerun_apsd_if_required(struct smb_charger *chg);
+void smblib_rerun_apsd(struct smb_charger *chg);
 int smblib_get_prop_fcc_delta(struct smb_charger *chg,
 				union power_supply_propval *val);
 int smblib_get_thermal_threshold(struct smb_charger *chg, u16 addr, int *val);
