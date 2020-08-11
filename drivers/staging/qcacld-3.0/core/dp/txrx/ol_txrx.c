@@ -4009,6 +4009,8 @@ void peer_unmap_timer_handler(void *data)
 	} else {
 		ol_txrx_err("Recovery is in progress, ignore!");
 	}
+
+	cds_trigger_recovery(QDF_PEER_UNMAP_TIMEDOUT);
 }
 
 
