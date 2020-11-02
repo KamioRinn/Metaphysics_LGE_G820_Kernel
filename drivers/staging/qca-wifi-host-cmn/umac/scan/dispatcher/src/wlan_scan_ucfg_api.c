@@ -927,7 +927,7 @@ ucfg_update_channel_list(struct scan_start_request *req,
 			}
 		} else {
 		/* LGE_CHANGE_E, 20191021, cheolsook.lee, case#04229383, fix to scan for p2p 5Ghz Passive channel*/
-			if (wlan_reg_is_dfs_ch(pdev, chan)))
+			if (wlan_reg_is_dfs_ch(pdev, chan))
 				continue;
 		}
 

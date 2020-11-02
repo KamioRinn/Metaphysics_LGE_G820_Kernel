@@ -75,6 +75,16 @@ ucfg_mlme_get_dynamic_vdev_config(struct wlan_objmgr_vdev *vdev)
 }
 
 /**
+ * ucfg_mlme_force_objmgr_vdev_peer_cleanup() - Cleanup ObjMgr Vdev peers
+ * during SSR
+ * @vdev_id: vdev ID
+ *
+ * Return: none
+ */
+
+void ucfg_mlme_force_objmgr_vdev_peer_cleanup(uint8_t vdev_id);
+
+/**
  * ucfg_mlme_update_oce_flags: Update the OCE flags
  *
  * @pdev: pointer to pdev object

@@ -681,8 +681,7 @@ out:
  *
  * Return: none
  */
-static void wma_force_objmgr_vdev_peer_cleanup(tp_wma_handle wma,
-					       uint8_t vdev_id)
+void wma_force_objmgr_vdev_peer_cleanup(tp_wma_handle wma, uint8_t vdev_id)
 {
 	struct wma_txrx_node *iface = &wma->interfaces[vdev_id];
 	struct wlan_objmgr_vdev *vdev;
