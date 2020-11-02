@@ -908,10 +908,15 @@ ucfg_update_channel_list(struct scan_start_request *req,
 		return;
 
 	for (i = 0; i < req->scan_req.chan_list.num_chan; i++) {
+
+		uint32_t freq;
+		uint32_t chan;
+
+		freq = req->scan_req.chan_list.chan[i].freq;
+		chan = wlan_reg_freq_to_chan(pdev, freq);
 		/* LGE_CHANGE_S, 20191021, cheolsook.lee, case#04229383, fix to scan for p2p 5Ghz Passive channel*/
 		if (wlan_vdev_mlme_get_opmode(req->vdev) == QDF_P2P_CLIENT_MODE
 		  || wlan_vdev_mlme_get_opmode(req->vdev) == QDF_P2P_DEVICE_MODE) {
-			uint32_t chan = wlan_reg_freq_to_chan(pdev, req->scan_req.chan_list.chan[i].freq);
 			if (wlan_reg_chan_has_dfs_attribute(pdev, chan)){
 				scm_err("mode %d chan %d dropped(flag=radar)", wlan_vdev_mlme_get_opmode(req->vdev), chan);
 				continue;
@@ -922,15 +927,12 @@ ucfg_update_channel_list(struct scan_start_request *req,
 			}
 		} else {
 		/* LGE_CHANGE_E, 20191021, cheolsook.lee, case#04229383, fix to scan for p2p 5Ghz Passive channel*/
-			if (wlan_reg_is_dfs_ch(pdev, wlan_reg_freq_to_chan(pdev,
-							req->scan_req.chan_list.
-							chan[i].freq)))
+			if (wlan_reg_is_dfs_ch(pdev, chan)))
 				continue;
 		}
 
-		req->scan_req.chan_list.chan[num_scan_channels] =
+		req->scan_req.chan_list.chan[num_scan_channels++] =
 				req->scan_req.chan_list.chan[i];
-		num_scan_channels ++;
 	}
 	req->scan_req.chan_list.num_chan = num_scan_channels;
 	scm_scan_chlist_concurrency_modify(req->vdev, req);
