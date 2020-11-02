@@ -887,6 +887,7 @@ struct wma_txrx_node {
 	uint32_t nwType;
 	void *staKeyParams;
 	uint32_t peer_count;
+	qdf_spinlock_t peer_lock;
 	bool roam_synch_in_progress;
 	void *plink_status_req;
 	void *psnr_req;
