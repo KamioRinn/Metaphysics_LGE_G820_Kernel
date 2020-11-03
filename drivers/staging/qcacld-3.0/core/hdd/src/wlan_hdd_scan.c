@@ -1306,8 +1306,6 @@ static int __wlan_hdd_cfg80211_sched_scan_start(struct wiphy *wiphy,
 	int ret;
 	enum QDF_GLOBAL_MODE curr_mode;
 
-	hdd_enter();
-
 	curr_mode = hdd_get_conparam();
 
 	if (QDF_GLOBAL_FTM_MODE == curr_mode ||
@@ -1425,8 +1423,6 @@ static int __wlan_hdd_cfg80211_sched_scan_stop(struct net_device *dev)
 	int errno;
 	enum QDF_GLOBAL_MODE curr_mode;
 
-	hdd_enter();
-
 	curr_mode = hdd_get_conparam();
 
 	if (QDF_GLOBAL_FTM_MODE == curr_mode ||
@@ -1472,8 +1468,6 @@ static int __wlan_hdd_cfg80211_sched_scan_stop(struct net_device *dev)
 		return errno;
 
 	errno = wlan_hdd_sched_scan_stop(dev);
-
-	hdd_exit();
 
 	return errno;
 }
