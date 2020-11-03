@@ -40,7 +40,7 @@ dtb-$(CONFIG_ARCH_QCS405) += qcs403-iot-sku1.dtb \
 			qcs403-iot-sku4.dtb
 endif
 
-ifneq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
+ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 ifneq ($(CONFIG_MACH_LGE), y)
 	dtbo-$(CONFIG_ARCH_SM8150) += \
 		sm8150-cdp-overlay.dtbo \
