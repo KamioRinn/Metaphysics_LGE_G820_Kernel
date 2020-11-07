@@ -21,7 +21,7 @@
 
 #include <linux/module.h>
 
-bool dc_enabled = true;
+bool dc_enabled = false;
 bool dc_mode = true;
 module_param(dc_enabled, bool, 0644);
 
