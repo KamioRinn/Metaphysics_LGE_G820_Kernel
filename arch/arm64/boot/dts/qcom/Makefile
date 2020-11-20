@@ -65,6 +65,8 @@ ifneq ($(CONFIG_MACH_LGE), y)
 		sm8150-sdxprairie-v3-mtp-overlay.dtbo \
 		sm8150-marmot-cdp-overlay.dtbo \
 		sm8150-marmot-mtp-overlay.dtbo \
+		sm8150-lemur-cdp-overlay.dtbo \
+		sm8150-lemur-mtp-overlay.dtbo \
 		sm8150-hdk-overlay.dtbo
 
 sm8150-cdp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
