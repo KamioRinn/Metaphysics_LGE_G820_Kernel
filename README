@@ -1,18 +1,36 @@
-Linux kernel
+Metaphysics Kernel for LGE_G820
+这是世界上第一个LGG8的第三方内核
 ============
 
-This file was moved to Documentation/admin-guide/README.rst
+- 版本号再+1，满足你的更新强迫症[手动滑稽]
 
-Please notice that there are several guides for kernel developers and users.
-These guides can be rendered in a number of formats, like HTML and PDF.
+- 同步最新源码
 
-In order to build the documentation, use ``make htmldocs`` or
-``make pdfdocs``.
+- 修复QM和TM系统上VoLTE开关缺失的问题
 
-There are various text files in the Documentation/ subdirectory,
-several of them using the Restructured Text markup notation.
-See Documentation/00-INDEX for a list of what is contained in each file.
+- GPU UC&OC：180-765Mhz
 
-Please read the Documentation/process/changes.rst file, as it contains the
-requirements for building and running the kernel, and information about
-the problems which may result by upgrading your kernel.
+- Touch Boost
+
+- GPU调频优化，提升性能，降低功耗
+
+- 支持DC调光
+
+- SELinux宽容
+
+- GCMA排序器，更省电更快响应
+
+- EXFAT分区支持
+
+- 动态Fsync
+
+- BBR TCP调整器
+
+- PM_sleep与s2idle省电优化
+
+- ZRAM lz4算法
+
+- 支持F2FS文件系统
+
+- TWRP触摸修复
+
