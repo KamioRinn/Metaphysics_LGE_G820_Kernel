@@ -464,7 +464,7 @@ static void diag_usb_notifier(void *priv, unsigned int event,
 #endif
 		if (!atomic_read(&usb_info->connected))
 			queue_work(usb_info->usb_wq,
-			   &usb_info->connect_work);
+			   &usb_info->event_work);
 		break;
 	case USB_DIAG_DISCONNECT:
 #ifdef CONFIG_LGE_DIAG_BYPASS
