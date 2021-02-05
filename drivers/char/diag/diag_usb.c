@@ -453,6 +453,7 @@ static void diag_usb_notifier(void *priv, unsigned int event,
 		spin_unlock_irqrestore(&usb_info->event_lock, flags);
 		queue_work(usb_info->usb_wq,
 			   &usb_info->event_work);
+
 #ifdef CONFIG_LGE_DIAG_BYPASS
         diag_bypass_enable = 0;
 #endif
