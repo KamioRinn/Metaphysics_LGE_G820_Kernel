@@ -1070,7 +1070,7 @@ static int smblib_request_dpdm(struct smb_charger *chg, bool enable)
 			}
 		}
 #endif
-		if (chg->dpdm_reg && !regulator_is_enabled(chg->dpdm_reg)) {
+		if (chg->dpdm_reg && !chg->dpdm_enabled) { 
 			smblib_dbg(chg, PR_MISC, "enabling DPDM regulator\n");
 			rc = regulator_enable(chg->dpdm_reg);
 			if (rc < 0)

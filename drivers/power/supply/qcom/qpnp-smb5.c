@@ -2755,8 +2755,8 @@ static int smb5_init_dc_peripheral(struct smb_charger *chg)
 		return 0;
 
 #ifndef CONFIG_LGE_PM
-	/* set DC icl_max 1A */
-	rc = smblib_set_charge_param(chg, &chg->param.dc_icl, 1000000);
+	/* Set DCIN ICL to 100 mA */
+	rc = smblib_set_charge_param(chg, &chg->param.dc_icl, DCIN_ICL_MIN_UA);
 	if (rc < 0) {
 		dev_err(chg->dev, "Couldn't set dc_icl rc=%d\n", rc);
 		return rc;
@@ -3450,8 +3450,9 @@ static struct smb_irq_info smb5_irqs[] = {
 		.handler	= override_dc_uv_irq_handler,
 		.storm_data	= {true, 500, 8},
 #else
-		.handler	= default_irq_handler,
+		.handler	= dcin_uv_irq_handler,
 #endif
+		.wake		= true,
 	},
 	[DCIN_OV_IRQ] = {
 		.name		= "dcin-ov",
